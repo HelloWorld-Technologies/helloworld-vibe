@@ -7,7 +7,7 @@ import { useOptionalPropertyActions } from "@/components/booking/property-action
 import type { SrpQuery } from "@/src/models/srp-query";
 import { VibeChips } from "@/components/ui/vibe-chips";
 import { useSelectedVibes } from "@/src/lib/use-selected-vibes";
-import { localityVibeChips } from "@/src/tokens/locality";
+import { useVibeList } from "@/src/lib/use-vibe-list";
 import type { LocalityProperty } from "@/src/tokens/locality";
 import { cn } from "@/src/lib/cn";
 
@@ -51,6 +51,7 @@ export function SrpListingsSection({
   showFilters?: boolean;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { vibes } = useVibeList();
   const { selectedVibes, toggleVibe, clearSelectedVibes } = useSelectedVibes();
   const propertyActions = useOptionalPropertyActions();
 
@@ -118,7 +119,7 @@ export function SrpListingsSection({
           </div>
 
           <VibeChips
-            chips={localityVibeChips}
+            chips={vibes}
             selectedIds={selectedVibes}
             onToggle={toggleVibe}
             scrollRef={scrollRef}

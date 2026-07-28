@@ -5,12 +5,13 @@ import { LocationSearch } from "@/components/search/location-search";
 import { VibeChips } from "@/components/ui/vibe-chips";
 import { cn } from "@/src/lib/cn";
 import { useSelectedVibes } from "@/src/lib/use-selected-vibes";
+import { useVibeList } from "@/src/lib/use-vibe-list";
 import { pageShell } from "@/src/tokens/layout";
 import {
   homepageHeroDesktop,
   homepageHeroMobile,
-  homepageVibeChips,
 } from "@/src/tokens/homepage";
+import type { VibeChip } from "@/src/tokens/vibes";
 
 const heroImageBlendOverlayClass =
   "pointer-events-none absolute inset-y-0 left-0 w-[55%] bg-[linear-gradient(to_right,#FAFAFA_0%,color-mix(in_srgb,#FAFAFA_96%,transparent)_30%,color-mix(in_srgb,#ffffff_70%,transparent)_48%,color-mix(in_srgb,#FAFAFA_30%,transparent)_66%,transparent_84%)]";
@@ -44,9 +45,11 @@ function HomepageHeroHeading({
 }
 
 function VibeFilters({
+  chips,
   selectedVibes,
   onToggle,
 }: {
+  chips: readonly VibeChip[];
   selectedVibes: Set<string>;
   onToggle: (id: string) => void;
 }) {
@@ -61,7 +64,7 @@ function VibeFilters({
       </p>
 
       <VibeChips
-        chips={homepageVibeChips}
+        chips={chips}
         selectedIds={selectedVibes}
         onToggle={onToggle}
         showMaxCount={4}
@@ -72,6 +75,7 @@ function VibeFilters({
 }
 
 export function HomepageHero() {
+  const { vibes } = useVibeList();
   const { selectedVibes, toggleVibe } = useSelectedVibes();
 
   return (
@@ -98,7 +102,11 @@ export function HomepageHero() {
 
         <div className="relative z-20 bg-white px-4 pb-8 pt-5 sm:px-6">
           <LocationSearch localityPlaceholder="Search Here" />
-          <VibeFilters selectedVibes={selectedVibes} onToggle={toggleVibe} />
+          <VibeFilters
+            chips={vibes}
+            selectedVibes={selectedVibes}
+            onToggle={toggleVibe}
+          />
         </div>
       </div>
 
@@ -124,7 +132,11 @@ export function HomepageHero() {
               <LocationSearch localityPlaceholder="Search for Localities" />
             </div>
 
-            <VibeFilters selectedVibes={selectedVibes} onToggle={toggleVibe} />
+            <VibeFilters
+              chips={vibes}
+              selectedVibes={selectedVibes}
+              onToggle={toggleVibe}
+            />
           </div>
         </div>
       </div>

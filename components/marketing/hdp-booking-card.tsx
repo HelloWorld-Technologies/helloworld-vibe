@@ -225,6 +225,8 @@ export function HdpBookingCard({
     about: "",
     amenities: [],
     galleryImages: [],
+    galleryItems: [],
+    moments: [],
     propertyUrl: "",
     hdpPath: "",
     bookingPath: "",

@@ -202,7 +202,9 @@ export function LocationSearch({
       ? `${localityListboxId}-option-${highlightedLocalityIndex}`
       : undefined;
 
-  const citySrpHref = buildCitySrpHref(city, { pathname, srpSlug });
+  // Always land on the city coliving SRP (e.g. /coliving-in-bangalore), not the
+  // current page's gender/hostel marketing slug.
+  const citySrpHref = buildCitySrpHref(city);
 
   function localityOptionId(index: number) {
     return `${localityListboxId}-option-${index}`;

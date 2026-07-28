@@ -83,6 +83,7 @@ export const hdpSectionNavItems = [
   { id: "about", label: "About" },
   { id: "amenities", label: "Amenities" },
   { id: "nearby", label: "Nearby Places" },
+  { id: "moments", label: "Moments" },
   { id: "reviews", label: "Reviews" },
 ] as const;
 

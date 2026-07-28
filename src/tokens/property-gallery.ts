@@ -6,6 +6,16 @@ export type GalleryMediaItem = {
   label: string;
   imageSrc: string;
   kind: "video" | "image";
+  videoSrc?: string;
+  caption?: string;
+};
+
+export type GalleryDesktopLayout = {
+  video: GalleryMediaItem;
+  moments: GalleryMediaItem;
+  livingRoom: GalleryMediaItem;
+  washroom: GalleryMediaItem;
+  featuredSequence: GalleryMediaItem[];
 };
 
 export const galleryCategoryTabs: {
@@ -73,24 +83,35 @@ export const propertyGalleryItems: GalleryMediaItem[] = [
   }),
 ];
 
-export const propertyGalleryDesktop = {
+export const propertyGalleryDesktop: GalleryDesktopLayout = {
   video: propertyGalleryItems[0],
   moments: propertyGalleryItems[1],
   livingRoom: propertyGalleryItems[2],
   washroom: propertyGalleryItems[3],
+  featuredSequence: [
+    propertyGalleryItems[0],
+    propertyGalleryItems[1],
+    ...propertyGalleryItems.filter((item) => item.category === "photos"),
+  ],
 };
 
-export function getGalleryItemsByCategory(category: GalleryCategory) {
-  return propertyGalleryItems.filter((item) => item.category === category);
+export function getGalleryItemsByCategory(
+  items: readonly GalleryMediaItem[],
+  category: GalleryCategory,
+) {
+  return items.filter((item) => item.category === category);
 }
 
-export function getGalleryCategoryIndex(category: GalleryCategory) {
-  return propertyGalleryItems.findIndex((item) => item.category === category);
+export function getGalleryCategoryIndex(
+  items: readonly GalleryMediaItem[],
+  category: GalleryCategory,
+) {
+  return items.findIndex((item) => item.category === category);
 }
 
 const desktopTileLabels = [
-  "Property Video",
-  "Moments",
+  "Image",
+  "Image",
   "Living Room",
   "Washroom",
 ] as const;
@@ -98,29 +119,106 @@ const desktopTileLabels = [
 export function buildGalleryItemsFromImages(
   images: readonly string[],
 ): GalleryMediaItem[] {
-  return images.map((imageSrc, index) => {
-    const category: GalleryCategory =
-      index === 0 ? "property-video" : index === 1 ? "moments" : "photos";
-    return {
-      id: `gallery-${index}`,
-      category,
-      label: desktopTileLabels[index] ?? "Photos",
-      imageSrc,
-      kind: index === 0 ? "video" : "image",
-    };
-  });
+  return images.map((imageSrc, index) => ({
+    id: `gallery-${index}`,
+    category: "photos" as const,
+    label: desktopTileLabels[index] ?? "Image",
+    imageSrc,
+    kind: "image" as const,
+  }));
 }
 
 export function buildGalleryDesktopFromImages(
   images: readonly string[],
-): typeof propertyGalleryDesktop {
+): GalleryDesktopLayout {
   const items = buildGalleryItemsFromImages(images);
   const pick = (index: number) => items[index] ?? items[0];
 
   return {
-    video: pick(0),
-    moments: pick(1),
+    video: { ...pick(0), label: "Image", caption: "Image" },
+    moments: { ...pick(1), label: "Image", caption: "Image" },
     livingRoom: pick(2),
     washroom: pick(3),
+    featuredSequence: items.filter(
+      (item, index, list) =>
+        list.findIndex((candidate) => candidate.id === item.id) === index,
+    ),
+  };
+}
+
+export function buildGalleryItemsFromMedia({
+  videos = [],
+  moments = [],
+  photos = [],
+}: {
+  videos?: readonly GalleryMediaItem[];
+  moments?: readonly GalleryMediaItem[];
+  photos?: readonly GalleryMediaItem[];
+}): GalleryMediaItem[] {
+  return [...videos, ...moments, ...photos];
+}
+
+export function buildGalleryDesktopFromMedia(
+  items: readonly GalleryMediaItem[],
+): GalleryDesktopLayout {
+  const videos = getGalleryItemsByCategory(items, "property-video");
+  const moments = getGalleryItemsByCategory(items, "moments");
+  const photos = getGalleryItemsByCategory(items, "photos");
+
+  const fallback = items[0] ?? propertyGalleryItems[0];
+  const momentVideo = moments.find((item) => Boolean(item.videoSrc));
+  const preferredMoment = momentVideo ?? moments[0];
+
+  const featuredVideo: GalleryMediaItem = videos[0]
+    ? { ...videos[0], label: "Property Video", caption: "Property Video" }
+    : (() => {
+        const source = photos[0] ?? preferredMoment ?? fallback;
+        return {
+          ...source,
+          id: `featured-video-fallback-${source.id}`,
+          category: "photos" as const,
+          label: "Image",
+          caption: "Image",
+          kind: "image" as const,
+          videoSrc: undefined,
+        };
+      })();
+
+  const usedFallbackPhotoId =
+    !videos[0] && photos[0] ? photos[0].id : null;
+
+  const featuredSequence: GalleryMediaItem[] = [featuredVideo];
+
+  if (preferredMoment) {
+    featuredSequence.push({
+      ...preferredMoment,
+      label: "Moments",
+      caption: preferredMoment.caption || "Moments",
+    });
+  }
+
+  const remainingPhotos = photos.filter(
+    (photo) => photo.id !== usedFallbackPhotoId,
+  );
+  featuredSequence.push(...remainingPhotos);
+
+  const momentsTile: GalleryMediaItem = preferredMoment
+    ? {
+        ...preferredMoment,
+        label: "Moments",
+        caption: preferredMoment.caption || "Moments",
+      }
+    : {
+        ...(photos[0] ?? featuredVideo),
+        label: "Image",
+        caption: "Image",
+      };
+
+  return {
+    video: featuredVideo,
+    moments: momentsTile,
+    livingRoom: photos[0] ?? preferredMoment ?? featuredVideo,
+    washroom: photos[1] ?? photos[0] ?? preferredMoment ?? featuredVideo,
+    featuredSequence,
   };
 }

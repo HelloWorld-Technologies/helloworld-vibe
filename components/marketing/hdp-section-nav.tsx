@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TabNav } from "@/components/ui/tab-nav";
 import {
   hdpSectionNavItems,
@@ -8,11 +8,22 @@ import {
 } from "@/src/tokens/hdp";
 import { cn } from "@/src/lib/cn";
 
-export function HdpSectionNav({ className }: { className?: string }) {
-  const [active, setActive] = useState<HdpSectionId>("about");
+export function HdpSectionNav({
+  className,
+  hiddenIds,
+}: {
+  className?: string;
+  hiddenIds?: readonly HdpSectionId[];
+}) {
+  const items = useMemo(
+    () =>
+      hdpSectionNavItems.filter((item) => !hiddenIds?.includes(item.id)),
+    [hiddenIds],
+  );
+  const [active, setActive] = useState<HdpSectionId>(items[0]?.id ?? "about");
 
   useEffect(() => {
-    const sections = hdpSectionNavItems
+    const sections = items
       .map((item) => document.getElementById(`hdp-${item.id}`))
       .filter(Boolean) as HTMLElement[];
 
@@ -33,7 +44,7 @@ export function HdpSectionNav({ className }: { className?: string }) {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [items]);
 
   function scrollToSection(id: HdpSectionId) {
     document.getElementById(`hdp-${id}`)?.scrollIntoView({
@@ -51,7 +62,7 @@ export function HdpSectionNav({ className }: { className?: string }) {
       )}
     >
       <TabNav
-        items={hdpSectionNavItems}
+        items={items}
         value={active}
         onChange={scrollToSection}
         heading=""

@@ -1,8 +1,15 @@
-import { vibeChips } from "@/src/tokens/vibes";
+import {
+  getFallbackVibeChips,
+  readStoredVibeList,
+} from "@/src/lib/vibe-list-storage";
 
 const STORAGE_KEY = "helloworld-selected-vibes";
 
-const validVibeIds = new Set(vibeChips.map((chip) => chip.id));
+function getValidVibeIds(): Set<string> {
+  const stored = readStoredVibeList();
+  const source = stored ?? getFallbackVibeChips();
+  return new Set(source.map((chip) => chip.id));
+}
 
 function parseStoredVibes(raw: string | null): Set<string> {
   if (!raw) return new Set();
@@ -11,6 +18,7 @@ function parseStoredVibes(raw: string | null): Set<string> {
     const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) return new Set();
 
+    const validVibeIds = getValidVibeIds();
     return new Set(
       parsed.filter(
         (id): id is string => typeof id === "string" && validVibeIds.has(id),

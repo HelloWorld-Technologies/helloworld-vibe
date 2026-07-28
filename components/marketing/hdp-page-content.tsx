@@ -15,6 +15,7 @@ import { HdpRatingCard } from "@/components/marketing/hdp-rating-card";
 import { HdpSectionNav } from "@/components/marketing/hdp-section-nav";
 import { HdpSimilarProperties } from "@/components/marketing/hdp-similar-properties";
 import { HdpVibeMatch } from "@/components/marketing/hdp-vibe-match";
+import { HdpMoments } from "@/components/marketing/hdp-moments";
 import { HdpReviews } from "@/components/marketing/hdp-reviews";
 import {
   PropertyGalleryDesktop,
@@ -25,6 +26,9 @@ import type { HdpPageConfig } from "@/src/lib/hdp/resolve-hdp-page";
 import { cn } from "@/src/lib/cn";
 import { pageLayout } from "@/src/tokens/layout";
 import { formatCityDisplayName } from "@/src/tokens/cities";
+import type { HdpSectionId } from "@/src/tokens/hdp";
+
+const HIDDEN_WHEN_NO_MOMENTS = ["moments"] as const satisfies readonly HdpSectionId[];
 
 export function HdpPageContent({ config }: { config: HdpPageConfig }) {
   const { view } = config;
@@ -51,10 +55,10 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
 
           <div className="mt-4 md:mt-6">
             <div className="hidden md:block">
-              <PropertyGalleryDesktop images={view.galleryImages} />
+              <PropertyGalleryDesktop items={view.galleryItems} />
             </div>
             <div className="md:hidden">
-              <PropertyGalleryMobile images={view.galleryImages} />
+              <PropertyGalleryMobile items={view.galleryItems} />
             </div>
           </div>
 
@@ -65,7 +69,12 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
                 <HdpVibeMatch displayName={view.displayName} />
               </div>
 
-              <HdpSectionNav className="mt-6" />
+              <HdpSectionNav
+                className="mt-6"
+                hiddenIds={
+                  view.moments.length === 0 ? HIDDEN_WHEN_NO_MOMENTS : undefined
+                }
+              />
 
               <div className="mt-8 space-y-10 md:mt-10 md:space-y-12">
                 <HdpAbout view={view} />
@@ -74,6 +83,10 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
                   items={view.nearbyItems}
                   mapUrl={view.mapUrl}
                   subtitle={view.nearbyDescription}
+                />
+                <HdpMoments
+                  displayName={view.displayName}
+                  moments={view.moments}
                 />
                 <section id="hdp-reviews" className="scroll-mt-32">
                   <HdpReviews

@@ -4,10 +4,10 @@ import { useRef } from "react";
 import { WishlistSrpCard } from "@/components/marketing/wishlist-srp-card";
 import { VibeChips } from "@/components/ui/vibe-chips";
 import { useSelectedVibes } from "@/src/lib/use-selected-vibes";
+import { useVibeList } from "@/src/lib/use-vibe-list";
 import {
   localityProperties,
   localityPropertiesHeading,
-  localityVibeChips,
   type LocalityProperty,
 } from "@/src/tokens/locality";
 import { cn } from "@/src/lib/cn";
@@ -41,6 +41,7 @@ function PropertyCard({
 
 export function LocalityProperties({ className }: { className?: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { vibes } = useVibeList();
   const { selectedVibes, toggleVibe, clearSelectedVibes } = useSelectedVibes();
 
   function scrollChips(direction: "left" | "right") {
@@ -101,7 +102,7 @@ export function LocalityProperties({ className }: { className?: string }) {
           </div>
 
           <VibeChips
-            chips={localityVibeChips}
+            chips={vibes}
             selectedIds={selectedVibes}
             onToggle={toggleVibe}
             scrollRef={scrollRef}

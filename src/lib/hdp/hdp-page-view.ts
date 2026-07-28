@@ -7,6 +7,7 @@ import type {
   HdpResidentReview,
 } from "@/src/tokens/hdp-reviews";
 import type { HdpReviewSummaryView } from "@/src/lib/hdp/map-hdp-api";
+import type { GalleryMediaItem } from "@/src/tokens/property-gallery";
 
 export type HdpPageView = {
   propertyId: number;
@@ -29,6 +30,8 @@ export type HdpPageView = {
   about: string;
   amenities: readonly string[];
   galleryImages: readonly string[];
+  galleryItems: readonly GalleryMediaItem[];
+  moments: readonly GalleryMediaItem[];
   propertyUrl: string;
   hdpPath: string;
   bookingPath: string;

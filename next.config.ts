@@ -61,6 +61,16 @@ const imageRemotePatterns: NonNullable<
   },
   {
     protocol: "https",
+    hostname: "property-videos-original-staging.s3.ap-south-1.amazonaws.com",
+    port: "",
+  },
+  {
+    protocol: "https",
+    hostname: "property-videos-original.s3.ap-south-1.amazonaws.com",
+    port: "",
+  },
+  {
+    protocol: "https",
     hostname: "hw-production-original-image.s3.ap-south-1.amazonaws.com",
     port: "",
   },

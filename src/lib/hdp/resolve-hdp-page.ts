@@ -3,6 +3,7 @@ import {
   fetchPropertyCategories,
   fetchSimilarProperties,
 } from "@/src/apis/hdp";
+import { fetchPropertyMoments } from "@/src/apis/moments";
 import { getHdpPageTitle } from "@/src/lib/hdp-page-title";
 import { buildHdpMetaDescription } from "@/src/lib/hdp/hdp-description";
 import { buildHdpFaqs } from "@/src/lib/hdp/hdp-faqs";
@@ -12,6 +13,12 @@ import {
   mapNearByToNeighborhoodCards,
   mergeNearByAreas,
 } from "@/src/lib/hdp/map-hdp-api";
+import {
+  legacyPropertyPhotoUrls,
+  mapLegacyPropertyPhotosToGalleryItems,
+  mapMomentsToGalleryItems,
+  mapPropertyMediaToGalleryItems,
+} from "@/src/lib/hdp/map-gallery-media";
 import {
   categorySharingOccupancy,
   categorySupportsPrivate,
@@ -35,11 +42,19 @@ import { formatCityDisplayName } from "@/src/tokens/cities";
 import { capitalizeFirstLetter } from "@/src/lib/string-utils";
 import type { CategoryProps } from "@/src/models/category";
 import type {
+  PropertyMediaItem,
+  PropertyMomentItem,
+} from "@/src/models/property-media";
+import type {
   GoogleData,
   NearByArea,
   Property,
   SimilarProperty,
 } from "@/src/models/property";
+import {
+  buildGalleryItemsFromMedia,
+  type GalleryMediaItem,
+} from "@/src/tokens/property-gallery";
 import type { HdpRoomType } from "@/src/tokens/hdp";
 
 export type HdpBreadcrumbItem = { name: string; path?: string };
@@ -115,15 +130,51 @@ function mapCategoriesToRoomTypes(categories: CategoryProps[]): HdpRoomType[] {
     }));
 }
 
-function propertyGalleryImages(property: Property): readonly string[] {
-  const primary = property.hdp_image || property.image || property.srp_image;
-  const gallery = Array.isArray(property.property_image)
-    ? property.property_image
-    : [];
-  const urls = [primary, ...gallery]
-    .filter(Boolean)
-    .map((url) => imageUrlFormatter("hdp", String(url)));
-  return urls.length > 0 ? urls : ["/assets/community/hero/hero-1.png"];
+function propertyGalleryImages(
+  property: Property,
+  media: readonly PropertyMediaItem[],
+): readonly string[] {
+  const fromMedia = mapPropertyMediaToGalleryItems(media).photos.map(
+    (item) => item.imageSrc,
+  );
+  if (fromMedia.length > 0) return fromMedia;
+
+  const legacy = legacyPropertyPhotoUrls(property).map((url) =>
+    imageUrlFormatter("hdp", url),
+  );
+  return legacy.length > 0 ? legacy : ["/assets/community/hero/hero-1.png"];
+}
+
+function buildGalleryItems(
+  property: Property,
+  media: readonly PropertyMediaItem[],
+  moments: readonly PropertyMomentItem[],
+): GalleryMediaItem[] {
+  const {
+    videos,
+    moments: mediaMoments,
+    photos: mediaPhotos,
+  } = mapPropertyMediaToGalleryItems(media);
+  const momentItems = [
+    ...mapMomentsToGalleryItems(moments),
+    ...mediaMoments,
+  ];
+  const photos =
+    mediaPhotos.length > 0
+      ? mediaPhotos
+      : mapLegacyPropertyPhotosToGalleryItems(legacyPropertyPhotoUrls(property));
+
+  const items = buildGalleryItemsFromMedia({
+    videos,
+    moments: momentItems,
+    photos,
+  });
+
+  return items.length > 0
+    ? items
+    : mapLegacyPropertyPhotosToGalleryItems([
+        "/assets/community/hero/hero-1.png",
+      ]);
 }
 
 function buildHdpView(options: {
@@ -134,6 +185,9 @@ function buildHdpView(options: {
   googleData: GoogleData | null;
   nearBy: NearByArea | null;
   localitySlug: string;
+  media: readonly PropertyMediaItem[];
+  moments: readonly PropertyMomentItem[];
+  galleryImages: readonly string[];
 }): HdpPageView {
   const {
     property,
@@ -143,6 +197,9 @@ function buildHdpView(options: {
     googleData,
     nearBy,
     localitySlug,
+    media,
+    moments,
+    galleryImages,
   } = options;
   const displayName = property.display_name || property.name;
   const reviewCount =
@@ -159,6 +216,14 @@ function buildHdpView(options: {
   const reviewSummary = mapGoogleDataToReviewSummary(googleData);
   const residentReviews = mapGoogleReviewsToResidentReviews(googleData);
   const mapUrl = property.map_url || undefined;
+  const galleryItems = buildGalleryItems(property, media, moments);
+  const {
+    moments: mediaMoments,
+  } = mapPropertyMediaToGalleryItems(media);
+  const momentItems = [
+    ...mapMomentsToGalleryItems(moments),
+    ...mediaMoments,
+  ];
 
   return {
     propertyId: property.id,
@@ -186,7 +251,9 @@ function buildHdpView(options: {
       ...(property.rent_includes ?? []),
       ...(property.services ?? []),
     ].filter((item) => item && item !== "None"),
-    galleryImages: propertyGalleryImages(property),
+    galleryImages,
+    galleryItems,
+    moments: momentItems,
     propertyUrl: `${getPublicSiteUrl()}/${canonicalPath}`,
     hdpPath: `/${canonicalPath}`,
     bookingPath: `/${canonicalPath}/booking`,
@@ -226,10 +293,23 @@ export async function resolveHdpPage(
   }
 
   const propertyId = Number(property.id);
-  const [categoriesResponse, similarResponse] = await Promise.all([
-    fetchPropertyCategories(propertyId),
-    fetchSimilarProperties(propertyId),
-  ]);
+  const media = (
+    Array.isArray(response.media) ? response.media : []
+  ) as PropertyMediaItem[];
+  const houseMoments = (
+    Array.isArray(response.moments) ? response.moments : []
+  ) as PropertyMomentItem[];
+
+  const [categoriesResponse, similarResponse, momentsResponse] =
+    await Promise.all([
+      fetchPropertyCategories(propertyId),
+      fetchSimilarProperties(propertyId),
+      fetchPropertyMoments(propertyId),
+    ]);
+
+  const momentsFromApi = (momentsResponse?.data ?? []) as PropertyMomentItem[];
+  const moments =
+    momentsFromApi.length > 0 ? momentsFromApi : houseMoments;
 
   const categories = (categoriesResponse?.data ?? []) as CategoryProps[];
   const similarProperties = (similarResponse?.data ?? []) as SimilarProperty[];
@@ -263,12 +343,18 @@ export async function resolveHdpPage(
 
   const baseUrl = getPublicSiteUrl();
   const fullUrl = `${baseUrl}/${canonicalPath}`;
-  const placeImage = property.hdp_image
-    ? imageUrlFormatter("hdp", property.hdp_image)
-    : undefined;
-  const propertyImageUrls = (property.property_image ?? [])
-    .map((url) => imageUrlFormatter("hdp", url))
-    .filter(Boolean);
+  const galleryImageUrls = propertyGalleryImages(property, media);
+  const placeImage =
+    galleryImageUrls[0] ??
+    (property.hdp_image
+      ? imageUrlFormatter("hdp", property.hdp_image)
+      : undefined);
+  const propertyImageUrls =
+    galleryImageUrls.length > 0
+      ? [...galleryImageUrls]
+      : (property.property_image ?? [])
+          .map((url) => imageUrlFormatter("hdp", url))
+          .filter(Boolean);
   const ratingValue = googleData?.google_rating;
   const hasValidRating =
     ratingValue != null && !Number.isNaN(Number(ratingValue));
@@ -320,6 +406,9 @@ export async function resolveHdpPage(
     googleData,
     nearBy,
     localitySlug: normalizedLocality,
+    media,
+    moments,
+    galleryImages: galleryImageUrls,
   });
 
   return {
