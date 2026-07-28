@@ -1,119 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { HomepageCarouselNav } from "@/components/marketing/homepage-carousel-nav";
+import { MomentsCarouselControls } from "@/components/marketing/moments-carousel-controls";
+import {
+  MomentCard,
+  MOMENT_CARD_SCROLL_STEP_PX,
+} from "@/components/marketing/moment-card";
 import { cn } from "@/src/lib/cn";
 import type { GalleryMediaItem } from "@/src/tokens/property-gallery";
-
-const CARD_WIDTH_CLASS = "w-[16.5rem] sm:w-[18.5rem]";
-const CARD_SCROLL_STEP_PX = 312;
-
-function PlayIcon({ className }: { className?: string }) {
-  return (
-    <span
-      aria-hidden
-      className={cn(
-        "pointer-events-none absolute inset-0 z-10 flex items-center justify-center",
-        className,
-      )}
-    >
-      <span className="flex size-14 items-center justify-center rounded-full bg-white/90 text-gray-900 shadow-lg">
-        <svg viewBox="0 0 24 24" fill="currentColor" className="size-6 translate-x-0.5">
-          <path d="M8 5v14l11-7L8 5Z" />
-        </svg>
-      </span>
-    </span>
-  );
-}
-
-function MomentCard({
-  item,
-  className,
-}: {
-  item: GalleryMediaItem;
-  className?: string;
-}) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
-  const hasVideo = Boolean(item.videoSrc);
-  const title = item.caption || item.label || "Moments";
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video || !hasVideo) return;
-
-    if (!isHovered) {
-      video.pause();
-      video.currentTime = 0;
-      return;
-    }
-
-    const playPromise = video.play();
-    if (playPromise) {
-      void playPromise.catch(() => {});
-    }
-  }, [hasVideo, isHovered, item.id]);
-
-  return (
-    <article
-      className={cn(
-        "relative aspect-3/4 shrink-0 overflow-hidden rounded-2xl bg-black",
-        CARD_WIDTH_CLASS,
-        className,
-      )}
-      onMouseEnter={() => hasVideo && setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onFocus={() => hasVideo && setIsHovered(true)}
-      onBlur={() => setIsHovered(false)}
-    >
-      {hasVideo ? (
-        <>
-          <video
-            ref={videoRef}
-            className={cn(
-              "absolute inset-0 size-full object-cover transition-opacity duration-200",
-              isHovered ? "opacity-100" : "opacity-0",
-            )}
-            src={item.videoSrc}
-            poster={item.imageSrc}
-            muted
-            playsInline
-            loop
-            preload="metadata"
-          />
-          <Image
-            src={item.imageSrc}
-            alt={title}
-            fill
-            className={cn(
-              "object-cover transition-opacity duration-200",
-              isHovered ? "opacity-0" : "opacity-100",
-            )}
-            sizes="(max-width: 640px) 70vw, 296px"
-          />
-          {!isHovered ? <PlayIcon /> : null}
-        </>
-      ) : (
-        <Image
-          src={item.imageSrc}
-          alt={title}
-          fill
-          className="object-cover"
-          sizes="(max-width: 640px) 70vw, 296px"
-        />
-      )}
-
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black/70 via-black/25 to-transparent"
-      />
-      <p className="absolute bottom-4 left-4 right-4 z-10 truncate text-base font-semibold text-white">
-        {title}
-      </p>
-    </article>
-  );
-}
 
 export function HdpMoments({
   displayName,
@@ -127,12 +21,24 @@ export function HdpMoments({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   function updateScrollState() {
     const node = scrollRef.current;
     if (!node) return;
     setCanScrollPrev(node.scrollLeft > 4);
     setCanScrollNext(node.scrollLeft + node.clientWidth < node.scrollWidth - 4);
+
+    const cards = Array.from(node.children) as HTMLElement[];
+    if (cards.length === 0) return;
+
+    const scrollLeft = node.scrollLeft;
+    const nextIndex = cards.findIndex((card, index) => {
+      const nextCard = cards[index + 1];
+      if (!nextCard) return true;
+      return scrollLeft < nextCard.offsetLeft - node.offsetLeft - 16;
+    });
+    setActiveIndex(nextIndex === -1 ? 0 : nextIndex);
   }
 
   useEffect(() => {
@@ -152,9 +58,23 @@ export function HdpMoments({
 
   function scrollByDirection(direction: "prev" | "next") {
     scrollRef.current?.scrollBy({
-      left: direction === "next" ? CARD_SCROLL_STEP_PX : -CARD_SCROLL_STEP_PX,
+      left:
+        direction === "next"
+          ? MOMENT_CARD_SCROLL_STEP_PX
+          : -MOMENT_CARD_SCROLL_STEP_PX,
       behavior: "smooth",
     });
+  }
+
+  function goToIndex(index: number) {
+    const container = scrollRef.current;
+    const card = container?.children[index] as HTMLElement | undefined;
+    card?.scrollIntoView({
+      behavior: "smooth",
+      inline: "start",
+      block: "nearest",
+    });
+    setActiveIndex(index);
   }
 
   return (
@@ -183,10 +103,13 @@ export function HdpMoments({
       </div>
 
       {moments.length > 1 ? (
-        <HomepageCarouselNav
+        <MomentsCarouselControls
           className="mt-5"
+          count={moments.length}
+          activeIndex={activeIndex}
           onPrev={() => scrollByDirection("prev")}
           onNext={() => scrollByDirection("next")}
+          onSelect={goToIndex}
           prevDisabled={!canScrollPrev}
           nextDisabled={!canScrollNext}
         />

@@ -1,24 +1,68 @@
 "use client";
 
-import Image from "next/image";
-import { useRef, useState } from "react";
-import { HomepageCarouselNav } from "@/components/marketing/homepage-carousel-nav";
-import {
-  LocalityPaginationDots,
-} from "@/components/marketing/locality-card";
+import { useEffect, useRef, useState } from "react";
 import { HomepageSectionHeading } from "@/components/marketing/homepage-section-heading";
-import { homepageFeedItems } from "@/src/tokens/homepage";
+import { MomentsCarouselControls } from "@/components/marketing/moments-carousel-controls";
+import {
+  MomentCard,
+  MOMENT_CARD_SCROLL_STEP_PX,
+} from "@/components/marketing/moment-card";
+import type { GalleryMediaItem } from "@/src/tokens/property-gallery";
 import { pageShell } from "@/src/tokens/layout";
 
-export function HomepageFeed() {
-  const [desktopIndex, setDesktopIndex] = useState(0);
-  const [mobileIndex, setMobileIndex] = useState(0);
+export function HomepageFeed({
+  moments = [],
+}: {
+  moments?: readonly GalleryMediaItem[];
+}) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const count = homepageFeedItems.length;
-  const visibleCount = 4;
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  function goToMobileIndex(index: number) {
-    setMobileIndex(index);
+  function updateScrollState() {
+    const node = scrollRef.current;
+    if (!node) return;
+    setCanScrollPrev(node.scrollLeft > 4);
+    setCanScrollNext(node.scrollLeft + node.clientWidth < node.scrollWidth - 4);
+
+    const cards = Array.from(node.children) as HTMLElement[];
+    if (cards.length === 0) return;
+
+    const scrollLeft = node.scrollLeft;
+    const nextIndex = cards.findIndex((card, index) => {
+      const nextCard = cards[index + 1];
+      if (!nextCard) return true;
+      return scrollLeft < nextCard.offsetLeft - node.offsetLeft - 16;
+    });
+    setActiveIndex(nextIndex === -1 ? 0 : nextIndex);
+  }
+
+  useEffect(() => {
+    const node = scrollRef.current;
+    if (!node) return;
+    updateScrollState();
+    node.addEventListener("scroll", updateScrollState, { passive: true });
+    window.addEventListener("resize", updateScrollState);
+    return () => {
+      node.removeEventListener("scroll", updateScrollState);
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, [moments]);
+
+  if (moments.length === 0) return null;
+
+  function scrollByDirection(direction: "prev" | "next") {
+    scrollRef.current?.scrollBy({
+      left:
+        direction === "next"
+          ? MOMENT_CARD_SCROLL_STEP_PX
+          : -MOMENT_CARD_SCROLL_STEP_PX,
+      behavior: "smooth",
+    });
+  }
+
+  function goToIndex(index: number) {
     const container = scrollRef.current;
     const card = container?.children[index] as HTMLElement | undefined;
     card?.scrollIntoView({
@@ -26,27 +70,8 @@ export function HomepageFeed() {
       inline: "start",
       block: "nearest",
     });
+    setActiveIndex(index);
   }
-
-  function handleMobileScroll() {
-    const container = scrollRef.current;
-    if (!container) return;
-
-    const cards = Array.from(container.children) as HTMLElement[];
-    const scrollLeft = container.scrollLeft;
-    const nextIndex = cards.findIndex((card, index) => {
-      const nextCard = cards[index + 1];
-      if (!nextCard) return index === cards.length - 1;
-      return scrollLeft < nextCard.offsetLeft - container.offsetLeft - 16;
-    });
-
-    setMobileIndex(nextIndex === -1 ? 0 : nextIndex);
-  }
-
-  const desktopItems = homepageFeedItems.slice(
-    desktopIndex,
-    desktopIndex + visibleCount,
-  );
 
   return (
     <section className="py-12 sm:py-16 lg:py-20">
@@ -58,65 +83,26 @@ export function HomepageFeed() {
             gradient="home"
           />
         </div>
-
-        <div className="mt-8 hidden gap-4 lg:grid lg:grid-cols-4">
-          {desktopItems.map((src, index) => (
-            <div
-              key={`${src}-${index}`}
-              className="overflow-hidden rounded-2xl bg-gray-100 shadow-md"
-            >
-              <Image
-                src={src}
-                alt="HelloWorld community moment"
-                width={280}
-                height={420}
-                className="aspect-[3/4] w-full object-cover"
-              />
-            </div>
+        <div
+          ref={scrollRef}
+          className="mt-8 flex gap-4 overflow-x-auto scroll-smooth pb-2 scrollbar-none"
+        >
+          {moments.map((item) => (
+            <MomentCard key={item.id} item={item} />
           ))}
         </div>
-
-        <HomepageCarouselNav
-          className="mt-8 hidden lg:flex"
-          prevDisabled={desktopIndex === 0}
-          nextDisabled={desktopIndex >= count - visibleCount}
-          onPrev={() => setDesktopIndex((index) => Math.max(0, index - 1))}
-          onNext={() =>
-            setDesktopIndex((index) =>
-              Math.min(count - visibleCount, index + 1),
-            )
-          }
-        />
-
-        <div className="mt-8 lg:hidden">
-          <div
-            ref={scrollRef}
-            onScroll={handleMobileScroll}
-            className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-none"
-          >
-            {homepageFeedItems.map((src, index) => (
-              <div
-                key={`${src}-${index}`}
-                className="w-44 shrink-0 snap-center overflow-hidden rounded-2xl bg-gray-100 shadow-md sm:w-52"
-              >
-                <Image
-                  src={src}
-                  alt="HelloWorld community moment"
-                  width={208}
-                  height={312}
-                  className="aspect-[3/4] w-full object-cover"
-                />
-              </div>
-            ))}
-          </div>
-          <div className="mt-6">
-            <LocalityPaginationDots
-              count={count}
-              activeIndex={mobileIndex}
-              onSelect={goToMobileIndex}
-            />
-          </div>
-        </div>
+        {moments.length > 1 ? (
+          <MomentsCarouselControls
+            className="mt-8"
+            count={moments.length}
+            activeIndex={activeIndex}
+            onPrev={() => scrollByDirection("prev")}
+            onNext={() => scrollByDirection("next")}
+            onSelect={goToIndex}
+            prevDisabled={!canScrollPrev}
+            nextDisabled={!canScrollNext}
+          />
+        ) : null}
       </div>
     </section>
   );
