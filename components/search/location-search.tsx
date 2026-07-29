@@ -13,8 +13,11 @@ import Image from "next/image";
 import { fetchLocalitySuggest } from "@/src/apis/search";
 import { cn } from "@/src/lib/cn";
 import { persistCity, readStoredCity } from "@/src/lib/city-storage";
+import { getPropertyHref } from "@/src/lib/sitemap-slug";
 import { buildCitySrpHref, buildLocalitySrpHref } from "@/src/lib/srp/locality-srp-href";
+import { capitalizeFirstLetter } from "@/src/lib/string-utils";
 import { useDebounce } from "@/src/lib/use-debounce";
+import type { LocalitySuggestProperty } from "@/src/models/search";
 import {
   cities,
   defaultCitySlug,
@@ -24,6 +27,10 @@ import {
 
 const LOCALITY_SUGGEST_DEBOUNCE_MS = 500;
 const LOCALITY_SUGGEST_MIN_LENGTH = 3;
+
+type SuggestItem =
+  | { kind: "locality"; label: string }
+  | { kind: "property"; label: string; property: LocalitySuggestProperty };
 
 export interface LocationSearchValue {
   city: CitySlug;
@@ -109,6 +116,44 @@ function SearchIcon({ className }: { className?: string }) {
   );
 }
 
+function BuildingIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 24 24"
+      fill="none"
+      className={className}
+    >
+      <path
+        d="M4 21V5.5C4 4.67157 4.67157 4 5.5 4H12.5C13.3284 4 14 4.67157 14 5.5V21"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M14 10H18.5C19.3284 10 20 10.6716 20 11.5V21"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M4 21H20"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+      <path
+        d="M7 8H9.5M7 12H9.5M7 16H9.5M16.5 14H17.5M16.5 17H17.5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 function SearchDropdown({
   open,
   children,
@@ -170,7 +215,7 @@ export function LocationSearch({
   const [activePanel, setActivePanel] = useState<Panel>(null);
   const [highlightedCity, setHighlightedCity] = useState<CitySlug | null>(null);
   const [highlightedLocalityIndex, setHighlightedLocalityIndex] = useState(-1);
-  const [localitySuggestions, setLocalitySuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<SuggestItem[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [hasFetchedSuggestions, setHasFetchedSuggestions] = useState(false);
 
@@ -196,9 +241,15 @@ export function LocationSearch({
       isDebouncingSuggestions ||
       hasFetchedSuggestions);
 
+  const localitySuggestions = suggestions.filter(
+    (item): item is Extract<SuggestItem, { kind: "locality" }> =>
+      item.kind === "locality",
+  );
+  const hasSuggestions = suggestions.length > 0;
+
   const activeLocalityOptionId =
     highlightedLocalityIndex >= 0 &&
-    highlightedLocalityIndex < localitySuggestions.length
+    highlightedLocalityIndex < suggestions.length
       ? `${localityListboxId}-option-${highlightedLocalityIndex}`
       : undefined;
 
@@ -211,16 +262,16 @@ export function LocationSearch({
   }
 
   function moveHighlightedLocality(direction: 1 | -1) {
-    if (localitySuggestions.length === 0) return;
+    if (suggestions.length === 0) return;
 
     setHighlightedLocalityIndex((current) => {
       if (current < 0) {
-        return direction === 1 ? 0 : localitySuggestions.length - 1;
+        return direction === 1 ? 0 : suggestions.length - 1;
       }
       const next = current + direction;
       if (next < 0) return 0;
-      if (next >= localitySuggestions.length) {
-        return localitySuggestions.length - 1;
+      if (next >= suggestions.length) {
+        return suggestions.length - 1;
       }
       return next;
     });
@@ -233,7 +284,7 @@ export function LocationSearch({
       setInternalLocality("");
       setLocalityQuery("");
     }
-    setLocalitySuggestions([]);
+    setSuggestions([]);
     setHasFetchedSuggestions(false);
     onCityChange?.(nextCity);
     setActivePanel(null);
@@ -267,6 +318,24 @@ export function LocationSearch({
     if (href) router.push(href);
   }
 
+  function selectProperty(property: LocalitySuggestProperty) {
+    const label = capitalizeFirstLetter(property.display_name || property.name);
+    updateLocality(label);
+
+    if (searchOnly) return;
+
+    const href = getPropertyHref(property);
+    if (href) router.push(href);
+  }
+
+  function selectSuggestion(item: SuggestItem) {
+    if (item.kind === "locality") {
+      selectLocality(item.label);
+      return;
+    }
+    selectProperty(item.property);
+  }
+
   function handleSearch() {
     onSearch?.({ city, locality: localityQuery.trim() || locality });
     setActivePanel(null);
@@ -296,7 +365,7 @@ export function LocationSearch({
     const query = debouncedLocalityQuery.trim();
 
     if (query.length < LOCALITY_SUGGEST_MIN_LENGTH) {
-      setLocalitySuggestions([]);
+      setSuggestions([]);
       setIsLoadingSuggestions(false);
       setHasFetchedSuggestions(false);
       setHighlightedLocalityIndex(-1);
@@ -319,7 +388,24 @@ export function LocationSearch({
 
         if (abortController.signal.aborted) return;
 
-        setLocalitySuggestions(success ? data.locality : []);
+        if (!success) {
+          setSuggestions([]);
+        } else {
+          const nextSuggestions: SuggestItem[] = [
+            ...data.locality.map((label) => ({
+              kind: "locality" as const,
+              label,
+            })),
+            ...data.properties.map((property) => ({
+              kind: "property" as const,
+              label: capitalizeFirstLetter(
+                property.display_name || property.name,
+              ),
+              property,
+            })),
+          ];
+          setSuggestions(nextSuggestions);
+        }
         setHasFetchedSuggestions(true);
         setHighlightedLocalityIndex(-1);
       } catch (error) {
@@ -327,7 +413,7 @@ export function LocationSearch({
           return;
         }
 
-        setLocalitySuggestions([]);
+        setSuggestions([]);
         setHasFetchedSuggestions(true);
         setHighlightedLocalityIndex(-1);
       } finally {
@@ -349,7 +435,7 @@ export function LocationSearch({
     localityOptionRefs.current
       .get(highlightedLocalityIndex)
       ?.scrollIntoView({ block: "nearest" });
-  }, [highlightedLocalityIndex, localitySuggestions]);
+  }, [highlightedLocalityIndex, suggestions]);
 
   useEffect(() => {
     function handlePointerDown(event: MouseEvent) {
@@ -466,7 +552,7 @@ export function LocationSearch({
                 setActivePanel("locality");
                 setHighlightedLocalityIndex(-1);
                 if (event.target.value.trim().length < LOCALITY_SUGGEST_MIN_LENGTH) {
-                  setLocalitySuggestions([]);
+                  setSuggestions([]);
                   setHasFetchedSuggestions(false);
                 }
               }}
@@ -474,7 +560,7 @@ export function LocationSearch({
               onKeyDown={(event) => {
                 if (
                   showLocalityDropdown &&
-                  localitySuggestions.length > 0 &&
+                  hasSuggestions &&
                   (event.key === "ArrowDown" || event.key === "ArrowUp")
                 ) {
                   event.preventDefault();
@@ -486,10 +572,10 @@ export function LocationSearch({
                   event.preventDefault();
                   const selected =
                     highlightedLocalityIndex >= 0
-                      ? localitySuggestions[highlightedLocalityIndex]
-                      : localitySuggestions[0];
+                      ? suggestions[highlightedLocalityIndex]
+                      : suggestions[0];
                   if (selected) {
-                    selectLocality(selected);
+                    selectSuggestion(selected);
                     return;
                   }
                   handleSearch();
@@ -506,34 +592,55 @@ export function LocationSearch({
             >
               {isLoadingSuggestions || isDebouncingSuggestions ? (
                 <p className="px-4 py-3.5 text-sm text-gray-500">Searching…</p>
-              ) : localitySuggestions.length > 0 ? (
-                localitySuggestions.map((option, index) => {
+              ) : hasSuggestions ? (
+                suggestions.map((item, index) => {
                   const isHighlighted = highlightedLocalityIndex === index;
+                  const showPropertyHeader =
+                    item.kind === "property" &&
+                    localitySuggestions.length > 0 &&
+                    (index === 0 || suggestions[index - 1]?.kind === "locality");
 
                   return (
-                    <button
-                      key={option}
-                      id={localityOptionId(index)}
-                      ref={(element) => {
-                        if (element) {
-                          localityOptionRefs.current.set(index, element);
-                        } else {
-                          localityOptionRefs.current.delete(index);
-                        }
-                      }}
-                      type="button"
-                      role="option"
-                      aria-selected={isHighlighted || locality === option}
-                      onMouseEnter={() => setHighlightedLocalityIndex(index)}
-                      onMouseLeave={() => setHighlightedLocalityIndex(-1)}
-                      onClick={() => selectLocality(option)}
-                      className={cn(
-                        "w-full border-b border-gray-100 px-4 py-3.5 text-left text-sm text-gray-900 transition-colors last:border-b-0",
-                        isHighlighted ? "bg-gray-100" : "hover:bg-gray-25",
-                      )}
-                    >
-                      {option}
-                    </button>
+                    <div key={`${item.kind}-${item.kind === "property" ? item.property.id : item.label}`}>
+                      {showPropertyHeader ? (
+                        <div className="relative mt-1 border-t border-gray-100 pt-2">
+                          <p className="px-4 pb-1 text-xs font-medium text-gray-500">
+                            HelloWorld Properties
+                          </p>
+                        </div>
+                      ) : null}
+                      <button
+                        id={localityOptionId(index)}
+                        ref={(element) => {
+                          if (element) {
+                            localityOptionRefs.current.set(index, element);
+                          } else {
+                            localityOptionRefs.current.delete(index);
+                          }
+                        }}
+                        type="button"
+                        role="option"
+                        aria-selected={isHighlighted || locality === item.label}
+                        onMouseEnter={() => setHighlightedLocalityIndex(index)}
+                        onMouseLeave={() => setHighlightedLocalityIndex(-1)}
+                        onClick={() => selectSuggestion(item)}
+                        className={cn(
+                          "w-full px-4 py-3.5 text-left text-sm text-gray-900 transition-colors",
+                          index < suggestions.length - 1 && "border-b border-gray-100",
+                          item.kind === "property" && "flex items-center gap-2.5",
+                          isHighlighted ? "bg-gray-100" : "hover:bg-gray-25",
+                        )}
+                      >
+                        {item.kind === "property" ? (
+                          <>
+                            <BuildingIcon className="size-4 shrink-0 text-gray-500" />
+                            <span className="min-w-0 truncate">{item.label}</span>
+                          </>
+                        ) : (
+                          item.label
+                        )}
+                      </button>
+                    </div>
                   );
                 })
               ) : (

@@ -81,10 +81,33 @@ function BedIcon({ className }: { className?: string }) {
 
 function ShareIcon({ className }: { className?: string }) {
   return (
-    <svg aria-hidden viewBox="0 0 20 20" fill="none" className={className}>
+    <svg aria-hidden viewBox="0 0 24 24" fill="none" className={className}>
+      <circle
+        cx="18"
+        cy="5"
+        r="2.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <circle
+        cx="6"
+        cy="12"
+        r="2.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <circle
+        cx="18"
+        cy="19"
+        r="2.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
       <path
-        d="M15 13.333a2.5 2.5 0 0 0-1.9.883l-5.267-3.05a2.5 2.5 0 0 0 0-1.566l5.267-3.05A2.5 2.5 0 1 0 12.5 3.75a2.483 2.483 0 0 0 .042.458l-5.267 3.05a2.5 2.5 0 1 0 0 3.658l5.267 3.05a2.483 2.483 0 0 0-.042.458 2.5 2.5 0 1 0 2.5-2.5Z"
-        fill="currentColor"
+        d="M8.59 13.51 15.42 17.49M15.41 6.51 8.59 10.49"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
       />
     </svg>
   );

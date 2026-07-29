@@ -79,7 +79,7 @@ export function HomepageHero() {
   const { selectedVibes, toggleVibe } = useSelectedVibes();
 
   return (
-    <section className="relative bg-white max-w-7xl mx-auto ">
+    <section className="relative mx-auto max-w-7xl bg-white">
       {/* Mobile */}
       <div className="lg:hidden">
         <div className="relative h-[17.25rem] w-full overflow-hidden bg-white">
@@ -111,21 +111,26 @@ export function HomepageHero() {
       </div>
 
       {/* Desktop */}
-      <div className="relative hidden bg-gray-50 lg:block lg:min-h-[28.875rem] rounded-b-[50px] ">
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-[58%]">
+      <div className="relative hidden rounded-b-[50px] bg-gray-50 lg:block lg:min-h-[28.875rem]">
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-[58%] overflow-hidden rounded-b-[50px]">
           <Image
             src={homepageHeroDesktop.file}
             alt={homepageHeroDesktop.name}
             fill
             priority
             sizes="58vw"
-            className="object-cover object-left-bottom rounded-b-[50px] overflow-hidden"
+            className="object-cover object-left-bottom"
           />
           <div aria-hidden className={heroImageBlendOverlayClass} />
         </div>
 
         <div className={pageShell.homepageHero}>
-          <div className={cn(pageShell.homepageHeroCopy, "pb-10 pt-10 xl:pb-12 xl:pt-12")}>
+          <div
+            className={cn(
+              pageShell.homepageHeroCopy,
+              "pb-10 pt-10 xl:pb-12 xl:pt-12",
+            )}
+          >
             <HomepageHeroHeading />
 
             <div className="relative z-20 mt-8">

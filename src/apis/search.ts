@@ -1,6 +1,7 @@
 import { getApiBaseUrl } from "@/src/lib/api";
 import type {
   FetchLocalitySuggestParams,
+  LocalitySuggestProperty,
   LocalitySuggestResponse,
 } from "@/src/models/search";
 
@@ -8,6 +9,21 @@ const emptyResult: LocalitySuggestResponse = {
   success: false,
   data: { locality: [], properties: [] },
 };
+
+function normalizeProperties(
+  properties: unknown,
+): LocalitySuggestProperty[] {
+  if (!Array.isArray(properties)) return [];
+
+  return properties.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+    const record = item as Partial<LocalitySuggestProperty>;
+    const id = Number(record.id);
+    const name = String(record.name ?? "").trim();
+    if (!Number.isFinite(id) || !name) return [];
+    return [{ ...record, id, name }];
+  });
+}
 
 export async function fetchLocalitySuggest({
   city,
@@ -47,7 +63,7 @@ export async function fetchLocalitySuggest({
       success: Boolean(payload.success),
       data: {
         locality: payload.data?.locality ?? [],
-        properties: payload.data?.properties ?? [],
+        properties: normalizeProperties(payload.data?.properties),
       },
     };
   } catch (error) {
