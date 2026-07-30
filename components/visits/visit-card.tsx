@@ -229,17 +229,14 @@ export function VisitCard({ visit, onRate }: VisitCardProps) {
             </Button>
             {visit.mapUrl ? (
               <Button
-                asChild
+                type="button"
                 className="w-full"
                 iconTrailing={<DirectionsIcon className="size-4" />}
+                onClick={() =>
+                  window.open(visit.mapUrl, "_blank", "noopener,noreferrer")
+                }
               >
-                <a
-                  href={visit.mapUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Get Directions
-                </a>
+                Get Directions
               </Button>
             ) : (
               <Button type="button" className="w-full" disabled>
