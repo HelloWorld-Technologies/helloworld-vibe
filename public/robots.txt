@@ -1,0 +1,3 @@
+# Search engines and general crawlers
+User-agent: *
+Disallow: /
