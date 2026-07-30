@@ -10,7 +10,7 @@ import { HomepageTestimonials } from "@/components/marketing/homepage-testimonia
 import { HomepageWeekends } from "@/components/marketing/homepage-weekends";
 import { fetchFeedMoments } from "@/src/apis/moments";
 import { mapMomentsToGalleryItems } from "@/src/lib/hdp/map-gallery-media";
-import type { PropertyMomentItem } from "@/src/models/property-media";
+import type { PropertyMoment } from "@/src/models/moment";
 
 export default async function Home() {
   const feedResponse = await fetchFeedMoments({
@@ -19,7 +19,7 @@ export default async function Home() {
     pageSize: 20,
   });
   const feedMoments = mapMomentsToGalleryItems(
-    (feedResponse.data ?? []) as PropertyMomentItem[],
+    (feedResponse.data ?? []) as PropertyMoment[],
   );
 
   return (

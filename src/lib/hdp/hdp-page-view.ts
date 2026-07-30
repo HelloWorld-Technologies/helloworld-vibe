@@ -1,3 +1,4 @@
+import type { GalleryMediaItem } from "@/src/models/gallery";
 import type { CategoryProps } from "@/src/models/category";
 import type { GoogleData, NearByArea, Property, SimilarProperty } from "@/src/models/property";
 import type { HdpRoomType } from "@/src/tokens/hdp";
@@ -7,7 +8,6 @@ import type {
   HdpResidentReview,
 } from "@/src/tokens/hdp-reviews";
 import type { HdpReviewSummaryView } from "@/src/lib/hdp/map-hdp-api";
-import type { GalleryMediaItem } from "@/src/tokens/property-gallery";
 
 export type HdpPageView = {
   propertyId: number;

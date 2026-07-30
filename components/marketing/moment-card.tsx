@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/src/lib/cn";
-import type { GalleryMediaItem } from "@/src/tokens/property-gallery";
+import type { GalleryMediaItem } from "@/src/models/gallery";
 
 export const MOMENT_CARD_WIDTH_CLASS = "w-[16.5rem] sm:w-[18.5rem]";
 

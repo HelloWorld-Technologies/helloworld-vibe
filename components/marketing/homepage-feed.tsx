@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { HomepageSectionHeading } from "@/components/marketing/homepage-section-heading";
 import { MomentsCarouselControls } from "@/components/marketing/moments-carousel-controls";
 import { MomentCard } from "@/components/marketing/moment-card";
-import type { GalleryMediaItem } from "@/src/tokens/property-gallery";
+import type { GalleryMediaItem } from "@/src/models/gallery";
 import { pageShell } from "@/src/tokens/layout";
 
 const CARD_GAP_PX = 16;

@@ -1,9 +1,7 @@
-import type {
-  PropertyMediaItem,
-  PropertyMomentItem,
-} from "@/src/models/property-media";
+import type { GalleryMediaItem } from "@/src/models/gallery";
+import type { PropertyMoment } from "@/src/models/moment";
+import type { PropertyMediaItem } from "@/src/models/property-media";
 import { imageUrlFormatter } from "@/src/lib/images";
-import type { GalleryMediaItem } from "@/src/tokens/property-gallery";
 
 function formatMediaUrl(url: string | null | undefined): string {
   if (!url) return "";
@@ -103,7 +101,7 @@ export function mapPropertyMediaToGalleryItems(
 }
 
 export function mapMomentsToGalleryItems(
-  moments: readonly PropertyMomentItem[],
+  moments: readonly PropertyMoment[],
 ): GalleryMediaItem[] {
   const items: GalleryMediaItem[] = [];
 

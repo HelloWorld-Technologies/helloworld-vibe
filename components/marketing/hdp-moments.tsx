@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { MomentsCarouselControls } from "@/components/marketing/moments-carousel-controls";
 import { MomentCard } from "@/components/marketing/moment-card";
 import { cn } from "@/src/lib/cn";
-import type { GalleryMediaItem } from "@/src/tokens/property-gallery";
+import type { GalleryMediaItem } from "@/src/models/gallery";
 
 const CARD_GAP_PX = 16;
 

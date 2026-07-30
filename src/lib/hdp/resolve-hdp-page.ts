@@ -41,20 +41,16 @@ import {
 import { formatCityDisplayName } from "@/src/tokens/cities";
 import { capitalizeFirstLetter } from "@/src/lib/string-utils";
 import type { CategoryProps } from "@/src/models/category";
-import type {
-  PropertyMediaItem,
-  PropertyMomentItem,
-} from "@/src/models/property-media";
+import type { GalleryMediaItem } from "@/src/models/gallery";
+import type { PropertyMoment } from "@/src/models/moment";
+import type { PropertyMediaItem } from "@/src/models/property-media";
 import type {
   GoogleData,
   NearByArea,
   Property,
   SimilarProperty,
 } from "@/src/models/property";
-import {
-  buildGalleryItemsFromMedia,
-  type GalleryMediaItem,
-} from "@/src/tokens/property-gallery";
+import { buildGalleryItemsFromMedia } from "@/src/tokens/property-gallery";
 import type { HdpRoomType } from "@/src/tokens/hdp";
 
 export type HdpBreadcrumbItem = { name: string; path?: string };
@@ -148,7 +144,7 @@ function propertyGalleryImages(
 function buildGalleryItems(
   property: Property,
   media: readonly PropertyMediaItem[],
-  moments: readonly PropertyMomentItem[],
+  moments: readonly PropertyMoment[],
 ): GalleryMediaItem[] {
   const {
     videos,
@@ -186,7 +182,7 @@ function buildHdpView(options: {
   nearBy: NearByArea | null;
   localitySlug: string;
   media: readonly PropertyMediaItem[];
-  moments: readonly PropertyMomentItem[];
+  moments: readonly PropertyMoment[];
   galleryImages: readonly string[];
 }): HdpPageView {
   const {
@@ -298,7 +294,7 @@ export async function resolveHdpPage(
   ) as PropertyMediaItem[];
   const houseMoments = (
     Array.isArray(response.moments) ? response.moments : []
-  ) as PropertyMomentItem[];
+  ) as PropertyMoment[];
 
   const [categoriesResponse, similarResponse, momentsResponse] =
     await Promise.all([
@@ -307,7 +303,7 @@ export async function resolveHdpPage(
       fetchPropertyMoments(propertyId),
     ]);
 
-  const momentsFromApi = (momentsResponse?.data ?? []) as PropertyMomentItem[];
+  const momentsFromApi = (momentsResponse?.data ?? []) as PropertyMoment[];
   const moments =
     momentsFromApi.length > 0 ? momentsFromApi : houseMoments;
 

@@ -9,6 +9,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/src/lib/cn";
+import type { GalleryCategory, GalleryMediaItem } from "@/src/models/gallery";
 import {
   buildGalleryDesktopFromImages,
   buildGalleryDesktopFromMedia,
@@ -18,8 +19,6 @@ import {
   propertyGalleryDesktop,
   propertyGalleryItems,
   propertyGalleryTotal,
-  type GalleryCategory,
-  type GalleryMediaItem,
 } from "@/src/tokens/property-gallery";
 
 type PropertyGalleryProps = {

@@ -1,23 +1,14 @@
-export type GalleryCategory = "property-video" | "moments" | "photos";
+import type {
+  GalleryCategory,
+  GalleryDesktopLayout,
+  GalleryMediaItem,
+} from "@/src/models/gallery";
 
-export type GalleryMediaItem = {
-  id: string;
-  category: GalleryCategory;
-  /** Media tag/caption when present — omit or leave empty to hide the gallery badge. */
-  label?: string;
-  imageSrc: string;
-  kind: "video" | "image";
-  videoSrc?: string;
-  caption?: string;
-};
-
-export type GalleryDesktopLayout = {
-  video: GalleryMediaItem;
-  moments: GalleryMediaItem;
-  livingRoom: GalleryMediaItem;
-  washroom: GalleryMediaItem;
-  featuredSequence: GalleryMediaItem[];
-};
+export type {
+  GalleryCategory,
+  GalleryDesktopLayout,
+  GalleryMediaItem,
+} from "@/src/models/gallery";
 
 export const galleryCategoryTabs: {
   value: GalleryCategory;
