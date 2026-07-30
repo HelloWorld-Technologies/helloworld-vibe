@@ -1,0 +1,54 @@
+# HelloWorld Coliving & Student Hostels
+
+> HelloWorld provides coliving, student housing, coworking, and community spaces across India. We offer furnished rooms, flexible stays, and social habitats for students and professionals exploring coliving and affordable quality living.
+
+## Contact
+
+- [Contact page](https://thehelloworld.com/contact): Enquiries, support, and property questions
+- Legal and privacy: legal@thehelloworld.com
+
+## Services
+
+- [Coliving](https://thehelloworld.com/campaign): Furnished coliving spaces with community and flexible stays
+- [Student housing](https://thehelloworld.com/student-hostel-in-kota): Student hostels and PG in Kota and other cities
+- [Coworking](https://thehelloworld.com/coworking): HelloWorld Cowork – flexible coworking at our locations
+- [Community events](https://thehelloworld.com/events): Workshops, meetups, and experiences at HelloWorld spaces
+
+## Key Information
+
+- [About Us](https://thehelloworld.com/about-us): Company and mission
+- [Blog](https://thehelloworld.com/blogs): Guides and updates (MDX posts)
+- [For property owners](https://thehelloworld.com/owner): List your property with HelloWorld
+- [Safety](https://thehelloworld.com/safety): How we keep spaces secure
+- [Privacy policy](https://thehelloworld.com/policy): Data and privacy
+- [Tenant policy](https://thehelloworld.com/tenant-policy): Resident guidelines
+- [Refer & earn](https://thehelloworld.com/refer): Referral program
+
+## Locations
+
+- [Coliving PG in Ahmedabad](https://thehelloworld.com/coliving-in-ahmedabad)
+- [Coliving PG in Bangalore](https://thehelloworld.com/coliving-in-bangalore)
+- [Coliving PG in Coimbatore](https://thehelloworld.com/coliving-in-coimbatore)
+- [Coliving PG in Chennai](https://thehelloworld.com/coliving-in-chennai)
+- [Coliving PG in Delhi](https://thehelloworld.com/coliving-in-delhi)
+- [Coliving PG in Goa](https://thehelloworld.com/coliving-in-goa)
+- [Coliving PG in Gurugram](https://thehelloworld.com/coliving-in-gurugram)
+- [Coliving PG in Hyderabad](https://thehelloworld.com/coliving-in-hyderabad)
+- [Coliving PG in Indore](https://thehelloworld.com/coliving-in-indore)
+- [Coliving PG in Jaipur](https://thehelloworld.com/coliving-in-jaipur)
+- [Coliving PG in Kolkata](https://thehelloworld.com/coliving-in-kolkata)
+- [Student hostels in Kota](https://thehelloworld.com/hostels-in-kota)
+- [Coliving PG in Mumbai](https://thehelloworld.com/coliving-in-mumbai)
+- [Coliving PG in Noida](https://thehelloworld.com/coliving-in-noida)
+- [Coliving PG in Pune](https://thehelloworld.com/coliving-in-pune)
+- [Coliving PG in Visakhapatnam](https://thehelloworld.com/coliving-in-visakhapatnam)
+
+## What We Do Not Do
+
+HelloWorld does not provide legal, financial, or tax advice. We are a coliving and student housing operator in India; we do not operate outside India. Property listings and availability are subject to our terms and tenant policy.
+
+## AI Discovery Files
+
+- [Sitemap index](https://thehelloworld.com/sitemap.xml): Full site structure and URLs
+- [Robots](https://thehelloworld.com/robots.txt): Crawl and AI crawler rules
+- [This file](https://thehelloworld.com/llms.txt): Identity and key links for AI systems
