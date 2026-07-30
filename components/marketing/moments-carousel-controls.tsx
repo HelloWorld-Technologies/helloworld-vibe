@@ -23,7 +23,7 @@ export function MomentsCarouselControls({
   return (
     <div
       className={cn(
-        "flex items-center justify-center gap-4 sm:gap-5",
+        "flex items-center justify-center gap-0 sm:gap-5",
         className,
       )}
     >
@@ -32,6 +32,7 @@ export function MomentsCarouselControls({
         label="Previous"
         disabled={prevDisabled}
         onClick={onPrev}
+        className="hidden sm:flex"
       />
       <div className="flex items-center justify-center gap-2">
         {Array.from({ length: count }, (_, index) => (
@@ -44,7 +45,7 @@ export function MomentsCarouselControls({
             className={cn(
               "h-2 rounded-full transition-all",
               index === activeIndex
-                ? "w-8 bg-hello-lime-400"
+                ? "w-8 bg-gray-700 sm:bg-hello-lime-400"
                 : "w-2 bg-gray-300",
             )}
           />
@@ -55,6 +56,7 @@ export function MomentsCarouselControls({
         label="Next"
         disabled={nextDisabled}
         onClick={onNext}
+        className="hidden sm:flex"
       />
     </div>
   );

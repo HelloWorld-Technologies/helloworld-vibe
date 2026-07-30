@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { submitVisitRating } from "@/src/apis/visit";
 import { formatVisitCardDate } from "@/src/lib/map-user-visit";
-import { cn } from "@/src/lib/cn";
-import { isSrpComingSoonImage } from "@/src/tokens/srp-card";
 import type { MyVisitItem } from "@/src/models/user-visit";
 
 export interface VisitRatingModalProps {
@@ -81,10 +79,7 @@ export function VisitRatingModal({
               src={image}
               alt=""
               fill
-              className={cn(
-                "object-cover",
-                isSrpComingSoonImage(image) && "object-contain p-1",
-              )}
+              className="object-cover"
               sizes="64px"
             />
           </div>

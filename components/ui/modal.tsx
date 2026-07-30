@@ -104,7 +104,9 @@ export function Modal({
   return createPortal(
     <div
       className={cn(
-        "fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6",
+        "fixed inset-0 z-50 flex justify-center",
+        // Mobile: bottom sheet. Desktop: centered dialog.
+        "items-end p-0 md:items-center md:p-6",
         !visible && "pointer-events-none",
       )}
     >
@@ -121,19 +123,25 @@ export function Modal({
 
       <div
         className={cn(
-          "relative w-full max-w-[400px]",
-          maxWidthClassName,
+          "relative w-full",
+          // Full-bleed sheet on mobile; caller/default max-width from md up.
+          "max-md:!max-w-none",
+          maxWidthClassName ?? "md:max-w-[400px]",
           "transition-all duration-300 ease-out motion-reduce:transition-none",
           visible
-            ? "translate-y-0 scale-100 opacity-100"
-            : "translate-y-4 scale-95 opacity-0",
+            ? "translate-y-0 opacity-100 md:scale-100"
+            : "translate-y-full opacity-100 md:translate-y-4 md:scale-95 md:opacity-0",
         )}
       >
         <button
           type="button"
           aria-label={closeLabel}
           onClick={onClose}
-          className="absolute -right-1 -top-1 z-10 flex size-10 items-center justify-center rounded-full bg-gray-900 text-white shadow-lg transition-colors hover:bg-gray-800 sm:-right-4 sm:-top-12"
+          className={cn(
+            "absolute z-10 flex size-10 items-center justify-center rounded-full bg-gray-900 text-white shadow-lg transition-colors hover:bg-gray-800",
+            // Mobile: sits above the sheet on the right. Desktop: outside top-right.
+            "right-4 -top-12 md:-right-4 md:-top-12",
+          )}
         >
           <CloseIcon className="size-5" />
         </button>
@@ -146,7 +154,10 @@ export function Modal({
           aria-describedby={describedBy}
           tabIndex={-1}
           className={cn(
-            "relative max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-3xl bg-white p-6 shadow-xl outline-none sm:p-10",
+            "relative overflow-y-auto bg-white shadow-xl outline-none",
+            // Bottom sheet on mobile; rounded dialog on desktop.
+            "max-h-[min(92dvh,calc(100dvh-3.5rem))] rounded-t-3xl rounded-b-none p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:p-6",
+            "md:max-h-[calc(100dvh-2rem)] md:rounded-3xl md:p-10 md:pb-10",
             className,
           )}
         >

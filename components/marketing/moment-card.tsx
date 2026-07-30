@@ -60,7 +60,7 @@ export function MomentCard({
   return (
     <article
       className={cn(
-        "relative aspect-3/4 shrink-0 overflow-hidden rounded-2xl bg-black",
+        "relative aspect-3/4 shrink-0 snap-start overflow-hidden rounded-2xl bg-black",
         MOMENT_CARD_WIDTH_CLASS,
         className,
       )}

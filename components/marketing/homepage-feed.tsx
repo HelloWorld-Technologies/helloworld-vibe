@@ -8,6 +8,8 @@ import type { GalleryMediaItem } from "@/src/models/gallery";
 import { pageShell } from "@/src/tokens/layout";
 
 const CARD_GAP_PX = 16;
+const MOBILE_MOMENT_LIMIT = 10;
+const MOBILE_MEDIA_QUERY = "(max-width: 1023px)";
 
 function getVisibleCount(container: HTMLElement): number {
   const first = container.children[0] as HTMLElement | undefined;
@@ -35,6 +37,19 @@ export function HomepageFeed({
   const [canScrollNext, setCanScrollNext] = useState(false);
   const [activePage, setActivePage] = useState(0);
   const [pageCount, setPageCount] = useState(1);
+  const [isMobile, setIsMobile] = useState(true);
+
+  const visibleMoments = isMobile
+    ? moments.slice(0, MOBILE_MOMENT_LIMIT)
+    : moments;
+
+  useEffect(() => {
+    const media = window.matchMedia(MOBILE_MEDIA_QUERY);
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   function updateScrollState() {
     const node = scrollRef.current;
@@ -70,9 +85,9 @@ export function HomepageFeed({
       node.removeEventListener("scroll", updateScrollState);
       window.removeEventListener("resize", updateScrollState);
     };
-  }, [moments]);
+  }, [visibleMoments]);
 
-  if (moments.length === 0) return null;
+  if (visibleMoments.length === 0) return null;
 
   function goToPage(page: number) {
     const container = scrollRef.current;
@@ -100,9 +115,9 @@ export function HomepageFeed({
         </div>
         <div
           ref={scrollRef}
-          className="mt-8 flex gap-4 overflow-x-auto scroll-smooth pb-2 scrollbar-none"
+          className="mt-8 flex touch-pan-x gap-4 overflow-x-auto overscroll-x-contain scroll-smooth pb-2 snap-x snap-mandatory scrollbar-none"
         >
-          {moments.map((item) => (
+          {visibleMoments.map((item) => (
             <MomentCard key={item.id} item={item} />
           ))}
         </div>

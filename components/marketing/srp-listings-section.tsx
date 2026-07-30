@@ -129,7 +129,7 @@ export function SrpListingsSection({
             <button
               type="button"
               onClick={clearSelectedVibes}
-              className="text-sm font-semibold text-hello-lime-600 hover:text-hello-lime-700"
+              className="ml-auto block w-fit text-sm font-semibold text-blue-light-600 hover:text-blue-light-700"
             >
               Clear All
             </button>

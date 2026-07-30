@@ -26,21 +26,21 @@ function ChevronIcon({ className }: { className?: string }) {
 export function FaqAccordion({
   items,
   className,
-  defaultOpenId,
 }: {
   items: readonly FaqAccordionItem[];
   className?: string;
+  /** @deprecated All items open by default; kept for call-site compatibility. */
   defaultOpenId?: string;
 }) {
   const baseId = useId();
-  const [openId, setOpenId] = useState<string | null>(
-    defaultOpenId ?? items[0]?.id ?? null,
+  const [openIds, setOpenIds] = useState<ReadonlySet<string>>(
+    () => new Set(items.map((item) => item.id)),
   );
 
   return (
     <div className={cn("flex flex-col gap-4", className)}>
       {items.map((item) => {
-        const isOpen = openId === item.id;
+        const isOpen = openIds.has(item.id);
         const panelId = `${baseId}-${item.id}-panel`;
         const buttonId = `${baseId}-${item.id}-button`;
 
@@ -58,7 +58,15 @@ export function FaqAccordion({
               aria-expanded={isOpen}
               aria-controls={panelId}
               onClick={() =>
-                setOpenId((current) => (current === item.id ? null : item.id))
+                setOpenIds((current) => {
+                  const next = new Set(current);
+                  if (next.has(item.id)) {
+                    next.delete(item.id);
+                  } else {
+                    next.add(item.id);
+                  }
+                  return next;
+                })
               }
               className="flex w-full items-start justify-between gap-6 text-left"
             >

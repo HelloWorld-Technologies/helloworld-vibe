@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type MouseEvent } from "react";
+import { useEffect, useMemo, useState, type MouseEvent } from "react";
+import { ShareIcon } from "@/components/icons/share-icon";
 import { Button } from "@/components/ui/button";
 import { WishlistButton } from "@/components/wishlist/wishlist-button";
 import { cn } from "@/src/lib/cn";
@@ -74,40 +75,6 @@ function BedIcon({ className }: { className?: string }) {
         strokeWidth="1.33"
         strokeLinecap="round"
         strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function ShareIcon({ className }: { className?: string }) {
-  return (
-    <svg aria-hidden viewBox="0 0 24 24" fill="none" className={className}>
-      <circle
-        cx="18"
-        cy="5"
-        r="2.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <circle
-        cx="6"
-        cy="12"
-        r="2.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <circle
-        cx="18"
-        cy="19"
-        r="2.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <path
-        d="M8.59 13.51 15.42 17.49M15.41 6.51 8.59 10.49"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
       />
     </svg>
   );
@@ -199,10 +166,15 @@ function SrpCardCarousel({
 }: {
   images: readonly string[];
   alt: string;
-  }) {
-  const slides = (images.length > 0 ? images : [srpCardDefaultImage])
-    .slice(0, SRP_CARD_MAX_IMAGES)
-    .map((src) => formatSrpCardImageSrc(src) || srpCardDefaultImage);
+}) {
+  const slides = useMemo(
+    () =>
+      (images.length > 0 ? images : [srpCardDefaultImage])
+        .slice(0, SRP_CARD_MAX_IMAGES)
+        .map((src) => formatSrpCardImageSrc(src) || srpCardDefaultImage),
+    [images],
+  );
+  const slidesKey = slides.join("|");
   const [activeIndex, setActiveIndex] = useState(0);
   const slideCount = slides.length;
   const imageSrc = slides[activeIndex] ?? srpCardDefaultImage;
@@ -210,14 +182,19 @@ function SrpCardCarousel({
 
   useEffect(() => {
     setActiveIndex(0);
-  }, [slides]);
+  }, [slidesKey]);
 
   function goTo(direction: -1 | 1) {
     setActiveIndex((current) => (current + direction + slideCount) % slideCount);
   }
 
   return (
-    <div className="relative h-[14.25rem] w-full overflow-hidden bg-gray-100">
+    <div
+      className={cn(
+        "relative h-[14.25rem] w-full overflow-hidden",
+        isComingSoon ? "bg-white" : "bg-gray-100",
+      )}
+    >
       <div className="relative h-full w-full">
         <Image
           src={imageSrc}
@@ -227,7 +204,7 @@ function SrpCardCarousel({
               : `${alt} — photo ${activeIndex + 1} of ${slideCount}`
           }
           fill
-          className={cn(isComingSoon ? "object-cover" : "object-cover")}
+          className="object-cover"
           sizes="411px"
         />
       </div>
@@ -262,7 +239,7 @@ function SrpCardCarousel({
           <div className="absolute inset-x-0 bottom-4 z-10 flex items-center justify-center gap-1.5">
             {slides.map((slide, index) => (
               <button
-                key={slide}
+                key={`${slide}-${index}`}
                 type="button"
                 aria-label={`Go to photo ${index + 1}`}
                 aria-current={index === activeIndex}
@@ -318,11 +295,11 @@ export function SrpCard({
 
   return (
     <article
-      className={cn(
-        "flex w-full max-w-[25.6875rem] flex-col overflow-hidden rounded-2xl border border-[#e6e6e6] bg-white shadow-[6px_6px_23.5px_rgba(0,0,0,0.08)]",
-        href && "cursor-pointer",
-        className,
-      )}
+        className={cn(
+          "flex w-full flex-col overflow-hidden rounded-2xl border border-[#e6e6e6] bg-white shadow-[6px_6px_23.5px_rgba(0,0,0,0.08)]",
+          href && "cursor-pointer",
+          className,
+        )}
       onClick={navigateToHdp}
       onKeyDown={
         href
@@ -387,12 +364,7 @@ export function SrpCard({
                 event.stopPropagation();
                 onShare?.();
               }}
-              className={cn(
-                "transition-colors",
-                saved
-                  ? "text-hello-lime-600 hover:text-hello-lime-700"
-                  : "text-gray-500 hover:text-gray-700",
-              )}
+              className="text-hello-lime-900 transition-colors hover:text-hello-lime-800"
             >
               <ShareIcon className="size-5" />
             </button>

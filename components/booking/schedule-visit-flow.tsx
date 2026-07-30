@@ -400,7 +400,7 @@ export function ScheduleVisitFlow({
           size="lg"
           disabled={loadingSlots || noSlots}
         >
-          Continue
+          {embedded ? "Take a Tour" : "Continue"}
         </Button>
       </form>
     );

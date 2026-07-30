@@ -148,13 +148,13 @@ function HdpBookingBookFooter({ minStayMonths }: { minStayMonths: number }) {
 function HdpBookingTourPanel({ view }: { view: HdpPageView }) {
   return (
     <div className="mt-6 space-y-6">
-      <div className="mt-6 grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         <div className="min-w-0">
           <p className="text-[13px] font-medium text-[#0a0e14]/50">
             Rent Starting From
           </p>
           <p className="text-lg font-bold text-hello-lime-700 sm:text-xl">
-            ₹{view.startingRent.toLocaleString("en-IN")}/month
+            ₹{view.startingRent.toLocaleString("en-IN")}/mo
           </p>
         </div>
 
@@ -184,6 +184,7 @@ export function HdpBookingCard({
   className,
   bookOnly = false,
   variant = "card",
+  initialMode,
   initialCategoryId,
   initialOccupancy,
   initialOccupantInfo,
@@ -198,6 +199,7 @@ export function HdpBookingCard({
   className?: string;
   bookOnly?: boolean;
   variant?: "card" | "modal";
+  initialMode?: BookingMode;
   initialCategoryId?: string | number;
   initialOccupancy?: HdpOccupancy;
   initialOccupantInfo?: BookingOccupantInfo & { moveInDate?: string };
@@ -255,7 +257,9 @@ export function HdpBookingCard({
       .filter((id) => fallbackRoomTypes.some((room) => room.occupancy === id));
   }, [visibleCategories, fallbackRoomTypes]);
 
-  const [mode, setMode] = useState<BookingMode>(bookOnly ? "book" : "tour");
+  const [mode, setMode] = useState<BookingMode>(
+    () => initialMode ?? (bookOnly ? "book" : "tour"),
+  );
   const [bookStep, setBookStep] = useState<BookStep>("select");
   const [panelDirection, setPanelDirection] = useState<"left" | "right">("right");
   const skipPanelAnimation = useRef(true);

@@ -79,6 +79,16 @@ export const hdpResidentInterests = [
   "📚 Reader",
 ] as const;
 
+export const hdpResidentWorkplaces = {
+  preview: ["Google", "Microsoft", "Amazon", "Swiggy"] as const,
+  extraCount: 31,
+} as const;
+
+export const hdpResidentColleges = {
+  preview: ["IIT Bombay", "BITS Pilani", "NIT Trichy"] as const,
+  extraCount: 31,
+} as const;
+
 export const hdpSectionNavItems = [
   { id: "about", label: "About" },
   { id: "amenities", label: "Amenities" },

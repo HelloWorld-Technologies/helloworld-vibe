@@ -111,8 +111,6 @@ export function HdpSimilarProperties({
         visibleDesktopCount={VISIBLE_DESKTOP_COUNT}
         mobileScrollGap={16}
         desktopItemClassName="w-full"
-        mobileItemClassName="w-[min(342px,85vw)]"
-        mobileTrackClassName="-mx-4 px-4"
         paginationClassName="mt-6"
         mobilePaginationClassName="mt-4"
         renderItem={(property, cardClassName) =>

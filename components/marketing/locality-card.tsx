@@ -143,11 +143,13 @@ export function LocalityCarouselButton({
   label,
   onClick,
   disabled,
+  className,
 }: {
   direction: "prev" | "next";
   label: string;
   onClick: () => void;
   disabled?: boolean;
+  className?: string;
 }) {
   return (
     <button
@@ -155,7 +157,10 @@ export function LocalityCarouselButton({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="flex size-12 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-900 shadow-xs transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+      className={cn(
+        "flex size-12 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-900 shadow-xs transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40",
+        className,
+      )}
     >
       <svg aria-hidden viewBox="0 0 24 24" fill="none" className="size-5">
         <path

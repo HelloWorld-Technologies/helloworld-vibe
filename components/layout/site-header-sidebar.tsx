@@ -216,10 +216,12 @@ export function SiteHeaderSidebar({
 }) {
   const menuItems = getHeaderMenuItems(Boolean(userPhone));
   const [view, setView] = useState<"menu" | "login">("menu");
+  const [loginStep, setLoginStep] = useState<"phone" | "otp">("phone");
 
   useEffect(() => {
     if (!open) {
       setView("menu");
+      setLoginStep("phone");
     }
   }, [open]);
   useEffect(() => {
@@ -264,7 +266,7 @@ export function SiteHeaderSidebar({
           type="button"
           aria-label="Close menu"
           onClick={onClose}
-          className="absolute right-6 top-8 flex size-5 items-center justify-center text-hello-lime-600 transition-colors hover:text-hello-lime-700"
+          className="absolute right-5 top-7 z-20 flex size-10 items-center justify-center rounded-full text-hello-lime-600 transition-colors hover:bg-gray-50 hover:text-hello-lime-700"
         >
           <CloseIcon className="size-5" />
         </button>
@@ -274,16 +276,26 @@ export function SiteHeaderSidebar({
             <>
               <button
                 type="button"
-                onClick={() => setView("menu")}
+                onClick={() => {
+                  if (loginStep === "otp") {
+                    setLoginStep("phone");
+                    return;
+                  }
+                  setView("menu");
+                  setLoginStep("phone");
+                }}
                 className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-900"
               >
                 <ChevronLeftIcon className="size-2.5" />
                 Back
               </button>
               <SidebarLoginFlow
+                step={loginStep}
+                onStepChange={setLoginStep}
                 onSuccess={(phone) => {
                   onLoginSuccess?.(phone);
                   setView("menu");
+                  setLoginStep("phone");
                 }}
               />
             </>
@@ -315,7 +327,10 @@ export function SiteHeaderSidebar({
                             onClose();
                           }
                         : item.action === "login"
-                          ? () => setView("login")
+                          ? () => {
+                              setLoginStep("phone");
+                              setView("login");
+                            }
                           : undefined
                     }
                   />

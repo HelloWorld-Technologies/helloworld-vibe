@@ -8,8 +8,7 @@ export const srpCardSampleImages = [
 
 export const SRP_CARD_MAX_IMAGES = 5;
 
-export const srpCardComingSoonImage =
-  "https://hello-assets-items.s3.ap-south-1.amazonaws.com/images/coming-soon.jpg";
+export const srpCardComingSoonImage = "/assets/coming-soon.png";
 
 export const srpCardDefaultImage = srpCardComingSoonImage;
 

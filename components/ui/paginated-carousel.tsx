@@ -60,7 +60,7 @@ export function PaginatedCarousel<T>({
   mobileTrackClassName,
   paginationClassName,
   mobilePaginationClassName,
-  mobileScrollGap = 16,
+  mobileScrollGap: _mobileScrollGap = 16,
   isLoading = false,
   loadingSkeletonCount,
   renderSkeleton,
@@ -87,7 +87,9 @@ export function PaginatedCarousel<T>({
   useEffect(() => {
     setMobileIndex(0);
     setDesktopIndex(0);
-    scrollRef.current?.scrollTo({ left: 0, behavior: "instant" });
+    const container = scrollRef.current;
+    if (!container) return;
+    container.scrollTo({ left: 0, behavior: "instant" });
   }, [resetKey, count]);
 
   useEffect(() => {
@@ -110,13 +112,20 @@ export function PaginatedCarousel<T>({
   }, [count, isLoading, items, visibleDesktopCount]);
 
   function goToMobileIndex(index: number) {
-    setMobileIndex(index);
+    const nextIndex = Math.max(0, Math.min(index, count - 1));
+    setMobileIndex(nextIndex);
     const container = scrollRef.current;
-    const card = container?.children[index] as HTMLElement | undefined;
-    card?.scrollIntoView({
+    if (!container) return;
+    const cards = Array.from(
+      container.querySelectorAll<HTMLElement>("[data-carousel-slide]"),
+    );
+    const card = cards[nextIndex];
+    if (!card) return;
+    const paddingLeft =
+      Number.parseFloat(getComputedStyle(container).paddingLeft) || 0;
+    container.scrollTo({
+      left: Math.max(0, card.offsetLeft - paddingLeft),
       behavior: "smooth",
-      inline: "start",
-      block: "nearest",
     });
   }
 
@@ -124,15 +133,26 @@ export function PaginatedCarousel<T>({
     const container = scrollRef.current;
     if (!container) return;
 
-    const cards = Array.from(container.children) as HTMLElement[];
+    const cards = Array.from(
+      container.querySelectorAll<HTMLElement>("[data-carousel-slide]"),
+    );
+    if (cards.length === 0) return;
+
+    const paddingLeft =
+      Number.parseFloat(getComputedStyle(container).paddingLeft) || 0;
     const scrollLeft = container.scrollLeft;
-    const nextIndex = cards.findIndex((card, index) => {
-      const nextCard = cards[index + 1];
-      if (!nextCard) return index === cards.length - 1;
-      return scrollLeft < nextCard.offsetLeft - container.offsetLeft - mobileScrollGap;
+    let closestIndex = 0;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    cards.forEach((card, index) => {
+      const distance = Math.abs(card.offsetLeft - paddingLeft - scrollLeft);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
     });
 
-    setMobileIndex(nextIndex === -1 ? 0 : nextIndex);
+    setMobileIndex(closestIndex);
   }
 
   function goToDesktopIndex(index: number) {
@@ -159,16 +179,35 @@ export function PaginatedCarousel<T>({
         <div
           className={cn(
             "flex gap-4 overflow-x-auto pb-2 scrollbar-none lg:hidden",
+            "-mx-4 px-4 scroll-px-4",
             mobileTrackClassName,
           )}
         >
           {Array.from({ length: skeletonCount }, (_, index) =>
-            renderSkeleton(mobileItemClassName ?? "", index),
+            renderSkeleton(
+              cn(
+                "shrink-0",
+                mobileItemClassName ?? "w-[min(21.375rem,85vw)]",
+              ),
+              index,
+            ),
           )}
         </div>
 
         <HomepageCarouselPagination
-          className={paginationClassName}
+          className={cn("mt-6 lg:hidden", mobilePaginationClassName)}
+          pageCount={placeholderPageCount}
+          activeIndex={0}
+          prevDisabled
+          nextDisabled
+          placeholder
+          showArrows={false}
+          activeTone="gray"
+          onPrev={() => {}}
+          onNext={() => {}}
+        />
+        <HomepageCarouselPagination
+          className={cn("mt-8 hidden lg:flex", paginationClassName)}
           pageCount={placeholderPageCount}
           activeIndex={0}
           prevDisabled
@@ -249,28 +288,35 @@ export function PaginatedCarousel<T>({
           ref={scrollRef}
           onScroll={handleMobileScroll}
           className={cn(
-            "flex scroll-smooth gap-4 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-none",
+            "flex touch-pan-x gap-4 overflow-x-auto overscroll-x-contain pb-2",
+            "snap-x snap-mandatory scroll-smooth scrollbar-none",
+            "-mx-4 px-4 scroll-px-4",
             mobileTrackClassName,
           )}
         >
           {items.map((item, index) => (
-            <div key={getItemKey(item, index)} className="contents">
-              {renderItem(
-                item,
-                cn(mobileItemClassName, "shrink-0 snap-center"),
-                index,
+            <div
+              key={getItemKey(item, index)}
+              data-carousel-slide
+              className={cn(
+                "shrink-0 snap-start",
+                mobileItemClassName ?? "w-[min(21.375rem,85vw)]",
               )}
+            >
+              {renderItem(item, "w-full max-w-none", index)}
             </div>
           ))}
         </div>
 
         {showMobilePagination ? (
           <HomepageCarouselPagination
-            className={mobilePaginationClassName}
+            className={cn("mt-6", mobilePaginationClassName)}
             pageCount={count}
             activeIndex={mobileIndex}
             prevDisabled={mobileIndex === 0}
             nextDisabled={mobileIndex >= count - 1}
+            showArrows={false}
+            activeTone="gray"
             onPrev={() => goToMobileIndex(mobileIndex - 1)}
             onNext={() => goToMobileIndex(mobileIndex + 1)}
             onSelectPage={goToMobileIndex}

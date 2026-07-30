@@ -51,6 +51,7 @@ function SrpHero({
       subtitle={config.heroSubtitle}
       heroImageSrc={resolvedSrc}
       heroImageAlt={config.pageTitle}
+      breadcrumbItems={config.breadcrumbItems}
     />
   );
 }
@@ -185,7 +186,7 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
       <main className={cn(pageLayout.container, "pt-0 lg:pt-8 pb-10")}>
         <Breadcrumbs
           items={config.breadcrumbItems}
-          className="mb-4 md:mb-6"
+          className="mb-4 hidden md:mb-6 lg:block"
         />
         <SrpHero config={config} />
 

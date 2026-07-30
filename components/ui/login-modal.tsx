@@ -23,7 +23,7 @@ export function LoginModal({
   onClose,
   onLogin,
   defaultPhone = "",
-  termsHref = "/terms",
+  termsHref = "/tenant-policy",
   loading = false,
 }: LoginModalProps) {
   const titleId = useId();

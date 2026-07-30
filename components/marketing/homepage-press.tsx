@@ -13,8 +13,10 @@ export function HomepagePress() {
           gradient="home"
           className="text-center"
         />
+      </div>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-8 sm:gap-12 lg:gap-16">
+      <div className="mt-10 touch-pan-x overflow-x-auto overscroll-x-contain scrollbar-none">
+        <div className="mx-auto flex w-max min-w-full items-center justify-start gap-10 px-4 sm:gap-12 sm:px-6 lg:justify-center lg:gap-16">
           {homepagePressLogos.map((logo) => (
             <Image
               key={logo.id}
@@ -22,7 +24,7 @@ export function HomepagePress() {
               alt={logo.name}
               width={160}
               height={48}
-              className="h-8 w-auto max-w-[8rem] object-contain opacity-100  transition-opacity hover:opacity-100 sm:h-10 sm:max-w-[10rem]"
+              className="h-8 w-auto max-w-[8rem] shrink-0 object-contain opacity-100 transition-opacity hover:opacity-100 sm:h-10 sm:max-w-[10rem]"
             />
           ))}
         </div>

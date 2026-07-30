@@ -28,19 +28,34 @@ function EditIcon({ className }: { className?: string }) {
 
 export function SidebarLoginFlow({
   onSuccess,
+  step: stepProp,
+  onStepChange,
 }: {
   onSuccess: (phone: string) => void;
+  step?: "phone" | "otp";
+  onStepChange?: (step: "phone" | "otp") => void;
 }) {
   const inputId = useId();
   const phoneInputRef = useRef<HTMLInputElement>(null);
   const otpInputRef = useRef<HTMLInputElement>(null);
-  const [step, setStep] = useState<"phone" | "otp">("phone");
+  const [internalStep, setInternalStep] = useState<"phone" | "otp">("phone");
+  const step = stepProp ?? internalStep;
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [errors, setErrors] = useState<{ phone?: boolean; otp?: boolean }>({});
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [resendSeconds, setResendSeconds] = useState(RESEND_SECONDS);
+
+  function goToStep(next: "phone" | "otp") {
+    if (stepProp === undefined) setInternalStep(next);
+    onStepChange?.(next);
+    if (next === "phone") {
+      setOtp("");
+      setErrors({});
+      setErrorMessage(null);
+    }
+  }
 
   useEffect(() => {
     const input = step === "phone" ? phoneInputRef.current : otpInputRef.current;
@@ -69,7 +84,7 @@ export function SidebarLoginFlow({
     setLoading(false);
 
     if (response.Status === "Success") {
-      setStep("otp");
+      goToStep("otp");
       setResendSeconds(RESEND_SECONDS);
       return;
     }
@@ -102,6 +117,7 @@ export function SidebarLoginFlow({
 
     if (response.success) {
       refreshAfterLogin();
+      onSuccess(phone);
       return;
     }
 
@@ -129,12 +145,7 @@ export function SidebarLoginFlow({
             <p className="text-base font-semibold text-gray-900">+91-{phone}</p>
             <button
               type="button"
-              onClick={() => {
-                setStep("phone");
-                setOtp("");
-                setErrors({});
-                setErrorMessage(null);
-              }}
+              onClick={() => goToStep("phone")}
               className="inline-flex items-center gap-1 text-sm font-semibold text-hello-lime-600 hover:text-hello-lime-700"
             >
               <EditIcon className="size-4" />
@@ -214,8 +225,8 @@ export function SidebarLoginFlow({
       </div>
 
       <form className="mt-8 space-y-6" onSubmit={handlePhoneSubmit}>
-        <div className="space-y-2">
-          <label htmlFor={inputId} className="text-xs font-medium text-gray-500">
+        <div className="space-y-4">
+          <label htmlFor={inputId} className="block text-xs font-medium text-gray-500">
             Please enter your phone number
           </label>
           <div className="relative">
@@ -263,7 +274,7 @@ export function SidebarLoginFlow({
       <p className="mt-6 text-xs leading-relaxed text-gray-600">
         By continuing you agree to{" "}
         <Link
-          href="/terms"
+          href="/tenant-policy"
           className="font-medium text-blue-light-600 hover:text-blue-light-700 hover:underline"
         >
           HelloWorld&apos;s Terms and conditions.

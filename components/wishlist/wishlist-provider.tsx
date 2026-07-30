@@ -255,6 +255,11 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         onOtpChange={setOtp}
         onSendOtp={handleSendOtp}
         onVerifyOtp={handleVerifyOtp}
+        onEditPhone={() => {
+          setAuthStep("phone");
+          setOtp("");
+          setAuthError(null);
+        }}
       />
     </WishlistContext.Provider>
   );
