@@ -6,7 +6,6 @@ import { cn } from "@/src/lib/cn";
 import type { GalleryMediaItem } from "@/src/tokens/property-gallery";
 
 export const MOMENT_CARD_WIDTH_CLASS = "w-[16.5rem] sm:w-[18.5rem]";
-export const MOMENT_CARD_SCROLL_STEP_PX = 312;
 
 function PlayIcon({ className }: { className?: string }) {
   return (

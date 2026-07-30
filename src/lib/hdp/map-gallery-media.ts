@@ -28,6 +28,10 @@ function isMomentsTag(tag: string | undefined): boolean {
   return normalized === "moments" || normalized === "moment";
 }
 
+function mediaLabel(tag: string | undefined): string | undefined {
+  return tag || undefined;
+}
+
 function sortByDisplayOrder<T extends { display_order?: number }>(items: readonly T[]) {
   return [...items].sort(
     (a, b) => (a.display_order ?? 0) - (b.display_order ?? 0),
@@ -52,6 +56,7 @@ export function mapPropertyMediaToGalleryItems(
     if (!url && !thumbnail) continue;
 
     const tag = item.tag?.trim() || item.caption?.trim() || undefined;
+    const label = mediaLabel(tag);
     const id = `media-${item.id}`;
 
     if (isVideoMedia(mediaType, url)) {
@@ -59,26 +64,27 @@ export function mapPropertyMediaToGalleryItems(
         moments.push({
           id,
           category: "moments",
-          label: tag || "Moments",
+          label,
           imageSrc: thumbnail || url,
           kind: "video",
           videoSrc: url || undefined,
-          caption: tag || "Moments",
+          caption: label,
         });
         continue;
       }
 
       const normalizedTag = tag?.toLowerCase();
-      const label =
-        !tag || normalizedTag === "property" ? "Property Video" : tag;
+      const videoLabel =
+        normalizedTag === "property" ? "Property Video" : label;
+
       videos.push({
         id,
         category: "property-video",
-        label,
+        label: videoLabel,
         imageSrc: thumbnail || url,
         kind: "video",
         videoSrc: url || undefined,
-        caption: label,
+        caption: videoLabel,
       });
       continue;
     }
@@ -86,10 +92,10 @@ export function mapPropertyMediaToGalleryItems(
     photos.push({
       id,
       category: "photos",
-      label: tag || "Photos",
+      label,
       imageSrc: url || thumbnail,
       kind: "image",
-      caption: tag,
+      caption: label,
     });
   }
 
@@ -116,7 +122,7 @@ export function mapMomentsToGalleryItems(
       items.push({
         id,
         category: "moments",
-        label: caption || "Moments",
+        label: caption,
         imageSrc: thumbnail || url,
         kind: "video",
         videoSrc: url || undefined,
@@ -128,7 +134,7 @@ export function mapMomentsToGalleryItems(
     items.push({
       id,
       category: "moments",
-      label: caption || "Moments",
+      label: caption,
       imageSrc: url || thumbnail,
       kind: "image",
       caption,
@@ -149,7 +155,6 @@ export function mapLegacyPropertyPhotosToGalleryItems(
     items.push({
       id: `photo-${index}`,
       category: "photos",
-      label: index === 0 ? "Photos" : `Photo ${index + 1}`,
       imageSrc,
       kind: "image",
     });

@@ -2,12 +2,27 @@
 
 import { useEffect, useRef, useState } from "react";
 import { MomentsCarouselControls } from "@/components/marketing/moments-carousel-controls";
-import {
-  MomentCard,
-  MOMENT_CARD_SCROLL_STEP_PX,
-} from "@/components/marketing/moment-card";
+import { MomentCard } from "@/components/marketing/moment-card";
 import { cn } from "@/src/lib/cn";
 import type { GalleryMediaItem } from "@/src/tokens/property-gallery";
+
+const CARD_GAP_PX = 16;
+
+function getVisibleCount(container: HTMLElement): number {
+  const first = container.children[0] as HTMLElement | undefined;
+  if (!first) return 1;
+  const cardWidth = first.getBoundingClientRect().width;
+  if (cardWidth <= 0) return 1;
+  return Math.max(
+    1,
+    Math.floor((container.clientWidth + CARD_GAP_PX) / (cardWidth + CARD_GAP_PX)),
+  );
+}
+
+function getPageStartIndex(container: HTMLElement, page: number): number {
+  const visible = getVisibleCount(container);
+  return Math.min(page * visible, Math.max(0, container.children.length - 1));
+}
 
 export function HdpMoments({
   displayName,
@@ -21,24 +36,31 @@ export function HdpMoments({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activePage, setActivePage] = useState(0);
+  const [pageCount, setPageCount] = useState(1);
 
   function updateScrollState() {
     const node = scrollRef.current;
     if (!node) return;
+
     setCanScrollPrev(node.scrollLeft > 4);
     setCanScrollNext(node.scrollLeft + node.clientWidth < node.scrollWidth - 4);
 
     const cards = Array.from(node.children) as HTMLElement[];
     if (cards.length === 0) return;
 
+    const visible = getVisibleCount(node);
+    const pages = Math.max(1, Math.ceil(cards.length / visible));
+    setPageCount(pages);
+
     const scrollLeft = node.scrollLeft;
-    const nextIndex = cards.findIndex((card, index) => {
+    const cardIndex = cards.findIndex((card, index) => {
       const nextCard = cards[index + 1];
       if (!nextCard) return true;
-      return scrollLeft < nextCard.offsetLeft - node.offsetLeft - 16;
+      return scrollLeft < nextCard.offsetLeft - node.offsetLeft - CARD_GAP_PX;
     });
-    setActiveIndex(nextIndex === -1 ? 0 : nextIndex);
+    const safeIndex = cardIndex === -1 ? 0 : cardIndex;
+    setActivePage(Math.min(pages - 1, Math.floor(safeIndex / visible)));
   }
 
   useEffect(() => {
@@ -56,25 +78,18 @@ export function HdpMoments({
 
   if (moments.length === 0) return null;
 
-  function scrollByDirection(direction: "prev" | "next") {
-    scrollRef.current?.scrollBy({
-      left:
-        direction === "next"
-          ? MOMENT_CARD_SCROLL_STEP_PX
-          : -MOMENT_CARD_SCROLL_STEP_PX,
-      behavior: "smooth",
-    });
-  }
-
-  function goToIndex(index: number) {
+  function goToPage(page: number) {
     const container = scrollRef.current;
-    const card = container?.children[index] as HTMLElement | undefined;
+    if (!container) return;
+    const nextPage = Math.max(0, Math.min(page, pageCount - 1));
+    const cardIndex = getPageStartIndex(container, nextPage);
+    const card = container.children[cardIndex] as HTMLElement | undefined;
     card?.scrollIntoView({
       behavior: "smooth",
       inline: "start",
       block: "nearest",
     });
-    setActiveIndex(index);
+    setActivePage(nextPage);
   }
 
   return (
@@ -102,14 +117,14 @@ export function HdpMoments({
         ))}
       </div>
 
-      {moments.length > 1 ? (
+      {pageCount > 1 ? (
         <MomentsCarouselControls
           className="mt-5"
-          count={moments.length}
-          activeIndex={activeIndex}
-          onPrev={() => scrollByDirection("prev")}
-          onNext={() => scrollByDirection("next")}
-          onSelect={goToIndex}
+          count={pageCount}
+          activeIndex={activePage}
+          onPrev={() => goToPage(activePage - 1)}
+          onNext={() => goToPage(activePage + 1)}
+          onSelect={goToPage}
           prevDisabled={!canScrollPrev}
           nextDisabled={!canScrollNext}
         />

@@ -136,6 +136,13 @@ export function VisitScheduler({
     itemRefs: timeItemRefs,
     indicator: timeIndicator,
   } = useSlidingIndicator(selectedTimeSlotId);
+  const timeScrollRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const el = timeScrollRef.current;
+    if (!el) return;
+    el.scrollTop = 0;
+  }, [selectedDateId]);
 
   return (
     <div
@@ -255,6 +262,7 @@ export function VisitScheduler({
         <div className={embedded ? "mt-4" : "mt-6 sm:mt-8"}>
           {embedded ? (
             <div
+              ref={timeScrollRef}
               className="overflow-y-auto scrollbar-none"
               style={{ maxHeight: visitTimeSlotListMaxHeight }}
             >
@@ -327,6 +335,7 @@ export function VisitScheduler({
             </div>
           ) : (
             <AnimateHeight
+              ref={timeScrollRef}
               className="overflow-y-auto scrollbar-none"
               style={{ maxHeight: visitTimeSlotListMaxHeight }}
             >

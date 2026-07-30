@@ -29,11 +29,16 @@ type PropertyGalleryProps = {
 };
 
 function GalleryBadge({ children }: { children: React.ReactNode }) {
+  if (children == null || children === "") return null;
   return (
     <span className="absolute left-3 top-3 z-10 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">
       {children}
     </span>
   );
+}
+
+function galleryMediaAlt(item: GalleryMediaItem): string {
+  return item.caption || item.label || "Property photo";
 }
 
 function GalleryChevron({
@@ -160,7 +165,7 @@ function GalleryImageTile({
         <Image
           key={item.id}
           src={item.imageSrc}
-          alt={item.label}
+          alt={galleryMediaAlt(item)}
           fill
           className="object-cover animate-gallery-media-fade"
           sizes="(max-width: 768px) 100vw, 280px"
@@ -344,7 +349,7 @@ function GalleryVideoTile({
         <Image
           key={mediaKey}
           src={item.imageSrc}
-          alt={item.label}
+          alt={galleryMediaAlt(item)}
           fill
           className={cn("object-cover", mediaAnimClass)}
           sizes="(max-width: 768px) 100vw, 480px"
@@ -538,7 +543,7 @@ function GalleryPhotosModal({
             <Image
               key={activePhoto.id}
               src={activePhoto.imageSrc}
-              alt={activePhoto.caption || activePhoto.label}
+              alt={activePhoto.caption || activePhoto.label || "Property photo"}
               fill
               className="object-contain"
               sizes="100vw"
@@ -863,7 +868,7 @@ export function PropertyGalleryMobile({
             <Image
               key={mediaKey}
               src={activeItem.imageSrc}
-              alt={activeItem.label}
+              alt={galleryMediaAlt(activeItem)}
               fill
               className={cn("object-cover", mediaAnimClass)}
               sizes="320px"

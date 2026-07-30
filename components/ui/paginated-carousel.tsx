@@ -80,7 +80,9 @@ export function PaginatedCarousel<T>({
 
   const count = items.length;
   const skeletonCount = loadingSkeletonCount ?? visibleDesktopCount;
-  const desktopPageCount = Math.max(0, count - visibleDesktopCount + 1);
+  // One pagination "page" = one full set of visible desktop cards.
+  const desktopPageCount =
+    count === 0 ? 0 : Math.ceil(count / visibleDesktopCount);
 
   useEffect(() => {
     setMobileIndex(0);
@@ -195,7 +197,11 @@ export function PaginatedCarousel<T>({
             className="flex gap-6 transition-transform duration-300 ease-out motion-reduce:transition-none"
             style={
               desktopMetrics.step > 0
-                ? { transform: `translateX(-${desktopIndex * desktopMetrics.step}px)` }
+                ? {
+                    transform: `translateX(-${
+                      desktopIndex * visibleDesktopCount * desktopMetrics.step
+                    }px)`,
+                  }
                 : undefined
             }
           >

@@ -3,7 +3,8 @@ export type GalleryCategory = "property-video" | "moments" | "photos";
 export type GalleryMediaItem = {
   id: string;
   category: GalleryCategory;
-  label: string;
+  /** Media tag/caption when present — omit or leave empty to hide the gallery badge. */
+  label?: string;
   imageSrc: string;
   kind: "video" | "image";
   videoSrc?: string;
@@ -109,20 +110,12 @@ export function getGalleryCategoryIndex(
   return items.findIndex((item) => item.category === category);
 }
 
-const desktopTileLabels = [
-  "Image",
-  "Image",
-  "Living Room",
-  "Washroom",
-] as const;
-
 export function buildGalleryItemsFromImages(
   images: readonly string[],
 ): GalleryMediaItem[] {
   return images.map((imageSrc, index) => ({
     id: `gallery-${index}`,
     category: "photos" as const,
-    label: desktopTileLabels[index] ?? "Image",
     imageSrc,
     kind: "image" as const,
   }));
@@ -135,8 +128,8 @@ export function buildGalleryDesktopFromImages(
   const pick = (index: number) => items[index] ?? items[0];
 
   return {
-    video: { ...pick(0), label: "Image", caption: "Image" },
-    moments: { ...pick(1), label: "Image", caption: "Image" },
+    video: { ...pick(0) },
+    moments: { ...pick(1) },
     livingRoom: pick(2),
     washroom: pick(3),
     featuredSequence: items.filter(
@@ -170,15 +163,15 @@ export function buildGalleryDesktopFromMedia(
   const preferredMoment = momentVideo ?? moments[0];
 
   const featuredVideo: GalleryMediaItem = videos[0]
-    ? { ...videos[0], label: "Property Video", caption: "Property Video" }
+    ? { ...videos[0] }
     : (() => {
         const source = photos[0] ?? preferredMoment ?? fallback;
         return {
           ...source,
           id: `featured-video-fallback-${source.id}`,
           category: "photos" as const,
-          label: "Image",
-          caption: "Image",
+          label: source.label,
+          caption: source.caption,
           kind: "image" as const,
           videoSrc: undefined,
         };
@@ -190,11 +183,7 @@ export function buildGalleryDesktopFromMedia(
   const featuredSequence: GalleryMediaItem[] = [featuredVideo];
 
   if (preferredMoment) {
-    featuredSequence.push({
-      ...preferredMoment,
-      label: "Moments",
-      caption: preferredMoment.caption || "Moments",
-    });
+    featuredSequence.push({ ...preferredMoment });
   }
 
   const remainingPhotos = photos.filter(
@@ -203,15 +192,11 @@ export function buildGalleryDesktopFromMedia(
   featuredSequence.push(...remainingPhotos);
 
   const momentsTile: GalleryMediaItem = preferredMoment
-    ? {
-        ...preferredMoment,
-        label: "Moments",
-        caption: preferredMoment.caption || "Moments",
-      }
+    ? { ...preferredMoment }
     : {
         ...(photos[0] ?? featuredVideo),
-        label: "Image",
-        caption: "Image",
+        label: (photos[0] ?? featuredVideo).label,
+        caption: (photos[0] ?? featuredVideo).caption,
       };
 
   return {

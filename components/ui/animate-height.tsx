@@ -7,8 +7,18 @@ import {
   useState,
   type CSSProperties,
   type ReactNode,
+  type Ref,
 } from "react";
 import { cn } from "@/src/lib/cn";
+
+function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
+  if (!ref) return;
+  if (typeof ref === "function") {
+    ref(value);
+  } else {
+    ref.current = value;
+  }
+}
 
 export function AnimateHeight({
   children,
@@ -16,12 +26,14 @@ export function AnimateHeight({
   contentClassName,
   style,
   durationMs = 300,
+  ref,
 }: {
   children: ReactNode;
   className?: string;
   contentClassName?: string;
   style?: CSSProperties;
   durationMs?: number;
+  ref?: Ref<HTMLDivElement | null>;
 }) {
   const outerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -56,7 +68,10 @@ export function AnimateHeight({
 
   return (
     <div
-      ref={outerRef}
+      ref={(node) => {
+        outerRef.current = node;
+        assignRef(ref, node);
+      }}
       className={cn(
         "overflow-hidden",
         canTransition &&
