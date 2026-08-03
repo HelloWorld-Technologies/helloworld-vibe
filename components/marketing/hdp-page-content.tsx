@@ -42,9 +42,7 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
     <PropertyActionsProvider defaultCity={city} defaultLocation={locality}>
       <div className={cn("bg-white", pageLayout.mobileStickyBottomPadding)}>
         <JsonLd schema={config.schema} />
-        <div className="hidden md:block">
-          <SiteHeader />
-        </div>
+        <SiteHeader />
 
         <HdpMobileHero
           view={view}

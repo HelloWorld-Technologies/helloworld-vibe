@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { renderFaqAnswer } from "@/src/lib/faq-answer";
 import { cn } from "@/src/lib/cn";
 
 export type FaqAccordionItem = {
@@ -26,16 +27,22 @@ function ChevronIcon({ className }: { className?: string }) {
 export function FaqAccordion({
   items,
   className,
+  defaultOpenAll = true,
+  defaultOpenId,
 }: {
   items: readonly FaqAccordionItem[];
   className?: string;
-  /** @deprecated All items open by default; kept for call-site compatibility. */
+  /** When true, every item starts expanded. */
+  defaultOpenAll?: boolean;
+  /** Opens a single item when `defaultOpenAll` is false. */
   defaultOpenId?: string;
 }) {
   const baseId = useId();
-  const [openIds, setOpenIds] = useState<ReadonlySet<string>>(
-    () => new Set(items.map((item) => item.id)),
-  );
+  const [openIds, setOpenIds] = useState<ReadonlySet<string>>(() => {
+    if (defaultOpenAll) return new Set(items.map((item) => item.id));
+    if (defaultOpenId) return new Set([defaultOpenId]);
+    return new Set();
+  });
 
   return (
     <div className={cn("flex flex-col gap-4", className)}>
@@ -94,7 +101,7 @@ export function FaqAccordion({
             >
               <div className="overflow-hidden">
                 <p className="text-sm font-medium leading-5 text-[#323232]">
-                  {item.answer}
+                  {renderFaqAnswer(item.answer)}
                 </p>
               </div>
             </div>
