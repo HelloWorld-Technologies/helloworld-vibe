@@ -69,7 +69,7 @@ function getSitemapLocalitySlug(property: SitemapProperty): string {
 
 /** Static paths for sitemap-static.xml (no properties, no cities). */
 export const SITEMAP_STATIC_LIST = [
-  "about-us",
+  "about",
   "owner",
   "contact",
   "policy",

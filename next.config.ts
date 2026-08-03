@@ -159,12 +159,21 @@ const nextConfig: NextConfig = {
       },
     ];
 
+    const aboutRedirects = [
+      {
+        source: "/about-us",
+        destination: "/about",
+        permanent: true,
+      },
+    ];
+
     return [
       ...kotaHostelRedirects,
       ...blogRedirects,
       ...slashRedirects,
       ...cityRedirects,
       ...genderPgFlatRedirects,
+      ...aboutRedirects,
     ];
   },
   async headers() {

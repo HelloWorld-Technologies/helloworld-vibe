@@ -247,7 +247,7 @@ export function buildStaticLinks() {
     })),
   ];
   const byHref = new Map(items.map((x) => [x.href, x.label]));
-  byHref.set("/about-us", "About Us");
+  byHref.set("/about", "About Us");
   byHref.set("/tenant-policy", "Tenant Policy");
   byHref.set("/policy", "Privacy Policy");
   byHref.set("/student-hostel-in-kota", "Student Hostel in Kota");

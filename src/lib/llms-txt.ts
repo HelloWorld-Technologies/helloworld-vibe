@@ -39,7 +39,7 @@ export function buildLlmsTxt(
     "",
     "## Key Information",
     "",
-    `- [About Us](${base}/about-us): Company and mission`,
+    `- [About Us](${base}/about): Company and mission`,
     `- [Blog](${base}/blogs): Guides and updates`,
     `- [For property owners](${base}/owner): List your property with HelloWorld`,
     `- [Safety](${base}/safety): How we keep spaces secure`,
