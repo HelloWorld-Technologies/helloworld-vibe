@@ -161,8 +161,16 @@ const nextConfig: NextConfig = {
 
     const aboutRedirects = [
       {
-        source: "/about-us",
-        destination: "/about",
+        source: "/about",
+        destination: "/about-us",
+        permanent: true,
+      },
+    ];
+
+    const ownerRedirects = [
+      {
+        source: "/for-homeowners",
+        destination: "/owner",
         permanent: true,
       },
     ];
@@ -174,6 +182,7 @@ const nextConfig: NextConfig = {
       ...cityRedirects,
       ...genderPgFlatRedirects,
       ...aboutRedirects,
+      ...ownerRedirects,
     ];
   },
   async headers() {

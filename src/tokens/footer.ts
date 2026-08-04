@@ -5,9 +5,9 @@ export const footerProductLinks = [
 ] as const;
 
 export const footerAboutLinks = [
-  { label: "About us", href: "/about" },
+  { label: "About us", href: "/about-us" },
   { label: "Work with us", href: "/careers" },
-  { label: "For home owners", href: "/for-homeowners" },
+  { label: "For home owners", href: "/owner" },
   { label: "Contact", href: "/contact" },
   { label: "Blog", href: "/blog" },
   { label: "Sitemap", href: "/sitemap" },

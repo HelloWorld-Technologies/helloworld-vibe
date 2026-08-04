@@ -1,38 +1,38 @@
 import type { Metadata } from "next";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
-import { AboutPageContent } from "@/components/marketing/about/about-page-content";
+import { HomeownersPageContent } from "@/components/marketing/homeowners/homeowners-page-content";
 import { JsonLd } from "@/components/seo/json-ld";
-import { aboutPageCopy } from "@/src/tokens/about";
+import { homeownersPageCopy } from "@/src/tokens/homeowners";
 import {
   getBreadcrumbSchema,
   getPublicSiteUrl,
   getWebPageSchema,
 } from "@/src/lib/schema";
 
-const title = aboutPageCopy.title;
-const description = aboutPageCopy.description;
+const title = homeownersPageCopy.title;
+const description = homeownersPageCopy.description;
 
 export const metadata: Metadata = {
   title,
   description,
   alternates: {
-    canonical: "/about",
+    canonical: "/owner",
   },
 };
 
-export default function AboutPage() {
+export default function OwnerPage() {
   const baseUrl = getPublicSiteUrl();
   const schema = {
     webPage: getWebPageSchema({
       baseUrl,
-      path: "about",
+      path: "owner",
       name: title,
       description,
     }),
     breadcrumb: getBreadcrumbSchema(baseUrl, [
       { name: "Home", path: "" },
-      { name: "About Us", path: "about" },
+      { name: "For Homeowners", path: "owner" },
     ]),
   };
 
@@ -41,7 +41,7 @@ export default function AboutPage() {
       <JsonLd schema={schema} />
       <SiteHeader />
       <main>
-        <AboutPageContent />
+        <HomeownersPageContent />
       </main>
       <SiteFooter />
     </div>

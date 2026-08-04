@@ -109,6 +109,22 @@ export function BookingPaymentCheckout({
     router.push(buildFailedHref({ propertyPath, message }));
   }
 
+  async function handleVerifyResult(
+    verifyResponse: { success?: boolean; message?: string } | null | undefined,
+    bookingId: string,
+  ) {
+    setLoading(false);
+
+    if (verifyResponse?.success) {
+      redirectToSuccess(bookingId);
+      return;
+    }
+
+    redirectToFailed(
+      verifyResponse?.message ?? "Payment verification failed. Please try again.",
+    );
+  }
+
   async function verifyRazorpayPayment(
     razorpayResponse: RazorpayPaymentResponse,
     initResponse: InitBookingResponse,
@@ -121,30 +137,37 @@ export function BookingPaymentCheckout({
       razorpaySignature: razorpayResponse.razorpay_signature,
       amount,
       bookingId: initResponse.id,
+      payment_gateway: "razorpay",
     });
 
-    setLoading(false);
+    await handleVerifyResult(verifyResponse, initResponse.id);
+  }
 
-    if (verifyResponse?.success) {
-      redirectToSuccess(initResponse.id);
-      return;
-    }
+  async function verifyCashfreePayment(initResponse: InitBookingResponse) {
+    setLoading(true);
 
-    redirectToFailed(
-      verifyResponse?.message ?? "Payment verification failed. Please try again.",
-    );
+    const verifyResponse = await postVerifyBooking({
+      paymentId: initResponse.paymentObj.transactionId,
+      amount,
+      bookingId: initResponse.id,
+      payment_gateway: "cashfree",
+      orderId: initResponse.paymentObj.orderId,
+    });
+
+    await handleVerifyResult(verifyResponse, initResponse.id);
   }
 
   async function openGateway(initResponse: InitBookingResponse) {
     if (usesCashfree(initResponse)) {
       await openCashfreeCheckout(initResponse, {
-        onComplete: () => redirectToSuccess(initResponse.id),
+        onComplete: () => {
+          void verifyCashfreePayment(initResponse);
+        },
         onError: (message) => {
           setLoading(false);
           onInitError?.(message);
         },
       });
-      setLoading(false);
       return;
     }
 
