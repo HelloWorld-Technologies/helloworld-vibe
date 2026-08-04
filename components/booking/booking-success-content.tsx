@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AppStoreIcon, PlayStoreIcon } from "@/components/brand/store-icons";
 import { pageLayout } from "@/src/tokens/layout";
 import { cn } from "@/src/lib/cn";
 
@@ -61,40 +62,6 @@ function BookingSuccessIcon() {
         <CheckIcon className="size-9 text-white" />
       </span>
     </div>
-  );
-}
-
-function PlayStoreIcon({ className }: { className?: string }) {
-  return (
-    <svg aria-hidden viewBox="0 0 30 33" className={className}>
-      <path
-        fill="currentColor"
-        d="M1.5 1.2 16.8 16.5 1.5 31.8A1.5 1.5 0 0 1 0 30.5V2.5a1.5 1.5 0 0 1 1.5-1.3Z"
-      />
-      <path
-        fill="currentColor"
-        d="M18.5 14.2 4.8 0.5l12.2 7.1a1.5 1.5 0 0 1 0 2.6Z"
-      />
-      <path
-        fill="currentColor"
-        d="m18.5 18.8-12.2 7.1 13.7-13.7a1.5 1.5 0 0 0 0-2.6Z"
-      />
-      <path
-        fill="currentColor"
-        d="M29.2 15.5 20.5 20.5l-2-1.2 2-1.2 8.7-5a1.5 1.5 0 0 1 0 2.6Z"
-      />
-    </svg>
-  );
-}
-
-function AppStoreIcon({ className }: { className?: string }) {
-  return (
-    <svg aria-hidden viewBox="0 0 30 30" className={className}>
-      <path
-        fill="currentColor"
-        d="M22.7 16.1c.02 2.2 1.9 2.9 1.93 2.9-.02.06-.3 1.03-1 2.04-.6.87-1.22 1.74-2.2 1.76-.96.02-1.27-.57-2.37-.57-1.1 0-1.44.55-2.35.59-.95.04-1.67-.95-2.28-1.82-1.24-1.8-2.19-5.08-.92-7.3.63-1.1 1.76-1.8 2.99-1.82.93-.02 1.81.63 2.38.63.56 0 1.62-.78 2.73-.66.46.02 1.76.19 2.59 1.43-.07.04-1.55.9-1.53 2.7ZM20.1 4.8c.5.61.84 1.46.75 2.31-.72.03-1.6-.48-2.1-1.09-.46-.56-.87-1.46-.76-2.32.8-.06 1.62.49 2.11 1.1Z"
-      />
-    </svg>
   );
 }
 

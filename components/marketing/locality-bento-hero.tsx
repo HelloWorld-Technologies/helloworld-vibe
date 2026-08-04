@@ -1,11 +1,11 @@
 import Image from "next/image";
+import { Breadcrumbs, type BreadcrumbItem } from "@/components/navigation/breadcrumbs";
 import {
   localityBentoDesktopLayout,
   localityBentoTiles,
   type LocalityBentoTile,
 } from "@/src/tokens/locality";
 import { cn } from "@/src/lib/cn";
-import { isSrpComingSoonImage } from "@/src/tokens/srp-card";
 
 function BentoRating({ rating, label }: { rating: number; label: string }) {
   return (
@@ -104,18 +104,13 @@ function HeroImage({
   sizes: string;
   priority?: boolean;
 }) {
-  const isComingSoon = isSrpComingSoonImage(src);
-
   return (
     <Image
       src={src}
       alt={alt}
       fill
       priority={priority}
-      className={cn(
-        isComingSoon ? "object-contain p-8 md:p-12" : "object-cover",
-        className,
-      )}
+      className={cn("object-cover", className)}
       sizes={sizes}
     />
   );
@@ -126,6 +121,7 @@ export type LocalityBentoHeroProps = {
   subtitle: string;
   heroImageSrc: string;
   heroImageAlt: string;
+  breadcrumbItems?: readonly BreadcrumbItem[];
 };
 
 export function LocalityBentoHero({
@@ -133,6 +129,7 @@ export function LocalityBentoHero({
   subtitle,
   heroImageSrc,
   heroImageAlt,
+  breadcrumbItems,
 }: LocalityBentoHeroProps) {
   return (
     <section aria-label="Search results overview">
@@ -161,11 +158,13 @@ export function LocalityBentoHero({
             src={heroImageSrc}
             alt={heroImageAlt}
             sizes="100vw"
-            className={isSrpComingSoonImage(heroImageSrc) ? "p-6" : undefined}
           />
         </div>
 
         <div className="relative z-10 -mt-10 rounded-t-[2.5rem] bg-white px-4 pt-8 pb-1 sm:px-6">
+          {breadcrumbItems && breadcrumbItems.length > 0 ? (
+            <Breadcrumbs items={breadcrumbItems} className="mb-4" />
+          ) : null}
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">
             {title}
           </h1>

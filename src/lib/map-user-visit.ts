@@ -25,11 +25,16 @@ function parseAddress(item: UserVisitApiItem): string {
 function parseImages(item: UserVisitApiItem): string[] {
   const fromList = item.images ?? item.property_image;
   if (Array.isArray(fromList) && fromList.length > 0) {
-    return fromList.filter((image) => typeof image === "string" && image.length > 0);
+    return fromList
+      .filter((image) => typeof image === "string" && image.length > 0)
+      .map((image) =>
+        image.includes("coming-soon") ? srpCardDefaultImage : image,
+      );
   }
 
   const single = item.image ?? item.hdp_image;
-  return single ? [single] : [srpCardDefaultImage];
+  if (!single) return [srpCardDefaultImage];
+  return [single.includes("coming-soon") ? srpCardDefaultImage : single];
 }
 
 function parseVisitDate(item: UserVisitApiItem): Date | null {

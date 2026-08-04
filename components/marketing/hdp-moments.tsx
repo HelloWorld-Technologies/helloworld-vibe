@@ -110,7 +110,7 @@ export function HdpMoments({
 
       <div
         ref={scrollRef}
-        className="mt-5 flex gap-4 overflow-x-auto scroll-smooth pb-2 scrollbar-none"
+        className="mt-5 flex touch-pan-x gap-4 overflow-x-auto overscroll-x-contain scroll-smooth pb-2 snap-x snap-mandatory scrollbar-none"
       >
         {moments.map((item) => (
           <MomentCard key={item.id} item={item} />

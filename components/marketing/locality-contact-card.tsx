@@ -29,12 +29,16 @@ export function LocalityContactCard({
   city,
   location: locationDefault = "",
   locationEditable = true,
+  locationPlaceholder = "Enter preferred location",
+  showCallFallback = true,
 }: {
   className?: string;
   sticky?: boolean;
   city?: string;
   location?: string;
   locationEditable?: boolean;
+  locationPlaceholder?: string;
+  showCallFallback?: boolean;
 }) {
   const [step, setStep] = useState<Step>("form");
   const [name, setName] = useState("");
@@ -167,7 +171,8 @@ export function LocalityContactCard({
                     <Button
                       type="button"
                       hierarchy="secondary-gray"
-                      className="flex-1 bg-white"
+                      size="xl"
+                      className="min-w-0 flex-1 rounded-2xl bg-white"
                       onClick={() => setStep("form")}
                       disabled={loading}
                     >
@@ -175,7 +180,8 @@ export function LocalityContactCard({
                     </Button>
                     <Button
                       type="submit"
-                      className="h-12 flex-1 rounded-2xl bg-hello-lime-400 text-base font-bold text-gray-900 hover:bg-hello-lime-500"
+                      size="xl"
+                      className="min-w-0 flex-1 rounded-2xl bg-hello-lime-400 font-bold text-gray-900 hover:bg-hello-lime-500"
                       disabled={loading || otp.length !== 6}
                     >
                       {loading ? "Submitting..." : "Submit"}
@@ -235,7 +241,7 @@ export function LocalityContactCard({
                       value={location}
                       onChange={(event) => setLocation(event.target.value)}
                       readOnly={!locationEditable}
-                      placeholder="Enter preferred location"
+                      placeholder={locationPlaceholder}
                       className={cn(
                         fieldInputClassName,
                         errors.location && "ring-2 ring-error-300",
@@ -257,17 +263,19 @@ export function LocalityContactCard({
                   </button>
                 </form>
 
-                <div className="mt-6 border-t border-gray-200/80 pt-5 text-center">
-                  <p className="text-sm text-gray-600">
-                    or call{" "}
-                    <Link
-                      href={footerContact.phoneHref}
-                      className="text-base font-bold text-gray-900 hover:underline"
-                    >
-                      {footerContact.phone}
-                    </Link>
-                  </p>
-                </div>
+                {showCallFallback ? (
+                  <div className="mt-6 border-t border-gray-200/80 pt-5 text-center">
+                    <p className="text-sm text-gray-600">
+                      or call{" "}
+                      <Link
+                        href={footerContact.phoneHref}
+                        className="text-base font-bold text-gray-900 hover:underline"
+                      >
+                        {footerContact.phone}
+                      </Link>
+                    </p>
+                  </div>
+                ) : null}
               </>
             )}
           </>

@@ -149,7 +149,7 @@ export function HdpReviews({
             href={allReviewsLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-semibold text-hello-lime-600 hover:text-hello-lime-700 hover:underline"
+            className="hidden text-sm font-semibold text-hello-lime-600 hover:text-hello-lime-700 hover:underline md:inline"
           >
             Show all Google reviews
           </Link>
@@ -163,7 +163,45 @@ export function HdpReviews({
             "bg-[linear-gradient(131deg,rgba(255,255,255,0.56)_45.09%,rgba(213,236,249,0.56)_94.76%),linear-gradient(90deg,#fff_0%,#fff_100%)]",
           )}
         >
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch lg:justify-between">
+          {/* Mobile: rating | recommend on top, categories below */}
+          <div className="space-y-4 lg:hidden">
+            <div className="flex items-stretch gap-4">
+              <div className="min-w-0 flex-1 space-y-0.5">
+                <p className="text-[1.875rem] font-medium leading-[2.375rem] text-gray-800">
+                  {summary.rating}
+                  <span className="text-amber-400">★</span>
+                </p>
+                <p className="text-base font-bold text-gray-900">{summary.label}</p>
+                <p className="text-xs font-medium text-gray-500">
+                  Based on {summary.reviewCount} reviews
+                </p>
+              </div>
+
+              <div className="w-px shrink-0 bg-gray-300" aria-hidden />
+
+              <div className="flex w-[7.5rem] shrink-0 flex-col items-center justify-center gap-2 text-center">
+                <RecommendRing percent={summary.recommendPercent} />
+                <p className="text-xs font-medium leading-4 text-gray-800">
+                  Residents would recommend to a friend
+                </p>
+              </div>
+            </div>
+
+            <div className="h-px bg-gray-300" />
+
+            <div className="flex flex-col gap-3">
+              {summary.categories.map((category) => (
+                <CategoryBar
+                  key={category.label}
+                  label={category.label}
+                  score={category.score}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop */}
+          <div className="hidden flex-col gap-6 lg:flex lg:flex-row lg:items-stretch lg:justify-between">
             <div className="space-y-4 lg:max-w-[18.3125rem]">
               <div className="space-y-0.5">
                 <div className="flex flex-wrap items-center gap-2">
@@ -208,9 +246,9 @@ export function HdpReviews({
           items={reviews}
           getItemKey={(review) => review.id}
           visibleDesktopCount={VISIBLE_DESKTOP_COUNT}
-          mobileScrollGap={24}
+          mobileScrollGap={16}
           desktopItemClassName="w-full"
-          mobileItemClassName="w-[18.8125rem]"
+          mobileItemClassName="w-[min(18.8125rem,85vw)]"
           paginationClassName="mt-4"
           mobilePaginationClassName="mt-4"
           renderItem={(review, cardClassName) => (

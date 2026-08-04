@@ -119,9 +119,8 @@ export function HomepageProperties() {
           resetKey={city}
           isLoading={isLoading}
           visibleDesktopCount={VISIBLE_DESKTOP_COUNT}
-          mobileScrollGap={24}
+          mobileScrollGap={16}
           desktopItemClassName="w-full"
-          mobileItemClassName="w-[min(100%,25.6875rem)]"
           desktopTrackClassName="mt-8"
           mobileTrackClassName="mt-8"
           paginationClassName="mt-8"

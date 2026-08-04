@@ -77,10 +77,10 @@ export function SiteHeader({
             <Link
               href="/contact"
               className={cn(
-                "inline-flex h-9 items-center justify-center text-sm font-semibold transition-colors",
+                "hidden h-9 items-center justify-center text-sm font-semibold transition-colors sm:inline-flex",
                 isBanner
                   ? "rounded-full bg-hello-lime-100 px-5 text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-gray-900 hover:bg-hello-lime-200"
-                  : "hidden text-gray-700 hover:text-gray-900 sm:inline-flex",
+                  : "text-gray-700 hover:text-gray-900",
               )}
             >
               Contact Us

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { useOptionalPropertyActions } from "@/components/booking/property-actions-provider";
 import { formatVisitDateBox } from "@/src/lib/map-user-visit";
 import { cn } from "@/src/lib/cn";
-import { isSrpComingSoonImage } from "@/src/tokens/srp-card";
 import type { MyVisitItem } from "@/src/models/user-visit";
 
 function ChevronIcon({ direction }: { direction: "left" | "right" }) {
@@ -86,10 +85,7 @@ export function VisitCard({ visit, onRate }: VisitCardProps) {
             src={currentImage}
             alt=""
             fill
-            className={cn(
-              "object-cover",
-              isSrpComingSoonImage(currentImage) && "object-contain p-6",
-            )}
+            className="object-cover"
             sizes="(max-width: 768px) 100vw, 640px"
           />
         ) : null}

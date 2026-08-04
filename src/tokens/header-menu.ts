@@ -23,9 +23,9 @@ const headerMenuItemsBase: Omit<HeaderMenuItem, "action">[] = [
   { id: "visits", label: "My Visits", href: "/my-visits" },
   { id: "wishlist", label: "My Wishlist", href: "/wishlist" },
   { id: "community", label: "Community Events", href: "/community" },
-  { id: "homeowners", label: "For Homeowners", href: "/for-homeowners" },
+  { id: "homeowners", label: "For Homeowners", href: "/owner" },
   { id: "living", label: "Helloworld Living", href: "/coliving-in-bangalore" },
-  { id: "about", label: "About", href: "/about" },
+  { id: "about", label: "About", href: "/about-us" },
   { id: "privacy", label: "Privacy Policy", href: "/policy" },
   { id: "tenancy", label: "Tenancy Policy", href: "/tenant-policy" },
 ];

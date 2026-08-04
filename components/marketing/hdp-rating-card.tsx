@@ -55,9 +55,11 @@ function StatDivider() {
 export function HdpRatingCard({
   view,
   className,
+  showTrophy = false,
 }: {
   view?: HdpPageView;
   className?: string;
+  showTrophy?: boolean;
 }) {
   const displayName = view?.displayName ?? hdpProperty.name;
   const trendingLabel = view?.trendingLabel ?? hdpProperty.trendingLabel;
@@ -115,7 +117,10 @@ export function HdpRatingCard({
             alt=""
             width={80}
             height={80}
-            className="hidden size-16 shrink-0 object-contain sm:block md:size-20"
+            className={cn(
+              "size-14 shrink-0 object-contain sm:size-16 md:size-20",
+              !showTrophy && "hidden sm:block",
+            )}
           />
         </div>
       </div>

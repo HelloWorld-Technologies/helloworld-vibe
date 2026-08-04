@@ -39,6 +39,7 @@ export interface LocationSearchValue {
 
 export interface LocationSearchProps {
   className?: string;
+  barClassName?: string;
   city?: CitySlug;
   defaultCity?: CitySlug;
   locality?: string;
@@ -188,6 +189,7 @@ function SearchDropdown({
 
 export function LocationSearch({
   className,
+  barClassName,
   city: cityProp,
   defaultCity = defaultCitySlug,
   locality: localityProp,
@@ -462,11 +464,11 @@ export function LocationSearch({
     <div ref={rootRef} className={cn("relative w-full min-w-0", className)}>
       <div
         className={cn(
-          "flex flex-col gap-2 border border-gray-200 bg-white p-2 shadow-md",
-          "rounded-2xl sm:flex-row sm:items-center sm:gap-0 sm:rounded-full",
+          "flex items-center gap-0 rounded-full border border-gray-200 bg-white p-1.5 sm:p-2",
+          barClassName ?? "shadow-lg",
         )}
       >
-        <div className="relative w-full min-w-0 sm:w-auto sm:shrink-0">
+        <div className="relative w-auto shrink-0">
           <button
             id={cityButtonId}
             type="button"
@@ -475,18 +477,22 @@ export function LocationSearch({
             onClick={() =>
               setActivePanel((panel) => (panel === "city" ? null : "city"))
             }
-            className="flex w-full min-w-0 items-center gap-2.5 rounded-xl px-2 py-2 transition-colors hover:bg-gray-50 sm:w-auto sm:gap-3 sm:rounded-full sm:py-1.5"
+            className="flex w-auto min-w-0 items-center gap-2 rounded-full px-1.5 py-1 transition-colors hover:bg-gray-50 sm:gap-3 sm:px-2 sm:py-1.5"
           >
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-900 sm:size-10">
-              <LocationIcon className="size-5" />
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-900 sm:size-10">
+              <LocationIcon className="size-4 sm:size-5" />
             </span>
             <span className="min-w-0 text-left">
-              <span className="block text-xs text-gray-500">You are in</span>
-              <span className="flex min-w-0 items-center gap-1 text-sm font-bold text-hello-lime-700">
-                <span className="truncate">{getCityLabel(city)}</span>
+              <span className="block text-[0.625rem] leading-3 text-gray-500 sm:text-xs sm:leading-4">
+                You are in
+              </span>
+              <span className="flex min-w-0 items-center gap-0.5 text-xs font-bold text-hello-lime-700 sm:gap-1 sm:text-sm">
+                <span className="max-w-[4.75rem] truncate sm:max-w-none">
+                  {getCityLabel(city)}
+                </span>
                 <ChevronDownIcon
                   className={cn(
-                    "size-4 shrink-0 text-gray-600 transition-transform duration-200 motion-reduce:transition-none",
+                    "size-3.5 shrink-0 text-gray-600 transition-transform duration-200 motion-reduce:transition-none sm:size-4",
                     cityOpen && "rotate-180",
                   )}
                 />
@@ -497,7 +503,7 @@ export function LocationSearch({
           <SearchDropdown
             open={cityOpen}
             labelledBy={cityButtonId}
-            className="left-0 right-0 w-full p-2 sm:right-auto sm:w-[min(100vw-3rem,17.5rem)]"
+            className="left-0 right-auto w-[min(100vw-3rem,17.5rem)] p-2"
           >
             {cities.map((option) => {
               const isSelected = option.slug === city;
@@ -528,10 +534,10 @@ export function LocationSearch({
 
         <span
           aria-hidden
-          className="h-px w-full shrink-0 bg-gray-200 sm:mx-2 sm:h-10 sm:w-px"
+          className="mx-1 h-8 w-px shrink-0 bg-gray-200 sm:mx-2 sm:h-10"
         />
 
-        <div className="flex w-full min-w-0 flex-1 items-center">
+        <div className="flex min-w-0 flex-1 items-center">
           <div className="relative min-w-0 flex-1">
             <label htmlFor={localityInputId} className="sr-only">
               {localityPlaceholder}
@@ -581,7 +587,7 @@ export function LocationSearch({
                   handleSearch();
                 }
               }}
-              className="w-full bg-transparent px-2 py-2.5 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none sm:px-3"
+              className="w-full bg-transparent px-1 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none sm:px-3 sm:py-2.5"
             />
 
             <SearchDropdown
@@ -665,17 +671,17 @@ export function LocationSearch({
             aria-label="Search localities"
             onClick={handleSearch}
             className={cn(
-              "group ml-1 flex h-10 w-10 shrink-0 items-center justify-center gap-0 overflow-visible rounded-full bg-hello-lime-500 text-white",
+              "group ml-1 flex h-9 w-9 shrink-0 items-center justify-center gap-0 overflow-visible rounded-full bg-hello-lime-500 text-white",
               "transition-[width,background-color,padding,gap] duration-200 ease-out motion-reduce:transition-none",
-              "hover:w-[6.5rem] hover:justify-start hover:gap-2 hover:bg-hello-lime-600 hover:px-3",
+              "hover:bg-hello-lime-600",
               "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-hello-lime-100",
-              "sm:h-11 sm:w-11 sm:hover:w-[6.75rem] sm:hover:px-3.5",
+              "sm:h-11 sm:w-11 sm:hover:w-[6.75rem] sm:hover:justify-start sm:hover:gap-2 sm:hover:px-3.5",
             )}
           >
-            <SearchIcon className="size-5 shrink-0" />
+            <SearchIcon className="size-4 shrink-0 sm:size-5" />
             <span
               aria-hidden
-              className="max-w-0 overflow-hidden whitespace-nowrap text-sm font-semibold opacity-0 transition-[max-width,opacity] duration-200 ease-out motion-reduce:transition-none group-hover:max-w-[3.5rem] group-hover:opacity-100"
+              className="hidden max-w-0 overflow-hidden whitespace-nowrap text-sm font-semibold opacity-0 transition-[max-width,opacity] duration-200 ease-out motion-reduce:transition-none sm:inline sm:group-hover:max-w-[3.5rem] sm:group-hover:opacity-100"
             >
               Search
             </span>

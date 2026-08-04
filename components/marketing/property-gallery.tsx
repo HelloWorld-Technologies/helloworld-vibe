@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
+import { ShareIcon } from "@/components/icons/share-icon";
 import { cn } from "@/src/lib/cn";
 import type { GalleryCategory, GalleryMediaItem } from "@/src/models/gallery";
 import {
@@ -774,7 +775,14 @@ export function PropertyGalleryMobile({
   images,
   items,
   className,
-}: PropertyGalleryProps) {
+  variant = "inset",
+  onBack,
+  onShare,
+}: PropertyGalleryProps & {
+  variant?: "inset" | "hero";
+  onBack?: () => void;
+  onShare?: () => void;
+}) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [photosOpen, setPhotosOpen] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<"next" | "prev">(
@@ -788,11 +796,13 @@ export function PropertyGalleryMobile({
   const availableTabs = galleryCategoryTabs.filter((tab) =>
     galleryItems.some((item) => item.category === tab.value),
   );
+  const showCategoryTabs = availableTabs.length > 1;
   const mediaAnimClass =
     swipeDirection === "prev"
       ? "animate-gallery-swipe-prev"
       : "animate-gallery-swipe-next";
   const mediaKey = `${activeItem?.id ?? "empty"}-${slideKey}-${swipeDirection}`;
+  const isHero = variant === "hero";
 
   if (galleryItems.length === 0 || !activeItem) return null;
 
@@ -826,15 +836,15 @@ export function PropertyGalleryMobile({
       ? photoItems
       : galleryItems.filter((item) => item.kind === "image");
 
-  const carouselImages = galleryItems.filter((item) => !item.videoSrc);
-  const activeImageIndex = carouselImages.findIndex(
-    (item) => item.id === activeItem.id,
-  );
-
   return (
     <>
-      <div className={cn("mx-auto w-full max-w-[320px]", className)}>
-        <div className="relative aspect-4/5 overflow-hidden rounded-3xl bg-black">
+      <div className={cn(!isHero && "mx-auto w-full max-w-[320px]", className)}>
+        <div
+          className={cn(
+            "relative overflow-hidden bg-black",
+            isHero ? "aspect-[4/5] w-full" : "aspect-4/5 rounded-3xl",
+          )}
+        >
           {activeItem.kind === "video" && activeItem.videoSrc ? (
             <video
               key={mediaKey}
@@ -858,7 +868,8 @@ export function PropertyGalleryMobile({
                 alt=""
                 fill
                 className={cn("object-cover opacity-35", mediaAnimClass)}
-                sizes="320px"
+                sizes={isHero ? "100vw" : "320px"}
+                priority={isHero}
               />
               <div className="absolute inset-0 bg-black/55" aria-hidden />
               <PlayBadge />
@@ -870,44 +881,87 @@ export function PropertyGalleryMobile({
               alt={galleryMediaAlt(activeItem)}
               fill
               className={cn("object-cover", mediaAnimClass)}
-              sizes="320px"
+              sizes={isHero ? "100vw" : "320px"}
+              priority={isHero}
             />
           )}
+
+          {isHero ? (
+            <>
+              <button
+                type="button"
+                aria-label="Go back"
+                onClick={onBack}
+                className="absolute left-4 top-4 z-20 flex size-10 items-center justify-center rounded-full bg-white text-gray-900 shadow-sm"
+              >
+                <svg aria-hidden viewBox="0 0 20 20" fill="none" className="size-5">
+                  <path
+                    d="M12.5 4.5 7 10l5.5 5.5"
+                    stroke="currentColor"
+                    strokeWidth="1.67"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              <button
+                type="button"
+                aria-label="Share property"
+                onClick={onShare}
+                className="absolute right-4 top-4 z-20 flex size-10 items-center justify-center rounded-full bg-white text-hello-lime-900 shadow-sm"
+              >
+                <ShareIcon className="size-5" />
+              </button>
+            </>
+          ) : null}
 
           <GalleryChevron direction="prev" label="Previous" onClick={goPrev} />
           <GalleryChevron direction="next" label="Next" onClick={goNext} />
 
-          {activeImageIndex >= 0 ? (
-            <GalleryImageCountBadge
-              current={activeImageIndex + 1}
-              total={carouselImages.length || totalCount}
-              onClick={() => setPhotosOpen(true)}
-              className="bottom-24 right-3"
-            />
-          ) : null}
+          <GalleryImageCountBadge
+            current={activeIndex + 1}
+            total={totalCount}
+            onClick={() => setPhotosOpen(true)}
+            className={
+              isHero
+                ? showCategoryTabs
+                  ? "bottom-28 right-4"
+                  : "bottom-16 right-4"
+                : showCategoryTabs
+                  ? "bottom-24 right-3"
+                  : "bottom-12 right-3"
+            }
+          />
 
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 pb-5 pt-16">
-            <div className="flex flex-wrap justify-center gap-2">
-              {availableTabs.map((tab) => {
-                const isActive = tab.value === activeCategory;
-                return (
-                  <button
-                    key={tab.value}
-                    type="button"
-                    onClick={() => goToCategory(tab.value)}
-                    className={cn(
-                      "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
-                      isActive
-                        ? "bg-white text-gray-900"
-                        : "bg-white/25 text-white backdrop-blur-sm",
-                    )}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
-            <div className="mt-4">
+          <div
+            className={cn(
+              "absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 pt-16",
+              isHero ? "pb-10" : "pb-5",
+            )}
+          >
+            {showCategoryTabs ? (
+              <div className="flex flex-wrap justify-center gap-2">
+                {availableTabs.map((tab) => {
+                  const isActive = tab.value === activeCategory;
+                  return (
+                    <button
+                      key={tab.value}
+                      type="button"
+                      onClick={() => goToCategory(tab.value)}
+                      className={cn(
+                        "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
+                        isActive
+                          ? "bg-white text-gray-900"
+                          : "bg-white/25 text-white backdrop-blur-sm",
+                      )}
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : null}
+            <div className={cn(showCategoryTabs && "mt-4")}>
               <GalleryPaginationDots
                 count={galleryItems.length}
                 activeIndex={activeIndex}

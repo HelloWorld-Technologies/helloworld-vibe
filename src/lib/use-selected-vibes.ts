@@ -6,6 +6,8 @@ import {
   readStoredSelectedVibes,
 } from "@/src/lib/vibe-storage";
 
+const MAX_SELECTED_VIBES = 5;
+
 export function useSelectedVibes() {
   const [selectedVibes, setSelectedVibes] = useState<Set<string>>(
     () => new Set(),
@@ -20,7 +22,7 @@ export function useSelectedVibes() {
       const next = new Set(current);
       if (next.has(id)) {
         next.delete(id);
-      } else {
+      } else if (next.size < MAX_SELECTED_VIBES) {
         next.add(id);
       }
       persistSelectedVibes(next);

@@ -10,6 +10,7 @@ import { HdpBookingCard } from "@/components/marketing/hdp-booking-card";
 import { HdpFaq } from "@/components/marketing/hdp-faq";
 import { HdpHeader } from "@/components/marketing/hdp-header";
 import { HdpMobileActions } from "@/components/marketing/hdp-mobile-actions";
+import { HdpMobileHero } from "@/components/marketing/hdp-mobile-hero";
 import { HdpNearbyPlaces } from "@/components/marketing/hdp-nearby-places";
 import { HdpRatingCard } from "@/components/marketing/hdp-rating-card";
 import { HdpSectionNav } from "@/components/marketing/hdp-section-nav";
@@ -17,10 +18,7 @@ import { HdpSimilarProperties } from "@/components/marketing/hdp-similar-propert
 import { HdpVibeMatch } from "@/components/marketing/hdp-vibe-match";
 import { HdpMoments } from "@/components/marketing/hdp-moments";
 import { HdpReviews } from "@/components/marketing/hdp-reviews";
-import {
-  PropertyGalleryDesktop,
-  PropertyGalleryMobile,
-} from "@/components/marketing/property-gallery";
+import { PropertyGalleryDesktop } from "@/components/marketing/property-gallery";
 import { JsonLd } from "@/components/seo/json-ld";
 import type { HdpPageConfig } from "@/src/lib/hdp/resolve-hdp-page";
 import { cn } from "@/src/lib/cn";
@@ -46,26 +44,34 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
         <JsonLd schema={config.schema} />
         <SiteHeader />
 
-        <main className={pageLayout.containerWithTopPadding}>
-          <Breadcrumbs
-            items={config.breadcrumbItems}
-            className="mb-4 md:mb-6"
-          />
-          <HdpHeader view={view} />
+        <HdpMobileHero
+          view={view}
+          breadcrumbItems={config.breadcrumbItems}
+        />
 
-          <div className="mt-4 md:mt-6">
-            <div className="hidden md:block">
+        <main
+          className={cn(
+            pageLayout.containerWithTopPadding,
+            "pt-0 md:pt-4",
+          )}
+        >
+          <div className="hidden md:block">
+            <Breadcrumbs
+              items={config.breadcrumbItems}
+              className="mb-4 md:mb-6"
+            />
+            <HdpHeader view={view} />
+            <div className="mt-4 md:mt-6">
               <PropertyGalleryDesktop items={view.galleryItems} />
-            </div>
-            <div className="md:hidden">
-              <PropertyGalleryMobile items={view.galleryItems} />
             </div>
           </div>
 
           <div className={pageLayout.hdpTwoColumn}>
             <div className={pageLayout.mainColumn}>
               <div className="space-y-6">
-                <HdpRatingCard view={view} />
+                <div className="hidden md:block">
+                  <HdpRatingCard view={view} />
+                </div>
                 <HdpVibeMatch displayName={view.displayName} />
               </div>
 
@@ -116,7 +122,7 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
         </main>
 
         <SiteFooter />
-        <HdpMobileActions view={view} />
+        <HdpMobileActions view={view} categories={config.categories} />
       </div>
     </PropertyActionsProvider>
   );

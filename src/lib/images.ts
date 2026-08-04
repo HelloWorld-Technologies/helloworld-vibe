@@ -1,3 +1,5 @@
+import { srpCardComingSoonImage } from "@/src/tokens/srp-card";
+
 const S3_IMAGE_BUCKET_BASE_URL =
   process.env.NEXT_PUBLIC_S3_IMAGE_BUCKET_BASE_URL ??
   "https://hw-production-compressed-image.s3.ap-south-1.amazonaws.com/";
@@ -8,6 +10,7 @@ function encodeImageUrl(url: string): string {
 
 export function imageUrlFormatter(page: "srp" | "hdp", url: string): string {
   if (!url) return "";
+  if (url.includes("coming-soon")) return srpCardComingSoonImage;
 
   let imgSrc = "";
 
@@ -26,6 +29,7 @@ export function imageUrlFormatter(page: "srp" | "hdp", url: string): string {
 
 export function formatSrpCardImageSrc(url: string): string {
   if (!url) return "";
+  if (url.includes("coming-soon")) return srpCardComingSoonImage;
   if (url.startsWith("/")) return url;
   if (url.includes("http")) return encodeImageUrl(url);
   return imageUrlFormatter("srp", url);

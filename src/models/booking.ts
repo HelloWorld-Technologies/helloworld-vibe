@@ -117,10 +117,18 @@ export interface RazorpayPaymentResponse {
   razorpay_signature: string;
 }
 
-export interface PostVerifyBookingPayload {
+export type PostVerifyBookingPayload = {
   paymentId: string;
-  razorpayPaymentId: string;
-  razorpaySignature: string;
   amount: number;
   bookingId: string;
-}
+} & (
+  | {
+      payment_gateway: "razorpay";
+      razorpayPaymentId: string;
+      razorpaySignature: string;
+    }
+  | {
+      payment_gateway: "cashfree";
+      orderId: string;
+    }
+);

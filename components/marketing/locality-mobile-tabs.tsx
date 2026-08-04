@@ -21,7 +21,7 @@ export function LocalityMobileTabs({
   return (
     <div
       className={cn(
-        "inline-flex rounded-full bg-gray-100 p-1 md:hidden",
+        "mx-auto flex w-fit rounded-full bg-gray-100 p-1 md:hidden",
         className,
       )}
       role="tablist"

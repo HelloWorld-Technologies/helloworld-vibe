@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { renderFaqAnswer } from "@/src/lib/faq-answer";
 import { cn } from "@/src/lib/cn";
 
 export type FaqAccordionItem = {
@@ -26,21 +27,27 @@ function ChevronIcon({ className }: { className?: string }) {
 export function FaqAccordion({
   items,
   className,
+  defaultOpenAll = true,
   defaultOpenId,
 }: {
   items: readonly FaqAccordionItem[];
   className?: string;
+  /** When true, every item starts expanded. */
+  defaultOpenAll?: boolean;
+  /** Opens a single item when `defaultOpenAll` is false. */
   defaultOpenId?: string;
 }) {
   const baseId = useId();
-  const [openId, setOpenId] = useState<string | null>(
-    defaultOpenId ?? items[0]?.id ?? null,
-  );
+  const [openIds, setOpenIds] = useState<ReadonlySet<string>>(() => {
+    if (defaultOpenAll) return new Set(items.map((item) => item.id));
+    if (defaultOpenId) return new Set([defaultOpenId]);
+    return new Set();
+  });
 
   return (
     <div className={cn("flex flex-col gap-4", className)}>
       {items.map((item) => {
-        const isOpen = openId === item.id;
+        const isOpen = openIds.has(item.id);
         const panelId = `${baseId}-${item.id}-panel`;
         const buttonId = `${baseId}-${item.id}-button`;
 
@@ -58,7 +65,15 @@ export function FaqAccordion({
               aria-expanded={isOpen}
               aria-controls={panelId}
               onClick={() =>
-                setOpenId((current) => (current === item.id ? null : item.id))
+                setOpenIds((current) => {
+                  const next = new Set(current);
+                  if (next.has(item.id)) {
+                    next.delete(item.id);
+                  } else {
+                    next.add(item.id);
+                  }
+                  return next;
+                })
               }
               className="flex w-full items-start justify-between gap-6 text-left"
             >
@@ -86,7 +101,7 @@ export function FaqAccordion({
             >
               <div className="overflow-hidden">
                 <p className="text-sm font-medium leading-5 text-[#323232]">
-                  {item.answer}
+                  {renderFaqAnswer(item.answer)}
                 </p>
               </div>
             </div>

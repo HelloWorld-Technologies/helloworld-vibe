@@ -8,21 +8,21 @@ function StatDivider() {
   return (
     <div
       aria-hidden
-      className="hidden h-10 w-px shrink-0 bg-gray-300 lg:block"
+      className="h-9 w-px shrink-0 self-center bg-gray-200 sm:h-10 lg:mx-1"
     />
   );
 }
 
 function WeekendsHeading() {
   return (
-    <div className="relative inline-block text-left">
-      <h2 className="font-playfair text-display-sm font-bold tracking-tight text-gray-900 sm:text-display-md">
+    <div className="relative inline-block text-center lg:text-left">
+      <h2 className="font-playfair text-[1.75rem] font-bold leading-[1.15] tracking-tight text-gray-900 sm:text-display-sm md:text-display-md">
         <span className="block">Weekends hit</span>
         <span className="mt-1 block leading-none sm:mt-2">
           <span
             className={cn(
-              "font-satoshi text-display-lg font-bold italic leading-[1.05] text-gradient-different",
-              "sm:text-display-xl md:text-display-2xl",
+              "font-satoshi text-[2.5rem] font-bold italic leading-[1.05] text-gradient-different",
+              "sm:text-display-lg md:text-display-xl lg:text-display-2xl",
             )}
           >
             Different
@@ -31,7 +31,7 @@ function WeekendsHeading() {
             here
             <span
               aria-hidden
-              className="absolute -bottom-4 left-0 w-max rotate-[-2.4deg] bg-blue-light-300 px-4 py-0.5 font-caveat text-sm text-gray-900 sm:-bottom-5 sm:px-5 sm:text-base"
+              className="absolute -bottom-4 left-1/2 w-max -translate-x-1/2 rotate-[-2.4deg] bg-blue-light-300 px-3 py-0.5 font-caveat text-sm text-gray-900 sm:-bottom-5 sm:left-0 sm:translate-x-0 sm:px-5 sm:text-base lg:left-0"
             >
               ✦ ps. Good vibes only!
             </span>
@@ -44,10 +44,10 @@ function WeekendsHeading() {
 
 export function HomepageWeekends() {
   return (
-    <section className="bg-white py-12 sm:py-16 lg:py-20">
+    <section className="bg-white py-10 sm:py-16 lg:py-20">
       <div className={pageShell.homepage}>
-        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <div className="overflow-hidden rounded-tl-[2rem] bg-gray-900 shadow-[11px_9px_0_0_#0baaec]">
+        <div className="grid items-center gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-16">
+          <div className="overflow-hidden rounded-tl-[1.5rem] bg-gray-900 shadow-[8px_7px_0_0_#0baaec] sm:rounded-tl-[2rem] sm:shadow-[11px_9px_0_0_#0baaec]">
             <video
               className="aspect-video w-full object-cover"
               src={homepageVideo.file}
@@ -64,22 +64,22 @@ export function HomepageWeekends() {
               <WeekendsHeading />
             </div>
 
-            <div className="flex w-full max-w-xl flex-wrap items-center justify-center gap-4 sm:gap-6 lg:flex-nowrap lg:justify-start lg:gap-0">
+            <div className="flex w-full items-stretch justify-between gap-0 sm:max-w-xl sm:justify-center sm:gap-0 lg:max-w-none lg:justify-start">
               {homepageStats.map((stat, index) => (
                 <div key={stat.id} className="contents">
                   {index > 0 ? <StatDivider /> : null}
-                  <div className="flex min-w-[4.5rem] items-center gap-2 sm:min-w-[5rem] lg:px-4">
+                  <div className="flex min-w-0 flex-1 items-center gap-1.5 px-1 sm:min-w-[5rem] sm:flex-none sm:gap-2 sm:px-3 lg:px-4">
                     <HomepageAsset
                       asset={stat.icon}
-                      width={32}
-                      height={32}
-                      className="size-8 shrink-0"
+                      width={28}
+                      height={28}
+                      className="size-6 shrink-0 sm:size-8"
                     />
-                    <div className="text-left">
-                      <p className="text-xl font-bold leading-7 text-gray-900 sm:text-2xl sm:leading-8">
+                    <div className="min-w-0 text-left">
+                      <p className="text-sm font-bold leading-5 text-gray-900 sm:text-xl sm:leading-7 md:text-2xl md:leading-8">
                         {stat.value}
                       </p>
-                      <p className="text-xs leading-[18px] text-gray-600">
+                      <p className="text-[0.625rem] leading-[0.875rem] text-gray-600 sm:text-xs sm:leading-[18px]">
                         {stat.label}
                       </p>
                     </div>
@@ -90,7 +90,7 @@ export function HomepageWeekends() {
 
             <Link
               href="/community"
-              className="mt-8 inline-flex h-12 items-center justify-center self-center rounded-full bg-hello-lime-400 px-8 text-base font-bold text-gray-900 transition-colors hover:bg-hello-lime-500 sm:mt-10 lg:self-start"
+              className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-hello-lime-400 px-8 text-base font-bold text-gray-900 transition-colors hover:bg-hello-lime-500 sm:mt-10 sm:w-auto lg:self-start"
             >
               See What&apos;s Happening!
             </Link>

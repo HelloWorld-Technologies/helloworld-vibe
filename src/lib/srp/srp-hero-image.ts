@@ -11,6 +11,7 @@ function normalizeImageSource(value: unknown): string {
 function formatHeroImageUrl(url: string): string {
   const trimmed = url.trim();
   if (!trimmed) return "";
+  if (trimmed.includes("coming-soon")) return srpHeroPlaceholderImage;
 
   if (trimmed.startsWith("/")) return trimmed;
 

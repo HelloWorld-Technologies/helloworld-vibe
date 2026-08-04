@@ -42,14 +42,13 @@ function FilterSlidersIcon({ className }: { className?: string }) {
   return (
     <svg aria-hidden viewBox="0 0 20 20" fill="none" className={className}>
       <path
-        d="M3 5h14M6 10h8M9 15h2"
+        d="M7 3v14M13 3v14"
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
       />
-      <circle cx="6" cy="5" r="1.5" fill="currentColor" />
-      <circle cx="12" cy="10" r="1.5" fill="currentColor" />
-      <circle cx="10" cy="15" r="1.5" fill="currentColor" />
+      <rect x="5" y="6" width="4" height="3" rx="0.75" fill="currentColor" />
+      <rect x="11" y="11" width="4" height="3" rx="0.75" fill="currentColor" />
     </svg>
   );
 }
@@ -210,9 +209,15 @@ function FilterDropdown({
 function SortDropdown({
   sortValue,
   onSelect,
+  className,
+  menuPlacement = "bottom",
+  fullWidth = false,
 }: {
   sortValue?: string;
   onSelect: (value: string) => void;
+  className?: string;
+  menuPlacement?: "top" | "bottom";
+  fullWidth?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -235,25 +240,35 @@ function SortDropdown({
   }, [open]);
 
   return (
-    <div ref={rootRef} className="relative ml-auto shrink-0">
+    <div ref={rootRef} className={cn("relative", className)}>
       <button
         type="button"
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-controls={listId}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3.5 text-sm text-gray-700 hover:bg-gray-50"
+        className={cn(
+          "inline-flex h-10 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3.5 text-sm text-gray-700 hover:bg-gray-50",
+          fullWidth && "w-full",
+        )}
       >
         <span>Sort By:</span>
-        <span className="font-semibold text-hello-lime-600">{selected.label}</span>
-        <ChevronDownIcon className="size-4 text-gray-500" />
+        <span className="truncate font-semibold text-hello-lime-900">
+          {selected.label}
+        </span>
+        <ChevronDownIcon className="ml-auto size-4 shrink-0 text-gray-500" />
       </button>
 
       {open ? (
         <ul
           id={listId}
           role="listbox"
-          className="absolute right-0 top-[calc(100%+0.375rem)] z-20 min-w-[12.5rem] overflow-hidden rounded-xl border border-gray-100 bg-white py-1 shadow-lg"
+          className={cn(
+            "absolute z-20 min-w-full overflow-hidden rounded-xl border border-gray-100 bg-white py-1 shadow-lg",
+            menuPlacement === "top"
+              ? "bottom-[calc(100%+0.375rem)] left-0 right-0"
+              : "right-0 top-[calc(100%+0.375rem)] min-w-[12.5rem]",
+          )}
         >
           {srpSortingOptions.map((option) => (
             <li key={option.value} role="option">
@@ -262,7 +277,7 @@ function SortDropdown({
                 className={cn(
                   "flex w-full px-3.5 py-2.5 text-left text-sm hover:bg-gray-50",
                   option.value === selected.value
-                    ? "font-semibold text-hello-lime-600"
+                    ? "font-semibold text-hello-lime-900"
                     : "text-gray-700",
                 )}
                 onClick={() => {
@@ -432,7 +447,7 @@ export function SrpFiltersBar({
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+      <div className="hidden flex-wrap items-center gap-2 sm:gap-3 md:flex">
         <FilterDropdown
           label="Budget"
           selectedLabel={selectedBudget?.value ? selectedBudget.label : "Budget"}
@@ -461,6 +476,7 @@ export function SrpFiltersBar({
         </button>
 
         <SortDropdown
+          className="ml-auto shrink-0"
           sortValue={query.sort}
           onSelect={(value) =>
             setQuery({ sort: value === "popularity" ? undefined : value })
@@ -483,6 +499,31 @@ export function SrpFiltersBar({
           ))}
         </div>
       ) : null}
+
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 md:hidden">
+        <div className="pointer-events-auto border-t border-gray-100 bg-white px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+          <div className="mx-auto flex max-w-7xl items-center gap-3">
+            <button
+              type="button"
+              onClick={openFiltersModal}
+              className="inline-flex h-10 shrink-0 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              <FilterSlidersIcon className="size-4" />
+              Filters
+            </button>
+
+            <SortDropdown
+              className="min-w-0 flex-1"
+              fullWidth
+              menuPlacement="top"
+              sortValue={query.sort}
+              onSelect={(value) =>
+                setQuery({ sort: value === "popularity" ? undefined : value })
+              }
+            />
+          </div>
+        </div>
+      </div>
 
       <Modal
         open={filtersOpen}
