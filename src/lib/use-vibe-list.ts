@@ -23,6 +23,7 @@ export function useVibeList() {
       const cached = readStoredVibeList();
       if (cached) {
         if (!cancelled) {
+          persistVibeList(cached);
           setVibes(cached);
           setIsLoading(false);
         }

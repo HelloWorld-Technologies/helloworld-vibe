@@ -15,6 +15,7 @@
     "fig-kiwi": "^0.0.1",
     "gray-matter": "^4.0.3",
     "kiwi-schema": "^0.5.0",
+    "leaflet": "^1.9.4",
     "lottie-react": "^2.4.1",
     "next": "16.2.9",
     "next-mdx-remote": "^6.0.0",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/leaflet": "^1.9.22",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

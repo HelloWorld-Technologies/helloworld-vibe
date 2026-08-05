@@ -89,6 +89,20 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
                   items={view.nearbyItems}
                   mapUrl={view.mapUrl}
                   subtitle={view.nearbyDescription}
+                  property={{
+                    name: view.displayName,
+                    addressLine: [
+                      view.addressLine,
+                      view.locality,
+                    ]
+                      .filter(Boolean)
+                      .join(", "),
+                    locality: view.locality,
+                    imageSrc: view.mapImageSrc ?? view.galleryImages[0],
+                    startingRent: view.startingRent,
+                    latitude: view.latitude,
+                    longitude: view.longitude,
+                  }}
                 />
                 <HdpMoments
                   displayName={view.displayName}
