@@ -31,7 +31,7 @@ type PropertyGalleryProps = {
 function GalleryBadge({ children }: { children: React.ReactNode }) {
   if (children == null || children === "") return null;
   return (
-    <span className="absolute left-3 top-3 z-10 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">
+    <span className="absolute left-3 top-3 z-10 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold capitalize text-brand-700">
       {children}
     </span>
   );

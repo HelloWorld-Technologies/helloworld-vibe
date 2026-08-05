@@ -220,6 +220,13 @@ function buildHdpView(options: {
     ...mapMomentsToGalleryItems(moments),
     ...mediaMoments,
   ];
+  const latitude = Number(property.address?.latitude);
+  const longitude = Number(property.address?.longitude);
+  const mapImageSrc =
+    galleryImages[0] ||
+    (property.hdp_image
+      ? imageUrlFormatter("hdp", property.hdp_image)
+      : undefined);
 
   return {
     propertyId: property.id,
@@ -261,6 +268,9 @@ function buildHdpView(options: {
     residentReviews,
     googleLink: googleData?.google_link || undefined,
     nearbyDescription: property.nearby_description || undefined,
+    latitude: Number.isFinite(latitude) ? latitude : undefined,
+    longitude: Number.isFinite(longitude) ? longitude : undefined,
+    mapImageSrc,
   };
 }
 

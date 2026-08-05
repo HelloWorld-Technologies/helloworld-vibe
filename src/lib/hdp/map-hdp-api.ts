@@ -1,6 +1,10 @@
 import { capitalizeFirstLetter } from "@/src/lib/string-utils";
-import type { GoogleData, NearByArea } from "@/src/models/property";
+import type { GoogleData, NearByArea, NearbyData } from "@/src/models/property";
 import type { NeighborhoodCardData } from "@/src/tokens/neighborhood-card";
+import {
+  nearbyCategoryFlow,
+  nearbyComingSoonImage,
+} from "@/src/tokens/nearby-categories";
 import type {
   HdpResidentReview,
   HdpReviewCategory,
@@ -26,13 +30,6 @@ const NEARBY_EMOJI: Record<string, string> = {
   mall: "🏬",
 };
 
-const NEARBY_IMAGES = [
-  "/assets/community/hero/hero-1.png",
-  "/assets/community/hero/hero-2.png",
-  "/assets/locality/transit-bento-desktop.png",
-  "/assets/community/sports/rectangle-2363-3.png",
-] as const;
-
 function formatNearbyLabel(key: string): string {
   return key
     .replace(/[_-]+/g, " ")
@@ -50,10 +47,94 @@ function nearbyEmoji(key: string): string {
   return "📍";
 }
 
-function formatDistanceAway(distance?: string): string {
-  const value = String(distance || "").trim();
-  if (!value) return "";
-  return /km$/i.test(value) ? `${value} away` : `${value} km away`;
+function parseDistanceKm(distance?: string | number): number | null {
+  if (typeof distance === "number" && Number.isFinite(distance)) {
+    return distance;
+  }
+  const raw = String(distance ?? "").trim();
+  if (!raw) return null;
+  const match = raw.match(/([\d.]+)/);
+  if (!match) return null;
+  const value = Number(match[1]);
+  return Number.isFinite(value) ? value : null;
+}
+
+function formatDistanceAway(distance?: string | number): string {
+  const km = parseDistanceKm(distance);
+  if (km == null) {
+    const value = String(distance || "").trim();
+    return value
+      ? /km$/i.test(value)
+        ? `${value} away`
+        : `${value} km away`
+      : "";
+  }
+
+  // Prefer a walk estimate for short distances (≈12 min per km).
+  if (km > 0 && km < 2) {
+    const minutes = Math.max(1, Math.round(km * 12));
+    return `${minutes} min walk`;
+  }
+
+  const rounded =
+    km < 10 ? km.toFixed(1).replace(/\.0$/, "") : String(Math.round(km));
+  return `${rounded} km away`;
+}
+
+function parseCoord(value?: string | number): number | undefined {
+  if (value == null || value === "") return undefined;
+  const n = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(n) ? n : undefined;
+}
+
+function sortPlacesByDistance(places: readonly NearbyData[]): NearbyData[] {
+  return [...places].sort((a, b) => {
+    const distA = parseDistanceKm(a.distance);
+    const distB = parseDistanceKm(b.distance);
+    if (distA == null && distB == null) return 0;
+    if (distA == null) return 1;
+    if (distB == null) return -1;
+    return distA - distB;
+  });
+}
+
+function normalizeNearbyKey(key: string): string {
+  return key.trim().toLowerCase().replace(/[\s-]+/g, "_");
+}
+
+function findPlacesForCategory(
+  nearBy: NearByArea,
+  apiKeys: readonly string[],
+  claimedKeys: ReadonlySet<string>,
+): { key: string; places: NearbyData[] } | null {
+  const entries = Object.entries(nearBy).filter(
+    ([key]) => !claimedKeys.has(key),
+  );
+
+  for (const apiKey of apiKeys) {
+    const needle = normalizeNearbyKey(apiKey);
+    for (const [key, places] of entries) {
+      if (!Array.isArray(places) || places.length === 0) continue;
+      if (normalizeNearbyKey(key) === needle) {
+        const valid = places.filter((place) => place?.name);
+        if (valid.length > 0) return { key, places: valid };
+      }
+    }
+  }
+
+  for (const apiKey of apiKeys) {
+    const needle = normalizeNearbyKey(apiKey);
+    for (const [key, places] of entries) {
+      if (!Array.isArray(places) || places.length === 0) continue;
+      const normalized = normalizeNearbyKey(key);
+      if (normalized.includes(needle) || needle.includes(normalized)) {
+        const valid = places.filter((place) => place?.name);
+        if (valid.length > 0) return { key, places: valid };
+      }
+    }
+  }
+
+  return null;
 }
 
 export function mergeNearByAreas(
@@ -73,50 +154,85 @@ export function mergeNearByAreas(
 
 export function mapNearByToNeighborhoodCards(
   nearBy: NearByArea | null | undefined,
-  mapUrl?: string,
+  _mapUrl?: string,
 ): NeighborhoodCardData[] {
-  if (!nearBy) return [];
+  if (!nearBy || Object.keys(nearBy).length === 0) return [];
 
-  const items: NeighborhoodCardData[] = [];
-  let imageIndex = 0;
+  const source = nearBy;
+  const claimedKeys = new Set<string>();
 
-  for (const [categoryKey, places] of Object.entries(nearBy)) {
-    if (!Array.isArray(places)) continue;
+  const flowCards: NeighborhoodCardData[] = nearbyCategoryFlow.flatMap((def) => {
+    const matched = findPlacesForCategory(source, def.apiKeys, claimedKeys);
+    if (matched) claimedKeys.add(matched.key);
+    const places = matched?.places ?? [];
 
-    const options = places
-      .filter((place) => place?.name)
-      .map((place, placeIndex) => {
-        const imageSrc = NEARBY_IMAGES[imageIndex % NEARBY_IMAGES.length];
-        imageIndex += 1;
-        return {
-          id: `${categoryKey}-${placeIndex}`,
-          placeName: place.name,
-          walkTime: formatDistanceAway(place.distance) || "Nearby",
-          imageSrc,
-          imageAlt: place.name,
-        };
-      });
+    if (places.length === 0) return [];
 
-    if (options.length === 0) continue;
+    const nearestFirst = sortPlacesByDistance(places);
+    const options = nearestFirst.map((place, placeIndex) => ({
+      id: `${def.id}-${placeIndex}`,
+      placeName: place.name,
+      walkTime: formatDistanceAway(place.distance) || "Nearby",
+      imageSrc: nearbyComingSoonImage,
+      imageAlt: place.name,
+      latitude: parseCoord(place.latitude),
+      longitude: parseCoord(place.longitude),
+    }));
 
-    const category = formatNearbyLabel(categoryKey);
     const primary = options[0];
 
-    items.push({
+    return [
+      {
+        id: def.id,
+        emoji: def.emoji,
+        category: def.category,
+        placeName: primary.placeName,
+        imageSrc: nearbyComingSoonImage,
+        imageAlt: primary.imageAlt,
+        walkTime: primary.walkTime,
+        linkLabel: def.linkLabel,
+        modalLabel: def.modalLabel,
+        options,
+      },
+    ];
+  });
+
+  // Append any unmatched API categories after the design flow.
+  for (const [categoryKey, places] of Object.entries(source)) {
+    if (claimedKeys.has(categoryKey)) continue;
+    if (!Array.isArray(places) || places.length === 0) continue;
+
+    const validPlaces = places.filter((place) => place?.name);
+    if (validPlaces.length === 0) continue;
+
+    const category = formatNearbyLabel(categoryKey);
+    const nearestFirst = sortPlacesByDistance(validPlaces);
+    const options = nearestFirst.map((place, placeIndex) => ({
+      id: `${categoryKey}-${placeIndex}`,
+      placeName: place.name,
+      walkTime: formatDistanceAway(place.distance) || "Nearby",
+      imageSrc: nearbyComingSoonImage,
+      imageAlt: place.name,
+      latitude: parseCoord(place.latitude),
+      longitude: parseCoord(place.longitude),
+    }));
+    const primary = options[0];
+
+    flowCards.push({
       id: categoryKey,
       emoji: nearbyEmoji(categoryKey),
       category,
       placeName: primary.placeName,
-      imageSrc: primary.imageSrc,
+      imageSrc: primary.imageSrc ?? nearbyComingSoonImage,
       imageAlt: primary.imageAlt,
       walkTime: primary.walkTime,
-      linkLabel: `View ${category}`,
+      linkLabel: `View ${category} Nearby`,
+      modalLabel: category,
       options,
-      ...(mapUrl && options.length === 1 ? { href: mapUrl } : {}),
     });
   }
 
-  return items;
+  return flowCards;
 }
 
 function ratingLabel(rating: number): string {
@@ -126,20 +242,30 @@ function ratingLabel(rating: number): string {
   return "Rated";
 }
 
-export function mapGoogleDataToReviewSummary(googleData: GoogleData | null | undefined) {
+export function mapGoogleDataToReviewSummary(
+  googleData: GoogleData | null | undefined,
+) {
   if (!googleData) return null;
 
   const rating = Number(googleData.google_rating);
   const reviewCount =
-    googleData.google_reviews_new?.length ?? googleData.google_reviews?.length ?? 0;
+    googleData.google_reviews_new?.length ??
+    googleData.google_reviews?.length ??
+    0;
 
   if (!Number.isFinite(rating) && reviewCount === 0) return null;
 
   const categories: HdpReviewCategory[] = [
     { label: "Cleanliness", score: Number.isFinite(rating) ? rating : 4.5 },
-    { label: "Location", score: Number.isFinite(rating) ? Math.max(0, rating - 0.1) : 4.4 },
+    {
+      label: "Location",
+      score: Number.isFinite(rating) ? Math.max(0, rating - 0.1) : 4.4,
+    },
     { label: "Amenities", score: Number.isFinite(rating) ? rating : 4.5 },
-    { label: "Community", score: Number.isFinite(rating) ? Math.max(0, rating - 0.2) : 4.3 },
+    {
+      label: "Community",
+      score: Number.isFinite(rating) ? Math.max(0, rating - 0.2) : 4.3,
+    },
   ];
 
   return {

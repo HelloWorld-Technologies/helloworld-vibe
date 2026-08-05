@@ -64,19 +64,17 @@ export const hdpSelectedVibes: readonly HdpVibeMatch[] = [
 ];
 
 export const hdpResidentInterests = [
-  "🚀 Hustle",
-  "🍔 Foodie",
-  "🌚 Night Owl",
-  "🎉 Party",
-  "👩🏼‍💻 Coders",
-  "🏏 Cricket",
-  "🍛 Biryani Lovers",
-  "✈️ Explorer",
-  "🎬 Movie Buff",
-  "🍳 Cooking",
-  "🏊 Swimming",
-  "🐱 Pet Lover",
-  "📚 Reader",
+  { emoji: "💻", label: "Coder" },
+  { emoji: "🎮", label: "Gamer" },
+  { emoji: "🎵", label: "Music" },
+  { emoji: "🏋️", label: "Fitness Freak" },
+  { emoji: "🏏", label: "Cricket" },
+  { emoji: "⚽️", label: "Football" },
+  { emoji: "🏸", label: "Badminton" },
+  { emoji: "🏃", label: "Runner" },
+  { emoji: "🎲", label: "Board Games" },
+  { emoji: "📸", label: "Creator" },
+  { emoji: "📚", label: "Bookworm" },
 ] as const;
 
 export const hdpResidentWorkplaces = {

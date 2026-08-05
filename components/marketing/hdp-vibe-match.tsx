@@ -17,7 +17,7 @@ function VibeScoreRing({ score }: { score: number }) {
 
   return (
     <div className="relative size-14 shrink-0">
-      <svg viewBox="0 0 56 56" className="size-full -rotate-90" aria-hidden>
+      <svg viewBox="0 0 56 56" className="size-full rotate-90" aria-hidden>
         <circle
           cx="28"
           cy="28"
@@ -52,7 +52,13 @@ function VibeScoreRing({ score }: { score: number }) {
   );
 }
 
-function ChevronDown({ className }: { className?: string }) {
+function ChevronIcon({
+  className,
+  direction = "down",
+}: {
+  className?: string;
+  direction?: "up" | "down";
+}) {
   return (
     <svg
       aria-hidden
@@ -61,7 +67,7 @@ function ChevronDown({ className }: { className?: string }) {
       className={cn("size-3.5", className)}
     >
       <path
-        d="M4 6.5 8 10.5 12 6.5"
+        d={direction === "up" ? "M4 10.5 8 6.5 12 10.5" : "M4 6.5 8 10.5 12 6.5"}
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
@@ -83,16 +89,18 @@ function ResidentInsightCard({
   extraCount: number;
 }) {
   return (
-    <div className="rounded-xl bg-blue-light-50 px-3 py-2.5">
+    <div className="min-w-0 flex-1 rounded-2xl bg-[#EBF5FF]/70 px-3.5 py-3">
       <p className="flex items-center gap-1.5 text-xs text-gray-500">
-        <span aria-hidden>{emoji}</span>
+        <span aria-hidden className="text-sm leading-none">
+          {emoji}
+        </span>
         {label}
       </p>
       <div className="mt-1.5 flex items-center gap-2">
         <p className="min-w-0 flex-1 truncate text-sm font-semibold text-gray-800">
           {items.join(" • ")}
         </p>
-        <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-white text-[11px] font-semibold text-gray-800 shadow-xs">
+        <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-white text-[11px] font-semibold text-gray-800 shadow-sm">
           +{extraCount}
         </span>
       </div>
@@ -107,54 +115,54 @@ export function HdpVibeMatch({
   displayName?: string;
   className?: string;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const propertyLabel = displayName ?? "this property";
 
   return (
     <section
       className={cn(
-        "rounded-2xl border border-[#ece6f5] bg-gradient-property-vibe-match p-4 md:p-5",
+        "rounded-[1.25rem] border border-[#ece6f5]/80 bg-gradient-property-vibe-match p-4 md:rounded-3xl md:p-6",
         className,
       )}
       aria-label="Vibe match"
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <h2 className="text-lg font-medium leading-6 text-[#1a1a2e]">
+          <h2 className="text-lg font-bold leading-6 tracking-tight text-gray-900 md:text-xl md:leading-7">
             How well this home matches your vibe
           </h2>
-          <p className="mt-1 text-xs leading-[18px] text-gray-500">
+          <p className="mt-1 text-sm leading-5 text-gray-500">
             Based on the {hdpSelectedVibes.length} vibes you selected
           </p>
         </div>
         <VibeScoreRing score={hdpVibeOverallScore} />
       </div>
 
-      <div className="-mx-4 mt-4 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:overflow-visible md:px-0">
-        <div className="flex w-max gap-2 md:w-full md:flex-wrap">
+      <div className="-mx-1 mt-5 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:overflow-visible md:px-0">
+        <div className="flex w-max gap-2.5 md:w-full md:gap-3">
           {hdpSelectedVibes.map((vibe) => (
             <div
               key={vibe.label}
-              className="flex w-[5.5rem] shrink-0 flex-col items-center rounded-2xl border border-[#ede8f5] bg-white px-2 py-3 md:w-[5.75rem]"
+              className="flex w-[5.75rem] shrink-0 flex-col items-center rounded-2xl bg-white px-2 py-3.5 shadow-sm md:w-auto md:min-w-0 md:flex-1"
             >
-              <span className="text-lg" aria-hidden>
+              <span className="text-xl leading-none" aria-hidden>
                 {vibe.emoji}
               </span>
-              <span className="mt-1 text-center text-xs font-medium text-gray-800">
+              <span className="mt-2 text-center text-xs font-medium text-gray-800">
                 {vibe.label}
               </span>
-              <span className="text-gradient-score-vibe text-sm font-bold">
+              <span className="text-gradient-score-vibe mt-1 text-sm font-bold">
                 {vibe.score}%
               </span>
-              <span className="text-xs text-gray-400">Match</span>
+              <span className="text-[11px] text-gray-400">Match</span>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-2.5">
+      <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:gap-3">
         <ResidentInsightCard
-          emoji="👨‍💼"
+          emoji="👨‍💻"
           label="Residents work at"
           items={hdpResidentWorkplaces.preview}
           extraCount={hdpResidentWorkplaces.extraCount}
@@ -167,23 +175,18 @@ export function HdpVibeMatch({
         />
       </div>
 
-      <div className="mt-4 flex items-start justify-between gap-3">
-        <p className="min-w-0 flex-1 text-xs font-medium leading-[18px] text-gray-800">
+      <div className="mt-5 flex items-start justify-between gap-3">
+        <p className="min-w-0 flex-1 text-sm font-medium leading-5 text-gray-600">
           See what residents at {propertyLabel} are usually into
         </p>
         <button
           type="button"
           onClick={() => setExpanded((value) => !value)}
-          className="inline-flex shrink-0 items-center gap-0.5 text-xs font-medium text-blue-light-600 hover:underline"
+          className="inline-flex shrink-0 items-center gap-0.5 text-sm font-semibold text-blue-light-600 hover:text-blue-light-700"
           aria-expanded={expanded}
         >
           {expanded ? "Show Less" : "Show More"}
-          <ChevronDown
-            className={cn(
-              "transition-transform",
-              expanded && "rotate-180",
-            )}
-          />
+          <ChevronIcon direction={expanded ? "up" : "down"} />
         </button>
       </div>
 
@@ -191,10 +194,11 @@ export function HdpVibeMatch({
         <div className="mt-3 flex flex-wrap gap-2">
           {hdpResidentInterests.map((interest) => (
             <span
-              key={interest}
-              className="rounded-full border border-gray-300/30 bg-white px-3 py-2 text-sm font-medium text-gray-800"
+              key={interest.label}
+              className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-sm font-medium text-gray-800 shadow-sm"
             >
-              {interest}
+              <span aria-hidden>{interest.emoji}</span>
+              {interest.label}
             </span>
           ))}
         </div>

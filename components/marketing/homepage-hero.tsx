@@ -78,6 +78,7 @@ function VibeFilters({
         chips={chips}
         selectedIds={selectedVibes}
         onToggle={onToggle}
+        showMaxCount={4}
         className="mt-3 lg:flex-wrap lg:overflow-visible"
       />
     </div>

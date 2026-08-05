@@ -93,10 +93,12 @@ export interface GoogleData {
 
 export interface NearbyData {
   name: string;
-  rating: number;
-  distance: string;
-  vicinity: string;
-  types: Array<string>;
+  rating?: number;
+  distance: string | number;
+  vicinity?: string;
+  types?: Array<string>;
+  latitude?: string | number;
+  longitude?: string | number;
 }
 
 export interface SimilarProperty extends Property {

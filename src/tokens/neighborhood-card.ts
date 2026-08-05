@@ -4,6 +4,8 @@ export interface NeighborhoodPlaceOption {
   walkTime: string;
   imageSrc?: string;
   imageAlt?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface NeighborhoodCardData {
@@ -16,6 +18,10 @@ export interface NeighborhoodCardData {
   walkTime: string;
   linkLabel: string;
   href?: string;
+  /** True when this category has no API places yet. */
+  comingSoon?: boolean;
+  /** Short label for map modal category chips. */
+  modalLabel?: string;
   options?: readonly NeighborhoodPlaceOption[];
 }
 

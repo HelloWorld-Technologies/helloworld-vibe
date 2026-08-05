@@ -43,6 +43,9 @@ export type HdpPageView = {
   residentReviews: readonly HdpResidentReview[];
   googleLink?: string;
   nearbyDescription?: string;
+  latitude?: number;
+  longitude?: number;
+  mapImageSrc?: string;
 };
 
 export type HdpPageContext = {

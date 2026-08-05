@@ -48,14 +48,19 @@ export function readStoredVibeList(): VibeChip[] | null {
     const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed) || parsed.length === 0) return null;
 
-    const chips = parsed.filter(
-      (item): item is VibeChip =>
-        !!item &&
-        typeof item === "object" &&
-        typeof (item as VibeChip).id === "string" &&
-        typeof (item as VibeChip).label === "string" &&
-        typeof (item as VibeChip).emoji === "string",
-    );
+    const chips = parsed
+      .filter(
+        (item): item is VibeChip =>
+          !!item &&
+          typeof item === "object" &&
+          typeof (item as VibeChip).id === "string" &&
+          typeof (item as VibeChip).label === "string" &&
+          typeof (item as VibeChip).emoji === "string",
+      )
+      .map((chip) => ({
+        ...chip,
+        emoji: emojiByCode[normalizeCode(chip.id)] ?? chip.emoji,
+      }));
 
     return chips.length > 0 ? chips : null;
   } catch {

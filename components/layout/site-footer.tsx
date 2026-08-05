@@ -167,9 +167,9 @@ export function SiteFooter() {
               {footerContact.address}
             </p>
 
-            <div className="mt-6 flex items-start justify-between gap-6 lg:mt-16 lg:block">
+            <div className="mt-6 space-y-6 lg:mt-16 lg:space-y-0">
               <FooterContactDetails />
-              <div className="shrink-0 lg:hidden">
+              <div className="lg:hidden">
                 <FooterSocialLinks variant="mobile" />
               </div>
             </div>

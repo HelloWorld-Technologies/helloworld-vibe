@@ -7,6 +7,7 @@ import { NeighborhoodCategoryPickerModal } from "@/components/marketing/neighbor
 import { cn } from "@/src/lib/cn";
 import { useAnimateOnView } from "@/src/lib/use-animate-on-view";
 import type { NeighborhoodCardData } from "@/src/tokens/neighborhood-card";
+import { srpCardComingSoonImage } from "@/src/tokens/srp-card";
 
 const CARD_ANIMATION_MS = 700;
 const STAGGER_MS = 100;
@@ -49,6 +50,12 @@ export function NeighborhoodCard({
   onLinkClick,
   className,
 }: NeighborhoodCardProps) {
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const displayImageSrc =
+    !imageSrc || failedSrc === imageSrc
+      ? srpCardComingSoonImage
+      : imageSrc;
+
   const linkContent = (
     <>
       {linkLabel}
@@ -63,9 +70,6 @@ export function NeighborhoodCard({
     <article
       className={cn(
         "flex w-[220px] shrink-0 flex-col rounded-2xl border border-blue-light-200 bg-white p-4",
-        "transition-[transform,box-shadow] duration-300 ease-out",
-        "hover:-translate-y-1 hover:shadow-md",
-        "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
         className,
       )}
     >
@@ -78,10 +82,14 @@ export function NeighborhoodCard({
 
       <div className="relative mt-3 aspect-[5/4] overflow-hidden rounded-xl bg-blue-light-50">
         <Image
-          src={imageSrc}
+          key={displayImageSrc}
+          src={displayImageSrc}
           alt={imageAlt ?? placeName}
           fill
-          className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none"
+          className="object-cover"
+          onError={() => {
+            if (imageSrc) setFailedSrc(imageSrc);
+          }}
         />
       </div>
 
@@ -164,6 +172,8 @@ export interface NeighborhoodTimelineProps {
   isActive?: boolean;
   shouldAnimate?: boolean;
   scrollContainerRef?: RefObject<HTMLDivElement | null>;
+  /** Opens the nearby map modal for a category (replaces the place picker). */
+  onViewNearby?: (categoryId: string) => void;
 }
 
 export function NeighborhoodTimeline({
@@ -174,6 +184,7 @@ export function NeighborhoodTimeline({
   isActive: isActiveProp,
   shouldAnimate: shouldAnimateProp,
   scrollContainerRef,
+  onViewNearby,
 }: NeighborhoodTimelineProps) {
   const { ref, isActive: internalActive, shouldAnimate: internalAnimate } =
     useAnimateOnView(animate);
@@ -225,6 +236,7 @@ export function NeighborhoodTimeline({
             const delay = index * STAGGER_MS + CARD_DELAY_OFFSET_MS;
             const selectedIndex = selectedByCategory[item.id] ?? 0;
             const displayItem = resolveDisplayCard(item, selectedIndex);
+            const useMapModal = Boolean(onViewNearby);
             const hasPicker = Boolean(item.options && item.options.length > 0);
 
             return (
@@ -255,9 +267,15 @@ export function NeighborhoodTimeline({
                 >
                   <NeighborhoodCard
                     {...displayItem}
-                    href={hasPicker ? undefined : item.href}
+                    href={
+                      useMapModal || hasPicker ? undefined : item.href
+                    }
                     onLinkClick={
-                      hasPicker ? () => setPickerCategoryId(item.id) : undefined
+                      useMapModal
+                        ? () => onViewNearby?.(item.id)
+                        : hasPicker
+                          ? () => setPickerCategoryId(item.id)
+                          : undefined
                     }
                     className="group w-full"
                   />
@@ -268,22 +286,24 @@ export function NeighborhoodTimeline({
         </div>
       </div>
 
-      <NeighborhoodCategoryPickerModal
-        open={pickerCategoryId !== null}
-        onClose={() => setPickerCategoryId(null)}
-        category={pickerItem?.category ?? ""}
-        options={pickerItem?.options ?? []}
-        selectedIndex={
-          pickerItem ? (selectedByCategory[pickerItem.id] ?? 0) : 0
-        }
-        onSelect={(index) => {
-          if (!pickerItem) return;
-          setSelectedByCategory((current) => ({
-            ...current,
-            [pickerItem.id]: index,
-          }));
-        }}
-      />
+      {!onViewNearby ? (
+        <NeighborhoodCategoryPickerModal
+          open={pickerCategoryId !== null}
+          onClose={() => setPickerCategoryId(null)}
+          category={pickerItem?.category ?? ""}
+          options={pickerItem?.options ?? []}
+          selectedIndex={
+            pickerItem ? (selectedByCategory[pickerItem.id] ?? 0) : 0
+          }
+          onSelect={(index) => {
+            if (!pickerItem) return;
+            setSelectedByCategory((current) => ({
+              ...current,
+              [pickerItem.id]: index,
+            }));
+          }}
+        />
+      ) : null}
     </div>
   );
 }
