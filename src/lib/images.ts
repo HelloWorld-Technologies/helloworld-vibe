@@ -2,7 +2,7 @@ import { srpCardComingSoonImage } from "@/src/tokens/srp-card";
 
 const S3_IMAGE_BUCKET_BASE_URL =
   process.env.NEXT_PUBLIC_S3_IMAGE_BUCKET_BASE_URL ??
-  "https://hw-production-compressed-image.s3.ap-south-1.amazonaws.com/";
+  "https://images.thehelloworld.com/";
 
 function encodeImageUrl(url: string): string {
   return url.replace(/\(/g, "%28").replace(/\)/g, "%29").replace(/ /g, "%20");
