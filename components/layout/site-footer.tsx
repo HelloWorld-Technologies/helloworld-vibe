@@ -55,30 +55,6 @@ function MailIcon({ className }: { className?: string }) {
   );
 }
 
-function SocialIcon({ id }: { id: string }) {
-  if (id === "facebook") {
-    return (
-      <svg aria-hidden viewBox="0 0 24 24" fill="currentColor" className="size-3.5">
-        <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97H15.83c-1.49 0-1.955.93-1.955 1.886v2.268h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" />
-      </svg>
-    );
-  }
-
-  if (id === "instagram") {
-    return (
-      <svg aria-hidden viewBox="0 0 24 24" fill="currentColor" className="size-3.5">
-        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.334 3.608 1.308.975.975 1.246 2.242 1.308 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.334 2.633-1.308 3.608-.975.975-2.242 1.246-3.608 1.308-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.334-3.608-1.308-.975-.975-1.246-2.242-1.308-3.608C2.175 15.747 2.163 15.367 2.163 12s.012-3.584.07-4.85c.062-1.366.334-2.633 1.308-3.608.975-.975 2.242-1.246 3.608-1.308C8.416 2.175 8.796 2.163 12 2.163zm0-2.163C8.741 0 8.332.014 7.052.072 5.775.13 4.602.402 3.635 1.37 2.668 2.337 2.396 3.51 2.338 4.788 2.28 6.068 2.266 6.477 2.266 12c0 5.523.014 5.932.072 7.212.058 1.277.33 2.45 1.297 3.417.967.967 2.14 1.239 3.417 1.297 1.28.058 1.689.072 7.212.072s5.932-.014 7.212-.072c1.277-.058 2.45-.33 3.417-1.297.967-.967 1.239-2.14 1.297-3.417.058-1.28.072-1.689.072-7.212s-.014-5.932-.072-7.212c-.058-1.277-.33-2.45-1.297-3.417C21.45 2.402 20.277 2.13 19 .072 17.72.014 17.311 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
-      </svg>
-    );
-  }
-
-  return (
-    <svg aria-hidden viewBox="0 0 24 24" fill="currentColor" className="size-3.5">
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-    </svg>
-  );
-}
-
 function FooterDivider({ className }: { className?: string }) {
   return <div aria-hidden className={cn("h-px w-full bg-[#e6e6e6]", className)} />;
 }
@@ -92,16 +68,29 @@ function FooterLinkList({
 }) {
   return (
     <ul className={className}>
-      {links.map((link) => (
-        <li key={link.href}>
-          <Link
-            href={link.href}
-            className="inline-flex min-h-8 items-center text-[0.9375rem] leading-[1.3] text-[#0a0e14]/60 transition-colors hover:text-[#0a0e14] lg:min-h-0"
-          >
-            {link.label}
-          </Link>
-        </li>
-      ))}
+      {links.map((link) => {
+        const isExternal = /^https?:\/\//i.test(link.href);
+        const classNameLink =
+          "inline-flex min-h-8 items-center text-[0.9375rem] leading-[1.3] text-[#0a0e14]/60 transition-colors hover:text-[#0a0e14] lg:min-h-0";
+        return (
+          <li key={`${link.label}-${link.href}`}>
+            {isExternal ? (
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classNameLink}
+              >
+                {link.label}
+              </a>
+            ) : (
+              <Link href={link.href} className={classNameLink}>
+                {link.label}
+              </Link>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -127,6 +116,50 @@ function FooterContactDetails() {
   );
 }
 
+/** Matches Figma: dark fill + white glyph (FB/IG rounded square, LI circle). */
+function SocialIcon({ id }: { id: (typeof socialLinks)[number]["id"] }) {
+  if (id === "facebook") {
+    return (
+      <svg aria-hidden viewBox="0 0 22 22" fill="none" className="size-[22px]">
+        <rect width="22" height="22" rx="5" fill="currentColor" />
+        <path
+          fill="#fff"
+          d="M14.2 12.05h1.85l.3-2.2h-2.15V8.45c0-.7.2-1.2 1.2-1.2h1.1V5.15h-1.6c-2.2 0-3.4 1.35-3.4 3.45v1.25H9.4v2.2h2.1V19h2.7v-6.95Z"
+        />
+      </svg>
+    );
+  }
+
+  if (id === "instagram") {
+    return (
+      <svg aria-hidden viewBox="0 0 22 22" fill="none" className="size-[22px]">
+        <rect width="22" height="22" rx="5" fill="currentColor" />
+        <rect
+          x="5.25"
+          y="5.25"
+          width="11.5"
+          height="11.5"
+          rx="3.25"
+          stroke="#fff"
+          strokeWidth="1.5"
+        />
+        <circle cx="11" cy="11" r="2.85" stroke="#fff" strokeWidth="1.5" />
+        <circle cx="15.15" cy="6.9" r="0.95" fill="#fff" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg aria-hidden viewBox="0 0 22 22" fill="none" className="size-[22px]">
+      <circle cx="11" cy="11" r="11" fill="currentColor" />
+      <path
+        fill="#fff"
+        d="M7.55 9.05H6.05v6.7h1.5v-6.7Zm-.75-2.4a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8Zm7.35 2.55c-.9 0-1.48.4-1.78.95V9.05h-1.48v6.7h1.5v-3.55c0-.95.4-1.55 1.2-1.55.72 0 1.08.5 1.08 1.5v3.6h1.5v-3.9c0-1.85-.98-2.85-2.72-2.85Z"
+      />
+    </svg>
+  );
+}
+
 function FooterSocialLinks({ variant }: { variant: "desktop" | "mobile" }) {
   return (
     <div>
@@ -140,10 +173,8 @@ function FooterSocialLinks({ variant }: { variant: "desktop" | "mobile" }) {
             rel="noopener noreferrer"
             aria-label={link.label}
             className={cn(
-              "inline-flex items-center justify-center transition-opacity hover:opacity-80",
-              variant === "mobile"
-                ? "size-[22px] rounded-md bg-[#0a0e14] text-white"
-                : "size-[22px] text-[#0a0e14]",
+              "inline-flex size-[22px] items-center justify-center text-[#252B37] transition-opacity hover:opacity-80",
+              variant === "mobile" ? "opacity-90" : undefined,
             )}
           >
             <SocialIcon id={link.id} />

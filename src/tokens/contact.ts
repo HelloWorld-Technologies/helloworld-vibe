@@ -10,7 +10,7 @@ export const contactMailing = {
   title: "Mailing address",
   company: "HelloWorld Technologies India Private Limited",
   address:
-    "375, 5th Main Rd, Sector 6, HSR Layout, Bengaluru, Karnataka 560102.",
+    "#556 Tattvam, 14th Main Rd, 7th Sector, HSR Layout, Bengaluru, Karnataka - 560068",
 } as const;
 
 export const contactQueries = {
@@ -35,4 +35,10 @@ export const contactEmails = {
       note: "For any issues, send an email",
     },
   ],
+} as const;
+
+export const contactLinkedIn = {
+  title: "Connect with us",
+  label: "LinkedIn",
+  href: "https://in.linkedin.com/company/thehelloworld",
 } as const;

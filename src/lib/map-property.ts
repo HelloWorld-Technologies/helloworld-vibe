@@ -1,3 +1,4 @@
+import { getGenderDisplayLabel } from "@/src/lib/gender-label";
 import { formatCityDisplayName } from "@/src/tokens/cities";
 import { imageUrlFormatter } from "@/src/lib/images";
 import { getPropertyHref } from "@/src/lib/sitemap-slug";
@@ -14,16 +15,7 @@ function normalizeImageSource(value: unknown): string {
 }
 
 function genderLabel(gender?: string): string | undefined {
-  switch (gender) {
-    case "MALE":
-      return "Men Only";
-    case "FEMALE":
-      return "Women Only";
-    case "ALL":
-      return undefined;
-    default:
-      return undefined;
-  }
+  return getGenderDisplayLabel(gender);
 }
 
 function statusLabel(property: Property): SrpCardStatusLabel | undefined {

@@ -4,6 +4,10 @@ import { useEffect, useId, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OtpInput } from "@/components/ui/otp-input";
+import {
+  getDefaultMoveInDateBounds,
+  MoveInDatePickerField,
+} from "@/components/ui/move-in-date-picker";
 import { sendLoginOtp, verifyLoginOtp } from "@/src/apis/login";
 import { getStoredMobile, isLoggedIn } from "@/src/lib/auth-storage";
 import { validateField } from "@/src/lib/form-validation";
@@ -83,37 +87,8 @@ function ChevronDownIcon({ className }: { className?: string }) {
   );
 }
 
-function CalendarIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 20 20"
-      fill="none"
-      className={className}
-    >
-      <path
-        d="M17.5 8.33333H2.5M13.3333 1.66667V5M6.66667 1.66667V5M6.5 18.3333H13.5C14.9001 18.3333 15.6002 18.3333 16.135 18.0608C16.6054 17.821 16.9877 17.4387 17.2275 16.9683C17.5 16.4335 17.5 15.7335 17.5 14.3333V7.66667C17.5 6.26654 17.5 5.56647 17.2275 5.03169C16.9877 4.56128 16.6054 4.17897 16.135 3.93915C15.6002 3.66667 14.9001 3.66667 13.5 3.66667H6.5C5.09987 3.66667 4.3998 3.66667 3.86502 3.93915C3.39462 4.17897 3.01231 4.56128 2.77249 5.03169C2.5 5.56647 2.5 6.26654 2.5 7.66667V14.3333C2.5 15.7335 2.5 16.4335 2.77249 16.9683C3.01231 17.4387 3.39462 17.821 3.86502 18.0608C4.3998 18.3333 5.09987 18.3333 6.5 18.3333Z"
-        stroke="currentColor"
-        strokeWidth="1.67"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function toDateInputValue(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
 function getMoveInDateBounds() {
-  const min = new Date();
-  const max = new Date();
-  max.setDate(max.getDate() + 6);
-  return { min: toDateInputValue(min), max: toDateInputValue(max) };
+  return getDefaultMoveInDateBounds();
 }
 
 function SelectField({
@@ -453,31 +428,15 @@ export function OccupantDetailsForm({
           </SelectField>
 
           <div className="flex w-full flex-col gap-1.5">
-            <label htmlFor={moveInDateId} className="text-sm font-medium text-gray-700">
-              Move in Date
-            </label>
-            <div className="relative">
-              <input
-                id={moveInDateId}
-                type="date"
-                name="moveInDate"
-                value={moveInDate}
-                min={dateBounds.min}
-                max={dateBounds.max}
-                onChange={(event) => setMoveInDate(event.target.value)}
-                aria-invalid={errors.moveInDate || undefined}
-                className={cn(
-                  "h-10 w-full rounded-lg border bg-white px-3.5 pr-10 text-sm shadow-xs transition-colors",
-                  "text-gray-900 focus:outline-none focus:ring-4",
-                  errors.moveInDate
-                    ? "border-error-300 hover:border-error-400 focus:border-error-300 focus:ring-error-100"
-                    : "border-gray-300 hover:border-gray-400 focus:border-hello-lime-300 focus:ring-hello-lime-100",
-                )}
-              />
-              <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500">
-                <CalendarIcon className="size-4" />
-              </span>
-            </div>
+            <MoveInDatePickerField
+              id={moveInDateId}
+              label="Move in Date"
+              value={moveInDate}
+              min={dateBounds.min}
+              max={dateBounds.max}
+              error={errors.moveInDate}
+              onChange={setMoveInDate}
+            />
             {errors.moveInDate ? (
               <p className="text-sm text-error-600">Select a move-in date</p>
             ) : null}

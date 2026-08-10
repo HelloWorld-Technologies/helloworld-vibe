@@ -20,6 +20,8 @@ export interface ModalProps {
   labelledBy?: string;
   describedBy?: string;
   closeLabel?: string;
+  /** Overlay stacking class. Use higher than `z-50` for nested modals (e.g. date picker). */
+  overlayClassName?: string;
 }
 
 function CloseIcon({ className }: { className?: string }) {
@@ -50,6 +52,7 @@ export function Modal({
   labelledBy,
   describedBy,
   closeLabel = "Close dialog",
+  overlayClassName = "z-50",
 }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(open);
@@ -104,7 +107,8 @@ export function Modal({
   return createPortal(
     <div
       className={cn(
-        "fixed inset-0 z-50 flex justify-center",
+        "fixed inset-0 flex justify-center",
+        overlayClassName,
         // Mobile: bottom sheet. Desktop: centered dialog.
         "items-end p-0 md:items-center md:p-6",
         !visible && "pointer-events-none",

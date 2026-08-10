@@ -1,12 +1,15 @@
 export const footerProductLinks = [
   { label: "Co living", href: "/coliving-in-bangalore" },
-  { label: "Student living", href: "/student-living" },
+  { label: "Student living", href: "/hostels-in-kota" },
   { label: "Community", href: "/community" },
 ] as const;
 
 export const footerAboutLinks = [
   { label: "About us", href: "/about-us" },
-  { label: "Work with us", href: "/careers" },
+  {
+    label: "Work with us",
+    href: "https://in.linkedin.com/company/thehelloworld",
+  },
   { label: "For home owners", href: "/owner" },
   { label: "Contact", href: "/contact" },
   { label: "Blog", href: "/blog" },
@@ -46,7 +49,7 @@ export const footerCityColumns = [
 
 export const footerContact = {
   address:
-    "1184, 5th Main Rd, Rajiv Gandhinagar Sector 7, HSR Layout, Bangalore, Karnataka 560102",
+    "#556 Tattvam, 14th Main Rd, 7th Sector, HSR Layout, Bengaluru, Karnataka - 560068",
   phone: "888 000 88 88",
   phoneHref: "tel:8880008888",
   email: "care@thehelloworld.com",
@@ -67,6 +70,6 @@ export const socialLinks = [
   {
     id: "linkedin",
     label: "LinkedIn",
-    href: "https://www.linkedin.com/company/helloworld-living/",
+    href: "https://in.linkedin.com/company/thehelloworld",
   },
 ] as const;

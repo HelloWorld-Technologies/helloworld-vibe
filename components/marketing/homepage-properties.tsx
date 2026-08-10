@@ -56,6 +56,7 @@ function PropertyCard({
       statusLabel={property.statusLabel}
       visitsToday={property.visitsToday}
       genderLabel={property.genderLabel}
+      propertyUrl={property.propertyUrl}
       className={className}
     />
   );

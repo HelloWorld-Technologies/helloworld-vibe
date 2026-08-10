@@ -52,13 +52,16 @@ export function getHdpPageTitle(
     return `${displayName} – Coliving PG${inPart}`;
   }
 
-  const g = String(property?.gender || "").toUpperCase();
-  if (g === "MALE") {
+  const g = String(property?.gender || "")
+    .trim()
+    .toUpperCase()
+    .replace(/[\s-]+/g, "_");
+  if (g === "MALE" || g === "BOYS" || g === "BOYS_ONLY") {
     return locationSuffix
       ? `${displayName} – Boys hostel in ${locationSuffix}`
       : `${displayName} – Boys hostel`;
   }
-  if (g === "FEMALE") {
+  if (g === "FEMALE" || g === "GIRLS" || g === "GIRLS_ONLY") {
     return locationSuffix
       ? `${displayName} – Girls hostel in ${locationSuffix}`
       : `${displayName} – Girls hostel`;

@@ -159,6 +159,7 @@ export function SrpListingsSection({
             statusLabel={property.statusLabel}
             visitsToday={property.visitsToday}
             genderLabel={property.genderLabel}
+            propertyUrl={property.propertyUrl}
             onRequestCallback={
               propertyActions
                 ? () =>

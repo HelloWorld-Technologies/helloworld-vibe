@@ -27,7 +27,13 @@ function isMomentsTag(tag: string | undefined): boolean {
 }
 
 function mediaLabel(tag: string | undefined): string | undefined {
-  return tag || undefined;
+  const value = String(tag || "").trim();
+  if (!value) return undefined;
+  if (value.toLowerCase() === "property") return undefined;
+  return value
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 function sortByDisplayOrder<T extends { display_order?: number }>(items: readonly T[]) {

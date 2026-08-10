@@ -170,7 +170,7 @@ function SidebarMenuRow({
   );
 
   const rowClassName =
-    "flex h-5 w-full items-center justify-between text-left transition-colors hover:opacity-80";
+    "flex min-h-10 w-full items-center justify-between py-1.5 text-left transition-colors hover:opacity-80";
 
   if (href) {
     return (
@@ -302,17 +302,17 @@ export function SiteHeaderSidebar({
           ) : (
             <>
               {userPhone ? (
-                <div className="mb-8 flex items-center gap-4">
-                  <div className="flex size-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-light-100 to-blue-light-300 text-blue-light-700">
-                    <UserAvatarIcon className="size-8" />
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-light-100 to-blue-light-300 text-blue-light-700">
+                    <UserAvatarIcon className="size-7" />
                   </div>
-                  <p className="text-lg font-bold leading-7 text-gray-900">
+                  <p className="text-base font-bold leading-6 text-gray-900">
                     +91-{userPhone}
                   </p>
                 </div>
               ) : null}
 
-              <nav className="flex flex-col gap-8">
+              <nav className="flex flex-col gap-0.5">
                 {menuItems.map((item) => (
                   <SidebarMenuRow
                     key={item.id}

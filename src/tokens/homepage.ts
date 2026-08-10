@@ -39,7 +39,7 @@ export const homepageBenefits = [
   },
   {
     id: "lock-in",
-    title: "No lock-in Period",
+    title: "Minimum Lock-in Period",
     description: "Don't worry about uncertainties anymore",
     icon: asset("no-lockin-period"),
   },
@@ -85,11 +85,26 @@ export const homepageStats = [
 ] as const;
 
 export const homepagePressLogos = [
-  asset("economic-teams"),
-  asset("business-line"),
-  asset("inc-42"),
-  asset("your-story"),
-  asset("et-realty"),
+  {
+    ...asset("economic-teams"),
+    href: "https://economictimes.indiatimes.com/industry/services/property-/-cstruction/aurum-proptech-buys-goldman-sachs-backed-cos-arm-helloworld-careersocially/articleshow/91817318.cms?from=mdr",
+  },
+  {
+    ...asset("business-line"),
+    href: "https://www.thehindubusinessline.com/companies/hello-world-launches-contactless-home-rental-solutions-for-the-covid-era/article31834483.ece",
+  },
+  {
+    ...asset("inc-42"),
+    href: "https://inc42.com/buzz/nestaways-hello-world-acquires-stayabode-to-strengthen-co-living-presence/",
+  },
+  {
+    ...asset("your-story"),
+    href: "https://yourstory.com/2019/09/nestaway-co-living-startup-student-housing-hello-world/amp",
+  },
+  {
+    ...asset("et-realty"),
+    href: "https://www.rprealtyplus.com/amp/allied/nestaway-acquires-three-co-living-operators-74881.html",
+  },
 ] as const;
 
 export { vibeChips as homepageVibeChips } from "@/src/tokens/vibes";

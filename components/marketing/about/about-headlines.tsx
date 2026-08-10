@@ -14,9 +14,13 @@ export function AboutHeadlines() {
         </h2>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-8 md:gap-10">
           {aboutPressLogos.map((logo) => (
-            <div
+            <a
               key={logo.name}
-              className="relative h-10 w-36 grayscale opacity-80 md:h-11 md:w-44"
+              href={logo.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Read ${logo.name} article`}
+              className="relative h-10 w-36 grayscale opacity-80 transition-opacity hover:opacity-100 md:h-11 md:w-44"
             >
               <Image
                 src={logo.src}
@@ -25,7 +29,7 @@ export function AboutHeadlines() {
                 sizes="180px"
                 className="object-contain"
               />
-            </div>
+            </a>
           ))}
         </div>
       </div>

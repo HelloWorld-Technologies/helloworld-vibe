@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
@@ -20,7 +21,10 @@ import { HdpMoments } from "@/components/marketing/hdp-moments";
 import { HdpReviews } from "@/components/marketing/hdp-reviews";
 import { PropertyGalleryDesktop } from "@/components/marketing/property-gallery";
 import { JsonLd } from "@/components/seo/json-ld";
-import type { HdpPageConfig } from "@/src/lib/hdp/resolve-hdp-page";
+import {
+  resolveHdpPage,
+  type HdpPageConfig,
+} from "@/src/lib/hdp/resolve-hdp-page";
 import { cn } from "@/src/lib/cn";
 import { pageLayout } from "@/src/tokens/layout";
 import { formatCityDisplayName } from "@/src/tokens/cities";
@@ -29,24 +33,50 @@ import type { HdpSectionId } from "@/src/tokens/hdp";
 const HIDDEN_WHEN_NO_MOMENTS = ["moments"] as const satisfies readonly HdpSectionId[];
 
 export function HdpPageContent({ config }: { config: HdpPageConfig }) {
-  const { view } = config;
+  const [liveConfig, setLiveConfig] = useState(config);
+
+  useEffect(() => {
+    setLiveConfig(config);
+  }, [config]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function refetchHdp() {
+      const fresh = await resolveHdpPage(
+        config.srpSlug,
+        config.localitySlug,
+        config.hdpSlug,
+      );
+      if (!cancelled && fresh) {
+        setLiveConfig(fresh);
+      }
+    }
+
+    void refetchHdp();
+    return () => {
+      cancelled = true;
+    };
+  }, [config.srpSlug, config.localitySlug, config.hdpSlug]);
+
+  const { view } = liveConfig;
   const cityRaw =
-    config.property.address?.city || config.property.city || "";
+    liveConfig.property.address?.city || liveConfig.property.city || "";
   const city = cityRaw ? formatCityDisplayName(cityRaw) : undefined;
   const locality =
-    config.property.locality ||
-    config.property.address?.line2 ||
-    config.localitySlug.replace(/-/g, " ");
+    liveConfig.property.locality ||
+    liveConfig.property.address?.line2 ||
+    liveConfig.localitySlug.replace(/-/g, " ");
 
   return (
     <PropertyActionsProvider defaultCity={city} defaultLocation={locality}>
       <div className={cn("bg-white", pageLayout.mobileStickyBottomPadding)}>
-        <JsonLd schema={config.schema} />
+        <JsonLd schema={liveConfig.schema} />
         <SiteHeader />
 
         <HdpMobileHero
           view={view}
-          breadcrumbItems={config.breadcrumbItems}
+          breadcrumbItems={liveConfig.breadcrumbItems}
         />
 
         <main
@@ -57,7 +87,7 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
         >
           <div className="hidden md:block">
             <Breadcrumbs
-              items={config.breadcrumbItems}
+              items={liveConfig.breadcrumbItems}
               className="mb-4 md:mb-6"
             />
             <HdpHeader view={view} />
@@ -88,21 +118,8 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
                 <HdpNearbyPlaces
                   items={view.nearbyItems}
                   mapUrl={view.mapUrl}
+                  embeddedMapUrl={view.embeddedMapUrl}
                   subtitle={view.nearbyDescription}
-                  property={{
-                    name: view.displayName,
-                    addressLine: [
-                      view.addressLine,
-                      view.locality,
-                    ]
-                      .filter(Boolean)
-                      .join(", "),
-                    locality: view.locality,
-                    imageSrc: view.mapImageSrc ?? view.galleryImages[0],
-                    startingRent: view.startingRent,
-                    latitude: view.latitude,
-                    longitude: view.longitude,
-                  }}
                 />
                 <HdpMoments
                   displayName={view.displayName}
@@ -120,23 +137,29 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
 
             <div className={pageLayout.hdpSidebarColumn}>
               <div className="sticky top-24 z-20 w-full">
-                <HdpBookingCard view={view} categories={config.categories} />
+                <HdpBookingCard
+                  view={view}
+                  categories={liveConfig.categories}
+                />
               </div>
             </div>
           </div>
 
           <div className="mt-12 space-y-12 md:mt-16 md:space-y-16">
             <HdpSimilarProperties
-              properties={config.similarProperties}
-              srpSlug={config.srpSlug}
-              localitySlug={config.localitySlug}
+              properties={liveConfig.similarProperties}
+              srpSlug={liveConfig.srpSlug}
+              localitySlug={liveConfig.localitySlug}
             />
-            <HdpFaq items={config.faqs} />
+            <HdpFaq items={liveConfig.faqs} />
           </div>
         </main>
 
         <SiteFooter />
-        <HdpMobileActions view={view} categories={config.categories} />
+        <HdpMobileActions
+          view={view}
+          categories={liveConfig.categories}
+        />
       </div>
     </PropertyActionsProvider>
   );
