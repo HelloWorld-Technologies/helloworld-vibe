@@ -116,7 +116,7 @@ function FooterContactDetails() {
   );
 }
 
-/** Matches Figma: dark fill + white glyph (FB/IG rounded square, LI circle). */
+/** Matches Figma: dark rounded square + white glyph for all three. */
 function SocialIcon({ id }: { id: (typeof socialLinks)[number]["id"] }) {
   if (id === "facebook") {
     return (
@@ -151,10 +151,10 @@ function SocialIcon({ id }: { id: (typeof socialLinks)[number]["id"] }) {
 
   return (
     <svg aria-hidden viewBox="0 0 22 22" fill="none" className="size-[22px]">
-      <circle cx="11" cy="11" r="11" fill="currentColor" />
+      <rect width="22" height="22" rx="5" fill="currentColor" />
       <path
         fill="#fff"
-        d="M7.55 9.05H6.05v6.7h1.5v-6.7Zm-.75-2.4a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8Zm7.35 2.55c-.9 0-1.48.4-1.78.95V9.05h-1.48v6.7h1.5v-3.55c0-.95.4-1.55 1.2-1.55.72 0 1.08.5 1.08 1.5v3.6h1.5v-3.9c0-1.85-.98-2.85-2.72-2.85Z"
+        d="M7.5 9.05H6v6.7h1.5v-6.7Zm-.75-2.4a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8Zm6.55 2.25c-.95 0-1.55.48-1.82 1.02V9.05H9.98v6.7h1.5v-3.55c0-.95.42-1.55 1.22-1.55.75 0 1.1.5 1.1 1.5v3.6H15.3v-3.9c0-1.85-1-2.85-2.75-2.85Z"
       />
     </svg>
   );
