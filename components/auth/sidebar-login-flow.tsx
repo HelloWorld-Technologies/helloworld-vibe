@@ -30,10 +30,13 @@ export function SidebarLoginFlow({
   onSuccess,
   step: stepProp,
   onStepChange,
+  reloadOnSuccess = true,
 }: {
   onSuccess: (phone: string) => void;
   step?: "phone" | "otp";
   onStepChange?: (step: "phone" | "otp") => void;
+  /** When false, caller handles post-login navigation (e.g. update booking URL phone). */
+  reloadOnSuccess?: boolean;
 }) {
   const inputId = useId();
   const phoneInputRef = useRef<HTMLInputElement>(null);
@@ -116,8 +119,10 @@ export function SidebarLoginFlow({
     setLoading(false);
 
     if (response.success) {
-      refreshAfterLogin();
       onSuccess(phone);
+      if (reloadOnSuccess) {
+        refreshAfterLogin();
+      }
       return;
     }
 

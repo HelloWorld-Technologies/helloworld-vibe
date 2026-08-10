@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { OccupantDetailsForm } from "@/components/booking/occupant-details-form";
 import { ScheduleVisitFlow } from "@/components/booking/schedule-visit-flow";
 import { Button } from "@/components/ui/button";
+import { Modal, ModalDescription, ModalTitle } from "@/components/ui/modal";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import type { HdpPageView } from "@/src/lib/hdp/hdp-page-view";
 import { buildBookingHref } from "@/src/lib/booking/url";
@@ -107,33 +108,75 @@ function RoomFeatureIcon({ className }: { className?: string }) {
   );
 }
 
-function HdpBookingTourFooter() {
+function InfoIcon({ className }: { className?: string }) {
   return (
-    <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-base font-medium text-black">
-      <span className="inline-flex items-center gap-2">
-        <Image
-          src="/assets/homepage-website/no-brokerage.svg"
-          alt=""
-          width={17}
-          height={16}
-          className="size-4"
-        />
-        No Brokerage
-      </span>
-      <span aria-hidden className="text-sm text-gray-400">
-        |
-      </span>
-      <span className="inline-flex items-center gap-2">
-        <Image
-          src="/assets/homepage-website/no-lockin-period.svg"
-          alt=""
-          width={17}
-          height={16}
-          className="size-4"
-        />
-        No Lock-in Period
-      </span>
-    </div>
+    <svg aria-hidden viewBox="0 0 16 16" fill="none" className={className}>
+      <circle cx="8" cy="8" r="6.25" stroke="currentColor" strokeWidth="1.3" />
+      <path
+        d="M8 7.25V11"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+      />
+      <circle cx="8" cy="5.1" r="0.85" fill="currentColor" />
+    </svg>
+  );
+}
+
+function HdpBookingTourFooter({ minStayMonths }: { minStayMonths: number }) {
+  const months = Math.max(1, minStayMonths || 1);
+  const lockInLabel =
+    months === 1 ? "1-month Lock-in" : `${months}-month Lock-in`;
+  const lockInDescription = `To qualify for a full refund of the security deposit, a minimum stay of ${months} ${
+    months === 1 ? "month" : "months"
+  } is mandatory.`;
+  const [infoOpen, setInfoOpen] = useState(false);
+  const titleId = useId();
+  const descriptionId = useId();
+
+  return (
+    <>
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-base font-medium text-black">
+        <span className="inline-flex items-center gap-2">
+          <Image
+            src="/assets/homepage-website/no-brokerage.svg"
+            alt=""
+            width={17}
+            height={16}
+            className="size-4"
+          />
+          No Brokerage
+        </span>
+        <span aria-hidden className="text-sm text-gray-400">
+          |
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          {lockInLabel}
+          <button
+            type="button"
+            aria-label="Lock-in period details"
+            onClick={() => setInfoOpen(true)}
+            className="inline-flex size-5 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800"
+          >
+            <InfoIcon className="size-4" />
+          </button>
+        </span>
+      </div>
+
+      <Modal
+        open={infoOpen}
+        onClose={() => setInfoOpen(false)}
+        labelledBy={titleId}
+        describedBy={descriptionId}
+        closeLabel="Close lock-in details"
+        maxWidthClassName="max-w-sm"
+      >
+        <ModalTitle id={titleId}>Minimum Stay Duration</ModalTitle>
+        <ModalDescription id={descriptionId} className="mt-3 text-sm text-gray-600">
+          {lockInDescription}
+        </ModalDescription>
+      </Modal>
+    </>
   );
 }
 
@@ -385,7 +428,7 @@ export function HdpBookingCard({
         {mode === "tour" ? (
           <>
             <HdpBookingTourPanel view={resolvedView} />
-            <HdpBookingTourFooter />
+            <HdpBookingTourFooter minStayMonths={resolvedView.minStayMonths} />
           </>
         ) : bookStep === "occupant" ? (
           <>

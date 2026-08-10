@@ -6,6 +6,17 @@ function visibleCategory(category: CategoryProps) {
   return category.show_to_ui && !category.is_removed;
 }
 
+/** True only for multi-bed sharing (2SHARING+), not PRIVATE / Classic+ / 1SHARING. */
+export function isSharingInventoryType(inventoryType?: string): boolean {
+  const normalized = String(inventoryType || "")
+    .toUpperCase()
+    .replace(/\s+/g, "");
+  if (!normalized.includes("SHARING")) return false;
+  const match = normalized.match(/^(\d+)SHARING$/);
+  if (match) return Number.parseInt(match[1], 10) >= 2;
+  return normalized === "SHARING";
+}
+
 function sharingCountFromInventoryType(inventoryType: string): number | null {
   const normalized = inventoryType.toUpperCase().replace(/\s+/g, "");
   const match = normalized.match(/^(\d+)SHARING$/);
@@ -14,16 +25,18 @@ function sharingCountFromInventoryType(inventoryType: string): number | null {
 }
 
 export function categorySupportsPrivate(category: CategoryProps): boolean {
-  const type = category.inventory_type?.toUpperCase() ?? "";
-  if (!type.includes("SHARING")) return true;
+  if (!isSharingInventoryType(category.inventory_type)) return true;
   return (category.private_rent ?? 0) > 0;
 }
 
 export function categorySharingOccupancy(
   category: CategoryProps,
 ): HdpOccupancy | null {
-  const sharingCount = sharingCountFromInventoryType(category.inventory_type ?? "");
-  if (sharingCount === 1) return "private";
+  if (!isSharingInventoryType(category.inventory_type)) return null;
+
+  const sharingCount = sharingCountFromInventoryType(
+    category.inventory_type ?? "",
+  );
   if (sharingCount === 2) return "double";
   if (sharingCount === 3) return "triple";
   if (sharingCount === 4) return "quadruple";
@@ -53,9 +66,8 @@ export function getRentForOccupancy(
   category: CategoryProps,
   occupancy: HdpOccupancy,
 ): number {
-  const type = category.inventory_type?.toUpperCase() ?? "";
   if (occupancy === "private") {
-    if (type.includes("SHARING")) {
+    if (isSharingInventoryType(category.inventory_type)) {
       return category.private_rent ?? category.private_offer_rent ?? 0;
     }
     return category.rent ?? category.offer_rent ?? 0;
@@ -94,7 +106,7 @@ export function getBookingRoomChipLabel(
     if (normalized.includes("BHK") || normalized.includes("RK")) {
       return getInventoryTypeLabel(raw);
     }
-    if (!normalized.includes("SHARING")) {
+    if (!isSharingInventoryType(raw)) {
       return getInventoryTypeLabel(raw) || "Private Room";
     }
     return "Private Room";

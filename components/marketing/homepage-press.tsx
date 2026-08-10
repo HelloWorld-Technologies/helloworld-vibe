@@ -18,14 +18,22 @@ export function HomepagePress() {
       <div className="mt-10 touch-pan-x overflow-x-auto overscroll-x-contain scrollbar-none">
         <div className="mx-auto flex w-max min-w-full items-center justify-start gap-10 px-4 sm:gap-12 sm:px-6 lg:justify-center lg:gap-16">
           {homepagePressLogos.map((logo) => (
-            <Image
+            <a
               key={logo.id}
-              src={logo.file}
-              alt={logo.name}
-              width={160}
-              height={48}
-              className="h-8 w-auto max-w-[8rem] shrink-0 object-contain opacity-100 transition-opacity hover:opacity-100 sm:h-10 sm:max-w-[10rem]"
-            />
+              href={logo.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Read ${logo.name} article`}
+              className="shrink-0"
+            >
+              <Image
+                src={logo.file}
+                alt={logo.name}
+                width={160}
+                height={48}
+                className="h-8 w-auto max-w-[8rem] object-contain opacity-100 transition-opacity hover:opacity-80 sm:h-10 sm:max-w-[10rem]"
+              />
+            </a>
           ))}
         </div>
       </div>

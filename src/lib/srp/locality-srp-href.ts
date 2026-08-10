@@ -55,9 +55,15 @@ export function resolveEffectiveSrpSlug(
   city: string,
   explicitSrpSlug?: string,
 ): string {
-  if (explicitSrpSlug?.trim()) return explicitSrpSlug.trim().toLowerCase();
-
-  const segment = (pathname || "").split("/").filter(Boolean)[0] ?? "";
+  // Prefer an explicit slug (e.g. SRP canonicalPath), but always rewrite it for
+  // `city` — returning it verbatim made city changes on locality/city SRPs
+  // navigate to the same URL (e.g. coliving-in-hsr-bangalore → same page).
+  const fromExplicit = explicitSrpSlug
+    ?.trim()
+    .toLowerCase()
+    .replace(/^\//, "");
+  const segment =
+    fromExplicit || (pathname || "").split("/").filter(Boolean)[0] || "";
   if (!segment) return srpSlug(city);
 
   const marketing = parseMarketingSrpSlug(segment);

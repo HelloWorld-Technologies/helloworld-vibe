@@ -18,6 +18,8 @@ export type HdpPageView = {
   locality: string;
   addressLine?: string;
   mapUrl?: string;
+  /** Google Maps iframe src (`embedded_url` or lat/lng embed). */
+  embeddedMapUrl?: string;
   startingRent: number;
   securityDepositMonths: number;
   securityDepositLabel: string;

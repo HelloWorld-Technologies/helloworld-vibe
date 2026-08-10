@@ -1,10 +1,12 @@
 import Image from "next/image";
 import {
   contactEmails,
+  contactLinkedIn,
   contactMailing,
   contactQueries,
   contactStackedLogo,
 } from "@/src/tokens/contact";
+import { aboutLinkedInIcon } from "@/src/tokens/about";
 import { cn } from "@/src/lib/cn";
 
 function HeadsetIcon({ className }: { className?: string }) {
@@ -103,6 +105,28 @@ export function ContactInfoCards({ className }: { className?: string }) {
             </li>
           ))}
         </ul>
+        <div className="mt-6 border-t border-white/40 pt-4">
+          <h3 className="text-sm font-bold text-gray-900">
+            {contactLinkedIn.title}
+          </h3>
+          <a
+            href={contactLinkedIn.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="HelloWorld on LinkedIn"
+            className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-blue-light-600 hover:underline"
+          >
+            <Image
+              src={aboutLinkedInIcon}
+              alt=""
+              width={20}
+              height={20}
+              aria-hidden
+              className="size-5"
+            />
+            {contactLinkedIn.label}
+          </a>
+        </div>
       </article>
     </div>
   );

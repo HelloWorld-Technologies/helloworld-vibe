@@ -69,6 +69,7 @@ export function HdpSimilarProperties({
         statusLabel={property.statusLabel}
         visitsToday={property.visitsToday}
         genderLabel={property.genderLabel}
+        propertyUrl={localityProperty?.propertyUrl}
         onRequestCallback={
           usingApiCards && propertyActions && localityProperty
             ? () =>

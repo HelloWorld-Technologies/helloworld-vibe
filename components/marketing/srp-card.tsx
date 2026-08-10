@@ -32,6 +32,7 @@ export interface SrpCardProps {
   saved?: boolean;
   className?: string;
   href?: string;
+  propertyUrl?: string;
   onRequestCallback?: () => void;
   onTakeTour?: () => void;
   onSaveToggle?: () => void;
@@ -276,6 +277,7 @@ export function SrpCard({
   saved = false,
   className,
   href,
+  propertyUrl,
   onRequestCallback,
   onTakeTour,
   onSaveToggle,
@@ -291,6 +293,32 @@ export function SrpCard({
     if (!href) return;
     if ((event.target as HTMLElement).closest("button, a")) return;
     router.push(href);
+  }
+
+  async function handleShare() {
+    if (onShare) {
+      onShare();
+      return;
+    }
+    if (typeof window === "undefined") return;
+    const url =
+      propertyUrl ||
+      (href
+        ? href.startsWith("http")
+          ? href
+          : `${window.location.origin}${href}`
+        : window.location.href);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: name, url });
+        return;
+      }
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+      }
+    } catch {
+      // User dismissed native share sheet.
+    }
   }
 
   return (
@@ -318,7 +346,8 @@ export function SrpCard({
 
         <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-4">
           {leftBadge ?? <span aria-hidden />}
-          {genderLabel ? (
+          {genderLabel &&
+          String(genderLabel).trim().toUpperCase() !== "ALL" ? (
             <span className="rounded-2xl bg-[#fecdca] px-2 py-0.5 text-xs font-medium text-gray-800">
               {genderLabel}
             </span>
@@ -362,7 +391,7 @@ export function SrpCard({
               aria-label="Share property"
               onClick={(event) => {
                 event.stopPropagation();
-                onShare?.();
+                void handleShare();
               }}
               className="text-hello-lime-900 transition-colors hover:text-hello-lime-800"
             >

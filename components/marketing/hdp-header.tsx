@@ -1,11 +1,13 @@
 "use client";
 
 import type { HdpPageView } from "@/src/lib/hdp/hdp-page-view";
+import { buildPropertyMapUrlFromView } from "@/src/lib/hdp/map-url";
 import { ShareIcon } from "@/components/icons/share-icon";
 import { useOptionalWishlist } from "@/components/wishlist/wishlist-provider";
 import { WishlistButton } from "@/components/wishlist/wishlist-button";
 import { hdpProperty } from "@/src/tokens/hdp";
 import { cn } from "@/src/lib/cn";
+import { useState } from "react";
 
 function MapPinIcon({ className }: { className?: string }) {
   return (
@@ -32,12 +34,22 @@ export function HdpHeader({
   className?: string;
 }) {
   const pageTitle = view?.pageTitle ?? hdpProperty.name;
-  const badge = view?.badge ?? hdpProperty.badge;
+  // When a live view exists, respect missing badge (e.g. gender ALL).
+  const badge = view ? view.badge : hdpProperty.badge;
   const locality = view?.locality ?? hdpProperty.locality;
-  const mapUrl = view?.mapUrl;
+  const mapUrl =
+    view?.mapUrl ||
+    buildPropertyMapUrlFromView({
+      mapUrl: view?.mapUrl,
+      latitude: view?.latitude,
+      longitude: view?.longitude,
+      addressLine: view?.addressLine,
+      locality: view?.locality,
+    });
   const propertyId = view?.propertyId ?? hdpProperty.propertyId;
   const wishlist = useOptionalWishlist();
   const saved = wishlist?.isWishlisted(propertyId) ?? false;
+  const [shareStatus, setShareStatus] = useState<string | null>(null);
 
   async function handleShare() {
     if (typeof window === "undefined") return;
@@ -48,6 +60,8 @@ export function HdpHeader({
         return;
       }
       await navigator.clipboard?.writeText(url);
+      setShareStatus("Link copied");
+      window.setTimeout(() => setShareStatus(null), 2000);
     } catch {
       // User dismissed native share sheet.
     }
@@ -83,15 +97,7 @@ export function HdpHeader({
               <MapPinIcon className="size-4" />
               Show on Maps
             </a>
-          ) : (
-            <button
-              type="button"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-gray-800 underline-offset-4 hover:underline"
-            >
-              <MapPinIcon className="size-4" />
-              Show on Maps
-            </button>
-          )}
+          ) : null}
           <WishlistButton
             saved={saved}
             aria-label={saved ? "Remove from saved" : "Save property"}
@@ -100,14 +106,21 @@ export function HdpHeader({
               void wishlist?.toggleWishlist(propertyId, pageTitle);
             }}
           />
-          <button
-            type="button"
-            onClick={handleShare}
-            aria-label={`Share ${pageTitle}`}
-            className="text-hello-lime-900 transition-colors hover:text-hello-lime-800"
-          >
-            <ShareIcon className="size-5" />
-          </button>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={handleShare}
+              aria-label={`Share ${pageTitle}`}
+              className="text-hello-lime-900 transition-colors hover:text-hello-lime-800"
+            >
+              <ShareIcon className="size-5" />
+            </button>
+            {shareStatus ? (
+              <span className="absolute right-0 top-full mt-1 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white">
+                {shareStatus}
+              </span>
+            ) : null}
+          </div>
         </div>
       </div>
     </header>

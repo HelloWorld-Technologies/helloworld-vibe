@@ -1,3 +1,9 @@
+import { dedupeAmenityLabels } from "@/src/lib/amenity-labels";
+import { getGenderDisplayLabel } from "@/src/lib/gender-label";
+import {
+  buildPropertyEmbedMapUrl,
+  buildPropertyMapUrl,
+} from "@/src/lib/hdp/map-url";
 import {
   fetchProperty,
   fetchPropertyCategories,
@@ -76,16 +82,7 @@ export type HdpPageConfig = {
 };
 
 function genderBadge(gender?: string): string | undefined {
-  switch (String(gender || "").toUpperCase()) {
-    case "MALE":
-      return "Men Only";
-    case "FEMALE":
-      return "Women Only";
-    case "ALL":
-      return undefined;
-    default:
-      return undefined;
-  }
+  return getGenderDisplayLabel(gender);
 }
 
 function localityDisplayName(localitySlug: string): string {
@@ -211,7 +208,8 @@ function buildHdpView(options: {
 
   const reviewSummary = mapGoogleDataToReviewSummary(googleData);
   const residentReviews = mapGoogleReviewsToResidentReviews(googleData);
-  const mapUrl = property.map_url || undefined;
+  const mapUrl = buildPropertyMapUrl(property);
+  const embeddedMapUrl = buildPropertyEmbedMapUrl(property);
   const galleryItems = buildGalleryItems(property, media, moments);
   const {
     moments: mediaMoments,
@@ -237,6 +235,7 @@ function buildHdpView(options: {
     locality,
     addressLine: property.address?.line1,
     mapUrl,
+    embeddedMapUrl,
     startingRent: property.min_rent ?? 0,
     securityDepositMonths: depositMonths,
     securityDepositLabel: `${depositMonths} month${depositMonths === 1 ? "" : "s"} rent`,
@@ -249,11 +248,11 @@ function buildHdpView(options: {
       ? `is the top choice in ${formatCityDisplayName(property.address.city)}.`
       : undefined,
     about: property.description || property.nearby_description || "",
-    amenities: [
+    amenities: dedupeAmenityLabels([
       ...(property.amenities ?? []),
       ...(property.rent_includes ?? []),
       ...(property.services ?? []),
-    ].filter((item) => item && item !== "None"),
+    ]),
     galleryImages,
     galleryItems,
     moments: momentItems,
@@ -291,10 +290,13 @@ export async function resolveHdpPage(
   if (!response?.success || !response?.data?.id) return null;
 
   let property = response.data as Property;
-  if (property.services && property.rent_includes) {
+  if (property.services || property.rent_includes) {
     property = {
       ...property,
-      rent_includes: [...property.rent_includes, ...property.services],
+      rent_includes: dedupeAmenityLabels([
+        ...(property.rent_includes ?? []),
+        ...(property.services ?? []),
+      ]),
     };
   }
 

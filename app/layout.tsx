@@ -30,7 +30,7 @@ const caveat = Caveat({
 export const metadata: Metadata = {
   title: "HelloWorld — Coliving that Matches Your Vibe",
   description:
-    "Find premium coliving PGs across India. Just 1 month deposit, no lock-in, no brokerage, and instant move-in.",
+    "Find premium coliving PGs across India. Just 1 month deposit, minimum lock-in, no brokerage, and instant move-in.",
   icons: {
     icon: [
       { url: "/assets/logos/favicon.svg", type: "image/svg+xml" },

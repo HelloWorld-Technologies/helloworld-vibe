@@ -98,22 +98,29 @@ export function HdpMobileHero({
         ) : null}
 
         {locationLabel ? (
-          view.mapUrl ? (
-            <a
-              href={view.mapUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-hello-lime-700 underline underline-offset-2 hover:text-hello-lime-800"
-            >
-              <MapPinIcon className="size-4 shrink-0" />
-              <span className="min-w-0">{locationLabel}</span>
-            </a>
-          ) : (
-            <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-hello-lime-700">
-              <MapPinIcon className="size-4 shrink-0" />
-              <span className="min-w-0">{locationLabel}</span>
-            </p>
-          )
+          (() => {
+            const mapsHref =
+              view.mapUrl ||
+              (view.latitude && view.longitude
+                ? `https://www.google.com/maps/place/${view.latitude},${view.longitude}`
+                : undefined);
+            return mapsHref ? (
+              <a
+                href={mapsHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-hello-lime-700 underline underline-offset-2 hover:text-hello-lime-800"
+              >
+                <MapPinIcon className="size-4 shrink-0" />
+                <span className="min-w-0">{locationLabel}</span>
+              </a>
+            ) : (
+              <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-hello-lime-700">
+                <MapPinIcon className="size-4 shrink-0" />
+                <span className="min-w-0">{locationLabel}</span>
+              </p>
+            );
+          })()
         ) : null}
 
         <div className="mt-5 flex items-stretch gap-4">
