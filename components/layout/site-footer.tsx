@@ -151,7 +151,7 @@ function SocialIcon({ id }: { id: (typeof socialLinks)[number]["id"] }) {
 
   return (
     <svg aria-hidden viewBox="0 0 22 22" fill="none" className="size-[22px]">
-      <rect width="22" height="22" rx="5" fill="currentColor" />
+      <circle cx="11" cy="11" r="11" fill="currentColor" />
       <path
         fill="#fff"
         d="M7.55 9.05H6.05v6.7h1.5v-6.7Zm-.75-2.4a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8Zm7.35 2.55c-.9 0-1.48.4-1.78.95V9.05h-1.48v6.7h1.5v-3.55c0-.95.4-1.55 1.2-1.55.72 0 1.08.5 1.08 1.5v3.6h1.5v-3.9c0-1.85-.98-2.85-2.72-2.85Z"
