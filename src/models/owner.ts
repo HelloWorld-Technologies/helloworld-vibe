@@ -3,6 +3,8 @@ export interface UploadOwnerLeadPayload {
   phone: string;
   email: string;
   city: string;
+  /** Free-text location / locality from the form (optional for older callers). */
+  location?: string;
 }
 
 export type UploadOwnerLeadResponse = {

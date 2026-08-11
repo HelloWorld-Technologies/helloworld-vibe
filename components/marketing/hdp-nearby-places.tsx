@@ -1,10 +1,14 @@
 "use client";
 
-import { useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   NEIGHBORHOOD_CARD_WIDTH_PX,
   NeighborhoodTimeline,
 } from "@/components/marketing/neighborhood-card";
+import {
+  HdpNearbyMapModal,
+  type NearbyMapProperty,
+} from "@/components/marketing/hdp-nearby-map-modal";
 import type { NeighborhoodCardData } from "@/src/tokens/neighborhood-card";
 import {
   neighborhoodRoutineSamples,
@@ -64,22 +68,37 @@ function CarouselChevron({
 export function HdpNearbyPlaces({
   items,
   mapUrl,
-  embeddedMapUrl,
   subtitle,
+  property,
   className,
 }: {
   items?: readonly NeighborhoodCardData[];
-  /** External Google Maps URL (`map_url`) — opened by Show on Maps. */
   mapUrl?: string;
-  /** Google Maps iframe src (`embedded_url`) — same as next Neighbourhood. */
-  embeddedMapUrl?: string;
   subtitle?: string;
+  property?: NearbyMapProperty;
   className?: string;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const resolvedItems =
     items && items.length > 0 ? items : neighborhoodRoutineSamples;
   const hasApiItems = Boolean(items && items.length > 0);
+  const [mapOpen, setMapOpen] = useState(false);
+  const [activeCategoryId, setActiveCategoryId] = useState(
+    () => resolvedItems[0]?.id ?? "",
+  );
+
+  const mapProperty = useMemo<NearbyMapProperty>(
+    () => ({
+      name: property?.name ?? "HelloWorld",
+      addressLine: property?.addressLine,
+      locality: property?.locality,
+      imageSrc: property?.imageSrc,
+      startingRent: property?.startingRent,
+      latitude: property?.latitude,
+      longitude: property?.longitude,
+    }),
+    [property],
+  );
 
   function scrollCarousel(direction: "prev" | "next") {
     scrollRef.current?.scrollBy({
@@ -87,6 +106,17 @@ export function HdpNearbyPlaces({
       behavior: "smooth",
     });
   }
+
+  function openMap(categoryId?: string) {
+    if (categoryId) setActiveCategoryId(categoryId);
+    else if (!activeCategoryId && resolvedItems[0]) {
+      setActiveCategoryId(resolvedItems[0].id);
+    }
+    setMapOpen(true);
+  }
+
+  const canOpenMapModal =
+    hasApiItems || mapProperty.latitude != null;
 
   return (
     <section
@@ -108,7 +138,16 @@ export function HdpNearbyPlaces({
         </div>
 
         <div className="flex shrink-0 flex-col items-start gap-3 sm:items-end">
-          {mapUrl ? (
+          {canOpenMapModal ? (
+            <button
+              type="button"
+              onClick={() => openMap()}
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-hello-lime-600 transition-colors hover:text-hello-lime-700"
+            >
+              <MapPinIcon className="size-4" />
+              Show on Maps
+            </button>
+          ) : mapUrl ? (
             <a
               href={mapUrl}
               target="_blank"
@@ -135,26 +174,27 @@ export function HdpNearbyPlaces({
         </div>
       </div>
 
-      {embeddedMapUrl ? (
-        <div className="mt-6 overflow-hidden rounded-2xl">
-          <iframe
-            title="Property location map"
-            className="h-[350px] w-full border-0"
-            src={embeddedMapUrl}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
-          />
-        </div>
-      ) : null}
-
       <div className="mt-6">
         <NeighborhoodTimeline
           items={resolvedItems}
           animate={false}
           scrollContainerRef={scrollRef}
+          onViewNearby={
+            canOpenMapModal ? (categoryId) => openMap(categoryId) : undefined
+          }
         />
       </div>
+
+      {canOpenMapModal ? (
+        <HdpNearbyMapModal
+          open={mapOpen}
+          onClose={() => setMapOpen(false)}
+          property={mapProperty}
+          categories={resolvedItems}
+          activeCategoryId={activeCategoryId || resolvedItems[0]?.id || ""}
+          onCategoryChange={setActiveCategoryId}
+        />
+      ) : null}
     </section>
   );
 }

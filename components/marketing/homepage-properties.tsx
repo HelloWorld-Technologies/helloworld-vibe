@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { fetchAllProperty } from "@/src/apis/srp";
+import {
+  PropertyActionsProvider,
+  useOptionalPropertyActions,
+} from "@/components/booking/property-actions-provider";
 import { WishlistSrpCard } from "@/components/marketing/wishlist-srp-card";
 import { HomepageSectionHeading } from "@/components/marketing/homepage-section-heading";
 import { PaginatedCarousel } from "@/components/ui/paginated-carousel";
@@ -36,11 +40,15 @@ function PropertyCardSkeleton({ className }: { className?: string }) {
 
 function PropertyCard({
   property,
+  city,
   className,
 }: {
   property: LocalityProperty;
+  city: string;
   className?: string;
 }) {
+  const propertyActions = useOptionalPropertyActions();
+
   return (
     <WishlistSrpCard
       propertyId={property.propertyId}
@@ -58,12 +66,33 @@ function PropertyCard({
       genderLabel={property.genderLabel}
       propertyUrl={property.propertyUrl}
       className={className}
+      onRequestCallback={
+        propertyActions
+          ? () =>
+              propertyActions.openRequestCallback({
+                propertyId: property.propertyId,
+                propertyName: property.name,
+                location: property.location,
+                // Homepage always uses the city stored from location search.
+                city,
+              })
+          : undefined
+      }
+      onTakeTour={
+        propertyActions
+          ? () =>
+              propertyActions.openScheduleVisit({
+                propertyId: property.propertyId,
+                propertyName: property.name,
+                propertyUrl: property.propertyUrl,
+              })
+          : undefined
+      }
     />
   );
 }
 
-export function HomepageProperties() {
-  const city = useSelectedCity();
+function HomepagePropertiesCarousel({ city }: { city: string }) {
   const [properties, setProperties] = useState<LocalityProperty[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -104,41 +133,51 @@ export function HomepageProperties() {
   }, [city]);
 
   return (
-    <section className="bg-white py-12 sm:py-16 lg:py-20">
-      <div className={pageShell.homepage}>
-        <div className="flex justify-center">
-          <HomepageSectionHeading
-            prefix="This could be your"
-            highlight="Home!"
-            gradient="home"
-          />
-        </div>
+    <PaginatedCarousel
+      items={properties}
+      getItemKey={(property) => property.id}
+      resetKey={city}
+      isLoading={isLoading}
+      visibleDesktopCount={VISIBLE_DESKTOP_COUNT}
+      mobileScrollGap={16}
+      desktopItemClassName="w-full"
+      desktopTrackClassName="mt-8"
+      mobileTrackClassName="mt-8"
+      paginationClassName="mt-8"
+      mobilePaginationClassName="mt-6"
+      renderSkeleton={(className) => (
+        <PropertyCardSkeleton className={className} />
+      )}
+      renderItem={(property, className) => (
+        <PropertyCard property={property} city={city} className={className} />
+      )}
+      emptyState={
+        <p className="mt-8 text-center text-base text-gray-600">
+          No properties found in {getCityLabel(city)} right now.
+        </p>
+      }
+    />
+  );
+}
 
-        <PaginatedCarousel
-          items={properties}
-          getItemKey={(property) => property.id}
-          resetKey={city}
-          isLoading={isLoading}
-          visibleDesktopCount={VISIBLE_DESKTOP_COUNT}
-          mobileScrollGap={16}
-          desktopItemClassName="w-full"
-          desktopTrackClassName="mt-8"
-          mobileTrackClassName="mt-8"
-          paginationClassName="mt-8"
-          mobilePaginationClassName="mt-6"
-          renderSkeleton={(className) => (
-            <PropertyCardSkeleton className={className} />
-          )}
-          renderItem={(property, className) => (
-            <PropertyCard property={property} className={className} />
-          )}
-          emptyState={
-            <p className="mt-8 text-center text-base text-gray-600">
-              No properties found in {getCityLabel(city)} right now.
-            </p>
-          }
-        />
-      </div>
-    </section>
+export function HomepageProperties() {
+  const city = useSelectedCity();
+
+  return (
+    <PropertyActionsProvider defaultCity={city} defaultLocation={getCityLabel(city)}>
+      <section className="bg-white py-12 sm:py-16 lg:py-20">
+        <div className={pageShell.homepage}>
+          <div className="flex justify-center">
+            <HomepageSectionHeading
+              prefix="This could be your"
+              highlight="Home!"
+              gradient="home"
+            />
+          </div>
+
+          <HomepagePropertiesCarousel city={city} />
+        </div>
+      </section>
+    </PropertyActionsProvider>
   );
 }

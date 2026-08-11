@@ -138,12 +138,12 @@ export function HdpVibeMatch({
         <VibeScoreRing score={hdpVibeOverallScore} />
       </div>
 
-      <div className="-mx-1 mt-5 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:overflow-visible md:px-0">
-        <div className="flex w-max gap-2.5 md:w-full md:gap-3">
+      <div className="-mx-1 mt-5 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex w-max gap-2.5 md:gap-3">
           {hdpSelectedVibes.map((vibe) => (
             <div
               key={vibe.label}
-              className="flex w-[5.75rem] shrink-0 flex-col items-center rounded-2xl bg-white px-2 py-3.5 shadow-sm md:w-auto md:min-w-0 md:flex-1"
+              className="flex w-[5.75rem] shrink-0 flex-col items-center rounded-2xl bg-white px-2 py-3.5 shadow-sm"
             >
               <span className="text-xl leading-none" aria-hidden>
                 {vibe.emoji}

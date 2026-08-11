@@ -24,7 +24,7 @@ export function HomepagePress() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Read ${logo.name} article`}
-              className="shrink-0"
+              className="relative z-10 shrink-0 cursor-pointer"
             >
               <Image
                 src={logo.file}

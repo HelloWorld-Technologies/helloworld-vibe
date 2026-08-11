@@ -76,12 +76,7 @@ export function SiteHeader({
           <div className="flex items-center gap-3 sm:gap-4">
             <Link
               href="/contact"
-              className={cn(
-                "hidden h-9 items-center justify-center text-sm font-semibold transition-colors sm:inline-flex",
-                isBanner
-                  ? "rounded-full bg-hello-lime-100 px-5 text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-gray-900 hover:bg-hello-lime-200"
-                  : "text-gray-700 hover:text-gray-900",
-              )}
+              className="hidden h-9 items-center justify-center rounded-full bg-hello-lime-100 px-5 text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-gray-900 transition-colors hover:bg-hello-lime-200 sm:inline-flex"
             >
               Contact Us
             </Link>
