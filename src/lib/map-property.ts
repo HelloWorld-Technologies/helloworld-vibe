@@ -26,6 +26,13 @@ function statusLabel(property: Property): SrpCardStatusLabel | undefined {
   return undefined;
 }
 
+function vibeMatchScore(property: Property): number | undefined {
+  const raw = property.vibe_match_score;
+  const score = typeof raw === "number" ? raw : Number(raw);
+  if (!Number.isFinite(score) || score <= 0) return undefined;
+  return Math.round(score);
+}
+
 function propertyImages(property: Property): readonly string[] {
   const candidates = [
     property.image,
@@ -70,6 +77,7 @@ export function mapPropertyToSrpCard(
     location: context?.locality ?? property.locality,
     href,
     propertyUrl,
+    vibeMatchScore: vibeMatchScore(property),
   };
 }
 
@@ -81,7 +89,11 @@ export function mapPropertiesToSrpCards(
   return properties.map((property) =>
     mapPropertyToSrpCard(property, subtitleBuilder(property), {
       city: context?.city,
-      locality: context?.locality ?? subtitleBuilder(property),
+      locality:
+        context?.locality ||
+        property.locality ||
+        property.address?.line2 ||
+        undefined,
     }),
   );
 }

@@ -3,7 +3,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, type MouseEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type MouseEvent,
+} from "react";
 import { ShareIcon } from "@/components/icons/share-icon";
 import { Button } from "@/components/ui/button";
 import { WishlistButton } from "@/components/wishlist/wishlist-button";
@@ -29,6 +37,7 @@ export interface SrpCardProps {
   statusLabel?: SrpCardStatusLabel;
   visitsToday?: number;
   genderLabel?: string;
+  vibeMatchScore?: number;
   saved?: boolean;
   className?: string;
   href?: string;
@@ -180,10 +189,37 @@ function SrpCardCarousel({
   const slideCount = slides.length;
   const imageSrc = slides[activeIndex] ?? srpCardDefaultImage;
   const isComingSoon = isSrpComingSoonImage(imageSrc);
+  const paginationRef = useRef<HTMLDivElement>(null);
+  const dotRefs = useRef(new Map<number, HTMLButtonElement>());
+  const [pill, setPill] = useState<{ left: number; width: number } | null>(
+    null,
+  );
 
   useEffect(() => {
     setActiveIndex(0);
   }, [slidesKey]);
+
+  const updatePill = useCallback(() => {
+    const container = paginationRef.current;
+    const activeDot = dotRefs.current.get(activeIndex);
+    if (!container || !activeDot) return;
+    setPill({
+      left: activeDot.offsetLeft,
+      width: activeDot.offsetWidth,
+    });
+  }, [activeIndex]);
+
+  useLayoutEffect(() => {
+    updatePill();
+  }, [updatePill, slideCount]);
+
+  useLayoutEffect(() => {
+    const container = paginationRef.current;
+    if (!container) return;
+    const observer = new ResizeObserver(() => updatePill());
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [updatePill]);
 
   function goTo(direction: -1 | 1) {
     setActiveIndex((current) => (current + direction + slideCount) % slideCount);
@@ -237,24 +273,46 @@ function SrpCardCarousel({
             <ChevronIcon direction="right" />
           </button>
 
-          <div className="absolute inset-x-0 bottom-4 z-10 flex items-center justify-center gap-1.5">
-            {slides.map((slide, index) => (
-              <button
-                key={`${slide}-${index}`}
-                type="button"
-                aria-label={`Go to photo ${index + 1}`}
-                aria-current={index === activeIndex}
-                onClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  setActiveIndex(index);
-                }}
-                className={cn(
-                  "h-1.5 rounded-full bg-white/90 transition-all",
-                  index === activeIndex ? "w-5" : "w-1.5 opacity-70",
-                )}
+          <div
+            ref={paginationRef}
+            className="absolute inset-x-0 bottom-4 z-10 flex items-center justify-center gap-1.5"
+          >
+            {pill ? (
+              <span
+                aria-hidden
+                className="pointer-events-none absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-white transition-[left,width] duration-300 ease-out motion-reduce:transition-none"
+                style={{ left: pill.left, width: pill.width }}
               />
-            ))}
+            ) : null}
+            {slides.map((slide, index) => {
+              const isActive = index === activeIndex;
+              return (
+                <button
+                  key={`${slide}-${index}`}
+                  ref={(node) => {
+                    if (node) {
+                      dotRefs.current.set(index, node);
+                    } else {
+                      dotRefs.current.delete(index);
+                    }
+                  }}
+                  type="button"
+                  aria-label={`Go to photo ${index + 1}`}
+                  aria-current={isActive}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setActiveIndex(index);
+                  }}
+                  className={cn(
+                    "relative z-10 h-1.5 rounded-full transition-[width,opacity,background-color] duration-300 ease-out motion-reduce:transition-none",
+                    isActive
+                      ? cn("w-5", pill ? "bg-transparent" : "bg-white")
+                      : "w-1.5 bg-white/70 hover:bg-white/90",
+                  )}
+                />
+              );
+            })}
           </div>
         </>
       ) : null}
@@ -274,6 +332,7 @@ export function SrpCard({
   statusLabel,
   visitsToday,
   genderLabel,
+  vibeMatchScore,
   saved = false,
   className,
   href,
@@ -285,6 +344,10 @@ export function SrpCard({
 }: SrpCardProps) {
   const router = useRouter();
   const hasOffer = originalRent != null && originalRent > rent;
+  const showVibeMatch =
+    vibeMatchScore != null &&
+    Number.isFinite(vibeMatchScore) &&
+    vibeMatchScore > 0;
   const leftBadge = (
     <LeftImageBadge statusLabel={statusLabel} visitsToday={visitsToday} />
   );
@@ -354,6 +417,14 @@ export function SrpCard({
           ) : null}
         </div>
       </div>
+
+      {showVibeMatch ? (
+        <div className="bg-gradient-property-vibe-match px-4 py-2.5 text-center text-sm text-gray-900">
+          <span aria-hidden>✨ </span>
+          <span className="font-bold">{Math.round(vibeMatchScore)}%</span> Vibe
+          Match
+        </div>
+      ) : null}
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         <div className="flex items-center justify-between gap-3">

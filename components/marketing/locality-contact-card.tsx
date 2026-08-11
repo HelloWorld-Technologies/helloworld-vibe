@@ -5,13 +5,20 @@ import Link from "next/link";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { uploadContactLead } from "@/src/apis/contact";
 import { postSendOtpLeads } from "@/src/apis/user";
+import { LocationSuggestField } from "@/components/search/location-suggest-field";
 import { validateField } from "@/src/lib/form-validation";
 import { CallbackRequestSuccess } from "@/components/booking/callback-request-success";
 import { Button } from "@/components/ui/button";
 import { OtpInput } from "@/components/ui/otp-input";
+import { readStoredCity } from "@/src/lib/city-storage";
+import { cn } from "@/src/lib/cn";
+import {
+  cities,
+  isCitySlug,
+  type CitySlug,
+} from "@/src/tokens/cities";
 import { localityContactIllustration } from "@/src/tokens/locality";
 import { footerContact } from "@/src/tokens/footer";
-import { cn } from "@/src/lib/cn";
 
 type Step = "form" | "otp" | "success";
 
@@ -19,8 +26,21 @@ const fieldLabelClassName = "text-sm font-normal text-gray-500";
 const fieldInputClassName =
   "h-12 w-full rounded-2xl border-0 bg-white px-4 text-sm text-gray-900 shadow-[0_1px_2px_rgba(16,24,40,0.06)] outline-none transition-shadow placeholder:text-gray-400 focus:shadow-[0_0_0_3px_rgba(198,255,55,0.35)]";
 
+const locationFieldClassName =
+  "rounded-2xl border-0 shadow-[0_1px_2px_rgba(16,24,40,0.06)] focus-within:border-transparent focus-within:shadow-[0_0_0_3px_rgba(198,255,55,0.35)]";
+
 function FieldLabel({ children }: { children: ReactNode }) {
   return <span className={fieldLabelClassName}>{children}</span>;
+}
+
+function resolveSearchCity(city?: string): CitySlug {
+  if (!city) return readStoredCity();
+  const normalized = city.trim().toLowerCase().replace(/\s+/g, "_");
+  if (isCitySlug(normalized)) return normalized;
+  const byLabel = cities.find(
+    (option) => option.label.toLowerCase() === city.trim().toLowerCase(),
+  );
+  return byLabel?.slug ?? readStoredCity();
 }
 
 export function LocalityContactCard({
@@ -29,7 +49,7 @@ export function LocalityContactCard({
   city,
   location: locationDefault = "",
   locationEditable = true,
-  locationPlaceholder = "Enter preferred location",
+  locationPlaceholder = "Search your location here",
   showCallFallback = true,
 }: {
   className?: string;
@@ -44,6 +64,9 @@ export function LocalityContactCard({
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState(locationDefault);
+  const [searchCity, setSearchCity] = useState<CitySlug>(() =>
+    resolveSearchCity(city),
+  );
   const [otp, setOtp] = useState("");
   const [errors, setErrors] = useState<{
     name?: boolean;
@@ -57,6 +80,10 @@ export function LocalityContactCard({
   useEffect(() => {
     setLocation(locationDefault);
   }, [locationDefault]);
+
+  useEffect(() => {
+    setSearchCity(resolveSearchCity(city));
+  }, [city]);
 
   function resetForm() {
     setStep("form");
@@ -103,8 +130,8 @@ export function LocalityContactCard({
     const response = await uploadContactLead({
       name,
       phone,
-      location,
-      city,
+      location: location.trim(),
+      city: searchCity,
       otp: Number.parseInt(otp, 10),
       srp: true,
     });
@@ -126,7 +153,7 @@ export function LocalityContactCard({
   return (
     <aside
       className={cn(
-        "overflow-hidden rounded-[2rem] bg-gradient-contact-card shadow-[0_8px_32px_rgba(16,24,40,0.08)]",
+        "overflow-visible rounded-[2rem] bg-gradient-contact-card shadow-[0_8px_32px_rgba(16,24,40,0.08)]",
         sticky && "md:sticky md:top-24 md:self-start",
         className,
       )}
@@ -234,21 +261,36 @@ export function LocalityContactCard({
                     </div>
                   </label>
 
-                  <label className="block space-y-2">
-                    <FieldLabel>Location</FieldLabel>
-                    <input
-                      type="text"
+                  <div className="block space-y-2">
+                    <label htmlFor="contact-location">
+                      <FieldLabel>Location</FieldLabel>
+                    </label>
+                    <LocationSuggestField
+                      id="contact-location"
+                      name="location"
                       value={location}
-                      onChange={(event) => setLocation(event.target.value)}
-                      readOnly={!locationEditable}
+                      city={searchCity}
+                      onCityChange={setSearchCity}
+                      onChange={(next) => {
+                        setLocation(next);
+                        setErrorMessage(null);
+                        if (errors.location) {
+                          setErrors((current) => ({
+                            ...current,
+                            location: false,
+                          }));
+                        }
+                      }}
                       placeholder={locationPlaceholder}
-                      className={cn(
-                        fieldInputClassName,
+                      showCitySelect={locationEditable}
+                      readOnly={!locationEditable}
+                      invalid={Boolean(errors.location)}
+                      fieldClassName={cn(
+                        locationFieldClassName,
                         errors.location && "ring-2 ring-error-300",
-                        !locationEditable && "text-gray-700",
                       )}
                     />
-                  </label>
+                  </div>
 
                   {errorMessage ? (
                     <p className="text-sm text-error-600">{errorMessage}</p>

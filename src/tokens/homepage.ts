@@ -1,5 +1,6 @@
 import { getAssetById } from "@/src/tokens/assets";
 import { buildNestedHdpHref } from "@/src/lib/sitemap-slug";
+import { pressLogos } from "@/src/tokens/press";
 import { srpCardSampleImages, type SrpCardStatusLabel } from "@/src/tokens/srp-card";
 
 function asset(id: string) {
@@ -84,28 +85,13 @@ export const homepageStats = [
   },
 ] as const;
 
-export const homepagePressLogos = [
-  {
-    ...asset("economic-teams"),
-    href: "https://economictimes.indiatimes.com/industry/services/property-/-cstruction/aurum-proptech-buys-goldman-sachs-backed-cos-arm-helloworld-careersocially/articleshow/91817318.cms?from=mdr",
-  },
-  {
-    ...asset("business-line"),
-    href: "https://www.thehindubusinessline.com/companies/hello-world-launches-contactless-home-rental-solutions-for-the-covid-era/article31834483.ece",
-  },
-  {
-    ...asset("inc-42"),
-    href: "https://inc42.com/buzz/nestaways-hello-world-acquires-stayabode-to-strengthen-co-living-presence/",
-  },
-  {
-    ...asset("your-story"),
-    href: "https://yourstory.com/2019/09/nestaway-co-living-startup-student-housing-hello-world/amp",
-  },
-  {
-    ...asset("et-realty"),
-    href: "https://www.rprealtyplus.com/amp/allied/nestaway-acquires-three-co-living-operators-74881.html",
-  },
-] as const;
+export const homepagePressLogos = pressLogos.map((logo) => ({
+  id: logo.id,
+  name: logo.name,
+  file: logo.homepageSrc,
+  href: logo.href,
+}));
+
 
 export { vibeChips as homepageVibeChips } from "@/src/tokens/vibes";
 

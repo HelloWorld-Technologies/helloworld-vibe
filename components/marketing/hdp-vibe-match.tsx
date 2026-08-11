@@ -3,17 +3,19 @@
 import { useState } from "react";
 import {
   hdpResidentColleges,
-  hdpResidentInterests,
   hdpResidentWorkplaces,
-  hdpSelectedVibes,
-  hdpVibeOverallScore,
 } from "@/src/tokens/hdp";
+import type {
+  HdpResidentInterest,
+  HdpSelectedVibeMatch,
+} from "@/src/lib/hdp/map-hdp-vibes";
 import { cn } from "@/src/lib/cn";
 
 function VibeScoreRing({ score }: { score: number }) {
   const radius = 24;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
+  const clamped = Math.min(Math.max(score, 0), 100);
+  const offset = circumference - (clamped / 100) * circumference;
 
   return (
     <div className="relative size-14 shrink-0">
@@ -46,7 +48,7 @@ function VibeScoreRing({ score }: { score: number }) {
         </defs>
       </svg>
       <span className="text-gradient-score-vibe absolute inset-0 flex items-center justify-center text-sm font-bold">
-        {score}%
+        {clamped}%
       </span>
     </div>
   );
@@ -111,12 +113,30 @@ function ResidentInsightCard({
 export function HdpVibeMatch({
   displayName,
   className,
+  overallScore,
+  selectedVibes,
+  residentInterests,
 }: {
   displayName?: string;
   className?: string;
+  overallScore?: number;
+  selectedVibes?: readonly HdpSelectedVibeMatch[];
+  /** Mapped from API `propertyVibes`. Section is hidden when empty. */
+  residentInterests?: readonly HdpResidentInterest[];
 }) {
   const [expanded, setExpanded] = useState(true);
+  const propertyVibes = residentInterests ?? [];
+
+  // Hide the entire vibe match block when propertyVibes is empty.
+  if (propertyVibes.length === 0) return null;
+
   const propertyLabel = displayName ?? "this property";
+  const selectedCount = selectedVibes?.length ?? 0;
+  const vibeCards = (selectedVibes ?? []).filter((vibe) => vibe.score > 0);
+  const score =
+    overallScore != null && Number.isFinite(overallScore) && overallScore > 0
+      ? Math.round(overallScore)
+      : undefined;
 
   return (
     <section
@@ -132,33 +152,37 @@ export function HdpVibeMatch({
             How well this home matches your vibe
           </h2>
           <p className="mt-1 text-sm leading-5 text-gray-500">
-            Based on the {hdpSelectedVibes.length} vibes you selected
+            {selectedCount > 0
+              ? `Based on the ${selectedCount} vibe${selectedCount === 1 ? "" : "s"} you selected`
+              : "Pick vibes on search to see your match score here"}
           </p>
         </div>
-        <VibeScoreRing score={hdpVibeOverallScore} />
+        {score != null ? <VibeScoreRing score={score} /> : null}
       </div>
 
-      <div className="-mx-1 mt-5 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:overflow-visible md:px-0">
-        <div className="flex w-max gap-2.5 md:w-full md:gap-3">
-          {hdpSelectedVibes.map((vibe) => (
-            <div
-              key={vibe.label}
-              className="flex w-[5.75rem] shrink-0 flex-col items-center rounded-2xl bg-white px-2 py-3.5 shadow-sm md:w-auto md:min-w-0 md:flex-1"
-            >
-              <span className="text-xl leading-none" aria-hidden>
-                {vibe.emoji}
-              </span>
-              <span className="mt-2 text-center text-xs font-medium text-gray-800">
-                {vibe.label}
-              </span>
-              <span className="text-gradient-score-vibe mt-1 text-sm font-bold">
-                {vibe.score}%
-              </span>
-              <span className="text-[11px] text-gray-400">Match</span>
-            </div>
-          ))}
+      {vibeCards.length > 0 ? (
+        <div className="-mx-1 mt-5 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex w-max gap-2.5 md:gap-3">
+            {vibeCards.map((vibe) => (
+              <div
+                key={vibe.id}
+                className="flex w-[5.75rem] shrink-0 flex-col items-center rounded-2xl bg-white px-2 py-3.5 shadow-sm"
+              >
+                <span className="text-xl leading-none" aria-hidden>
+                  {vibe.emoji}
+                </span>
+                <span className="mt-2 text-center text-xs font-medium text-gray-800">
+                  {vibe.label}
+                </span>
+                <span className="text-gradient-score-vibe mt-1 text-sm font-bold">
+                  {vibe.score}%
+                </span>
+                <span className="text-[11px] text-gray-400">Match</span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      ) : null}
 
       <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:gap-3">
         <ResidentInsightCard
@@ -184,25 +208,44 @@ export function HdpVibeMatch({
           onClick={() => setExpanded((value) => !value)}
           className="inline-flex shrink-0 items-center gap-0.5 text-sm font-semibold text-blue-light-600 hover:text-blue-light-700"
           aria-expanded={expanded}
+          aria-controls="hdp-property-vibes-panel"
         >
           {expanded ? "Show Less" : "Show More"}
-          <ChevronIcon direction={expanded ? "up" : "down"} />
+          <ChevronIcon
+            direction="down"
+            className={cn(
+              "transition-transform duration-300 ease-out motion-reduce:transition-none",
+              expanded && "rotate-180",
+            )}
+          />
         </button>
       </div>
 
-      {expanded ? (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {hdpResidentInterests.map((interest) => (
-            <span
-              key={interest.label}
-              className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-sm font-medium text-gray-800 shadow-sm"
-            >
-              <span aria-hidden>{interest.emoji}</span>
-              {interest.label}
-            </span>
-          ))}
+      <div
+        id="hdp-property-vibes-panel"
+        role="region"
+        aria-label={`Resident interests at ${propertyLabel}`}
+        className={cn(
+          "grid transition-[grid-template-rows,opacity,margin] duration-300 ease-out motion-reduce:transition-none",
+          expanded
+            ? "mt-3 grid-rows-[1fr] opacity-100"
+            : "mt-0 grid-rows-[0fr] opacity-0",
+        )}
+      >
+        <div className="overflow-hidden">
+          <div className="flex flex-wrap gap-2">
+            {propertyVibes.map((interest) => (
+              <span
+                key={interest.label}
+                className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-2 text-sm font-medium text-gray-800 shadow-sm"
+              >
+                <span aria-hidden>{interest.emoji}</span>
+                {interest.label}
+              </span>
+            ))}
+          </div>
         </div>
-      ) : null}
+      </div>
     </section>
   );
 }

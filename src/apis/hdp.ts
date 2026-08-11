@@ -2,11 +2,25 @@ import { createHttpClient } from "@/src/apis/http";
 
 export const SIMILAR_PROPERTIES_LIMIT = 12;
 
-export async function fetchProperty(name: string) {
+export type FetchPropertyOptions = {
+  /** Selected vibe API ids — sent as `vibes=1,3,6`. */
+  vibes?: readonly number[];
+};
+
+export async function fetchProperty(
+  name: string,
+  options?: FetchPropertyOptions,
+) {
   try {
     const nameForApi = (name || "").replace(/-/g, " ");
+    const vibes = (options?.vibes ?? []).filter(
+      (id) => Number.isFinite(id) && id > 0,
+    );
     const { data } = await createHttpClient().get("v2/hello/house", {
-      params: { name: nameForApi },
+      params: {
+        name: nameForApi,
+        ...(vibes.length > 0 ? { vibes: vibes.join(",") } : {}),
+      },
     });
     return data;
   } catch {

@@ -35,6 +35,7 @@ function PropertyCard({
       visitsToday={property.visitsToday}
       genderLabel={property.genderLabel}
       className={className}
+      vibeMatchScore={property.vibeMatchScore}
     />
   );
 }

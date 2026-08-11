@@ -245,7 +245,7 @@ export function BookingPageContent({
   }, [config]);
 
   function bookingHref(params: {
-    categoryId?: number;
+    categoryId?: string | number;
     occupancy?: HdpOccupancy;
     moveInDate?: string;
     occupant?: BookingOccupantInfo;

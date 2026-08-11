@@ -29,6 +29,13 @@ import {
   categorySharingOccupancy,
   categorySupportsPrivate,
 } from "@/src/lib/hdp/category-occupancy";
+import {
+  mapPropertyVibesToInterests,
+  mapVibeBadgesToSelectedMatches,
+  parseVibeMatchScore,
+  type HdpPropertyVibeApi,
+  type HdpVibeBadgeApi,
+} from "@/src/lib/hdp/map-hdp-vibes";
 import type { HdpPageView } from "@/src/lib/hdp/hdp-page-view";
 import { imageUrlFormatter } from "@/src/lib/images";
 import {
@@ -60,6 +67,10 @@ import { buildGalleryItemsFromMedia } from "@/src/tokens/property-gallery";
 import type { HdpRoomType } from "@/src/tokens/hdp";
 
 export type HdpBreadcrumbItem = { name: string; path?: string };
+
+export type ResolveHdpPageOptions = {
+  vibes?: readonly number[];
+};
 
 export type HdpPageConfig = {
   canonicalPath: string;
@@ -181,6 +192,9 @@ function buildHdpView(options: {
   media: readonly PropertyMediaItem[];
   moments: readonly PropertyMoment[];
   galleryImages: readonly string[];
+  vibeMatchScore?: number;
+  selectedVibeMatches?: HdpPageView["selectedVibeMatches"];
+  residentInterests?: HdpPageView["residentInterests"];
 }): HdpPageView {
   const {
     property,
@@ -193,6 +207,9 @@ function buildHdpView(options: {
     media,
     moments,
     galleryImages,
+    vibeMatchScore,
+    selectedVibeMatches,
+    residentInterests,
   } = options;
   const displayName = property.display_name || property.name;
   const reviewCount =
@@ -270,6 +287,9 @@ function buildHdpView(options: {
     latitude: Number.isFinite(latitude) ? latitude : undefined,
     longitude: Number.isFinite(longitude) ? longitude : undefined,
     mapImageSrc,
+    vibeMatchScore,
+    selectedVibeMatches,
+    residentInterests,
   };
 }
 
@@ -277,6 +297,7 @@ export async function resolveHdpPage(
   srpSlug: string,
   localitySlug: string,
   hdpSlug: string,
+  options?: ResolveHdpPageOptions,
 ): Promise<HdpPageConfig | null> {
   const normalizedSrp = String(srpSlug || "").trim().toLowerCase();
   const normalizedLocality = String(localitySlug || "")
@@ -286,7 +307,12 @@ export async function resolveHdpPage(
   const normalizedHdp = String(hdpSlug || "").trim().toLowerCase();
   if (!normalizedSrp || !normalizedLocality || !normalizedHdp) return null;
 
-  const response = await fetchProperty(normalizedHdp);
+  const vibeIds = (options?.vibes ?? []).filter(
+    (id) => Number.isFinite(id) && id > 0,
+  );
+  const response = await fetchProperty(normalizedHdp, {
+    vibes: vibeIds.length > 0 ? vibeIds : undefined,
+  });
   if (!response?.success || !response?.data?.id) return null;
 
   let property = response.data as Property;
@@ -417,6 +443,13 @@ export async function resolveHdpPage(
     media,
     moments,
     galleryImages: galleryImageUrls,
+    vibeMatchScore: parseVibeMatchScore(response.vibeMatchScore),
+    selectedVibeMatches: mapVibeBadgesToSelectedMatches(
+      response.vibeBadges as HdpVibeBadgeApi[] | undefined,
+    ),
+    residentInterests: mapPropertyVibesToInterests(
+      response.propertyVibes as HdpPropertyVibeApi[] | undefined,
+    ),
   });
 
   return {

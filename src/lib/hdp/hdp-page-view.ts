@@ -8,6 +8,10 @@ import type {
   HdpResidentReview,
 } from "@/src/tokens/hdp-reviews";
 import type { HdpReviewSummaryView } from "@/src/lib/hdp/map-hdp-api";
+import type {
+  HdpResidentInterest,
+  HdpSelectedVibeMatch,
+} from "@/src/lib/hdp/map-hdp-vibes";
 
 export type HdpPageView = {
   propertyId: number;
@@ -48,6 +52,12 @@ export type HdpPageView = {
   latitude?: number;
   longitude?: number;
   mapImageSrc?: string;
+  /** Overall match % when `vibes` were sent to the house API. */
+  vibeMatchScore?: number;
+  /** Per-selected-vibe match cards from `vibeBadges`. */
+  selectedVibeMatches?: readonly HdpSelectedVibeMatch[];
+  /** Resident interests from `propertyVibes`. */
+  residentInterests?: readonly HdpResidentInterest[];
 };
 
 export type HdpPageContext = {

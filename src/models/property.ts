@@ -50,6 +50,8 @@ export interface Property {
   gst_percent: number;
   free_rent: boolean;
   lightning_deal: boolean;
+  /** Present on list responses when vibes filter is applied. */
+  vibe_match_score?: number | null;
 }
 
 export interface Address {

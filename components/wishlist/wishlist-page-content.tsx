@@ -166,6 +166,7 @@ export function WishlistPageContent() {
                 statusLabel={property.statusLabel}
                 visitsToday={property.visitsToday}
                 genderLabel={property.genderLabel}
+                vibeMatchScore={property.vibeMatchScore}
               />
             ))}
           </div>

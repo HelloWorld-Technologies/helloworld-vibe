@@ -25,11 +25,6 @@ export const contactEmails = {
   title: "Reach out to us at",
   items: [
     {
-      email: "sales@thehelloworld.com",
-      href: "mailto:sales@thehelloworld.com",
-      note: "For property and partnership enquiries",
-    },
-    {
       email: "care@thehelloworld.com",
       href: "mailto:care@thehelloworld.com",
       note: "For any issues, send an email",

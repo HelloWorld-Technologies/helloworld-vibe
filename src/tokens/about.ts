@@ -1,3 +1,5 @@
+import { pressLogos } from "@/src/tokens/press";
+
 export const aboutPageCopy = {
   title: "About Us | HelloWorld Coliving & Student Hostels",
   description:
@@ -124,33 +126,12 @@ export const aboutCoreTeam: AboutPerson[] = [
   },
 ];
 
-export const aboutPressLogos = [
-  {
-    name: "The Economic Times",
-    src: "/assets/about/press/economic-times.png",
-    href: "https://economictimes.indiatimes.com/industry/services/property-/-cstruction/aurum-proptech-buys-goldman-sachs-backed-cos-arm-helloworld-careersocially/articleshow/91817318.cms?from=mdr",
-  },
-  {
-    name: "BusinessLine",
-    src: "/assets/about/press/business-line.png",
-    href: "https://www.thehindubusinessline.com/companies/hello-world-launches-contactless-home-rental-solutions-for-the-covid-era/article31834483.ece",
-  },
-  {
-    name: "Inc42",
-    src: "/assets/about/press/inc42.png",
-    href: "https://inc42.com/buzz/nestaways-hello-world-acquires-stayabode-to-strengthen-co-living-presence/",
-  },
-  {
-    name: "YourStory",
-    src: "/assets/about/press/yourstory.png",
-    href: "https://yourstory.com/2019/09/nestaway-co-living-startup-student-housing-hello-world/amp",
-  },
-  {
-    name: "ET Realty",
-    src: "/assets/about/press/realty.png",
-    href: "https://www.rprealtyplus.com/amp/allied/nestaway-acquires-three-co-living-operators-74881.html",
-  },
-] as const;
+export const aboutPressLogos = pressLogos.map((logo) => ({
+  name: logo.name,
+  src: logo.src,
+  href: logo.href,
+}));
+
 
 export type AboutMilestone = {
   date: string;

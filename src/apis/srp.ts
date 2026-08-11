@@ -21,6 +21,8 @@ export interface Filters {
   };
   amenities: string[];
   food?: boolean;
+  /** Selected vibe API ids for ranking / matching. */
+  vibes?: number[];
 }
 
 export interface LocalityListItem {

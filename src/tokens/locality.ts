@@ -43,6 +43,8 @@ export type LocalityProperty = {
   location?: string;
   href?: string;
   propertyUrl?: string;
+  /** Shown on the card when the list API returns a vibe match. */
+  vibeMatchScore?: number;
 };
 
 export type LocalityVibeChip = VibeChip;

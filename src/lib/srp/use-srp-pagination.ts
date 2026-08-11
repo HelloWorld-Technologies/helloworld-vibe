@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   fetchAllProperty,
   fetchPropertiesBySlug,
@@ -13,6 +13,10 @@ import {
   serializeSrpQuery,
 } from "@/src/lib/srp/build-srp-api-payload";
 import type { SrpPageKind } from "@/src/lib/srp/resolve-srp-page";
+import { useDebounce } from "@/src/lib/use-debounce";
+import { useSelectedVibes } from "@/src/lib/use-selected-vibes";
+import { useVibeList } from "@/src/lib/use-vibe-list";
+import { selectedVibeApiIds } from "@/src/lib/vibe-list-storage";
 import type { SrpQuery } from "@/src/models/srp-query";
 import type { Property } from "@/src/models/property";
 
@@ -25,6 +29,8 @@ export type SrpPaginationContext = {
 };
 
 const LOAD_ROOT_MARGIN_PX = 400;
+/** Wait for vibe chip clicks to settle before refetching listings. */
+const VIBE_FILTER_DEBOUNCE_MS = 400;
 
 function sentinelNearViewport(sentinel: HTMLElement) {
   return sentinel.getBoundingClientRect().top <= window.innerHeight + LOAD_ROOT_MARGIN_PX;
@@ -44,8 +50,9 @@ async function fetchSrpPage(
   context: SrpPaginationContext,
   query: SrpQuery,
   page: number,
+  vibeIds: readonly number[],
 ) {
-  const filter = buildSrpApiFilter(query, context.slugGender);
+  const filter = buildSrpApiFilter(query, context.slugGender, vibeIds);
   const sorting = buildSrpApiSorting(query.sort);
   const params = { page, page_size: SRP_LIST_PAGE_SIZE };
 
@@ -74,6 +81,23 @@ export function useSrpPagination(
   resetKey: string,
   query: SrpQuery,
 ) {
+  const { selectedVibes } = useSelectedVibes();
+  const { vibes } = useVibeList();
+  const vibeIds = useMemo(
+    () => selectedVibeApiIds(selectedVibes, vibes),
+    [selectedVibes, vibes],
+  );
+  const vibeKey = vibeIds.join(",");
+  const debouncedVibeKey = useDebounce(vibeKey, VIBE_FILTER_DEBOUNCE_MS);
+  const debouncedVibeIds = useMemo(() => {
+    if (!debouncedVibeKey) return [] as number[];
+    return debouncedVibeKey
+      .split(",")
+      .map((id) => Number(id))
+      .filter((id) => Number.isFinite(id) && id > 0);
+  }, [debouncedVibeKey]);
+  const vibesPending = vibeKey !== debouncedVibeKey;
+
   const [properties, setProperties] = useState(initialProperties);
   const [total, setTotal] = useState(initialTotal);
   const [isLoading, setIsLoading] = useState(false);
@@ -88,20 +112,28 @@ export function useSrpPagination(
   const loadingRef = useRef(false);
   const contextRef = useRef(context);
   const queryRef = useRef(query);
+  const vibeIdsRef = useRef(debouncedVibeIds);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   contextRef.current = context;
   queryRef.current = query;
+  vibeIdsRef.current = debouncedVibeIds;
   totalRef.current = total;
 
   const queryKey = serializeSrpQuery(query);
-  const resetSnapshot = `${resetKey}:${initialTotal}:${initialProperties.length}:${queryKey}`;
+  const resetSnapshot = `${resetKey}:${initialTotal}:${initialProperties.length}:${queryKey}:${debouncedVibeKey}`;
+
+  useEffect(() => {
+    if (vibesPending) {
+      setIsRefreshing(true);
+    }
+  }, [vibesPending]);
 
   useEffect(() => {
     let cancelled = false;
 
     async function syncListings() {
-      if (!hasActiveSrpQueryFilters(query)) {
+      if (!hasActiveSrpQueryFilters(query) && debouncedVibeIds.length === 0) {
         setProperties(initialProperties);
         setTotal(initialTotal);
         pageRef.current = 1;
@@ -118,7 +150,12 @@ export function useSrpPagination(
       loadingRef.current = true;
 
       try {
-        const response = await fetchSrpPage(contextRef.current, query, 1);
+        const response = await fetchSrpPage(
+          contextRef.current,
+          query,
+          1,
+          debouncedVibeIds,
+        );
         if (cancelled) return;
 
         const nextData = response.success && Array.isArray(response.data)
@@ -153,7 +190,15 @@ export function useSrpPagination(
     return () => {
       cancelled = true;
     };
-  }, [resetSnapshot, initialProperties, initialTotal, query, queryKey]);
+  }, [
+    resetSnapshot,
+    initialProperties,
+    initialTotal,
+    query,
+    queryKey,
+    debouncedVibeIds,
+    debouncedVibeKey,
+  ]);
 
   const loadMore = useCallback(async () => {
     if (loadingRef.current || !hasMoreRef.current) return;
@@ -168,6 +213,7 @@ export function useSrpPagination(
         contextRef.current,
         queryRef.current,
         nextPage,
+        vibeIdsRef.current,
       );
 
       if (response.success && Array.isArray(response.data) && response.data.length > 0) {

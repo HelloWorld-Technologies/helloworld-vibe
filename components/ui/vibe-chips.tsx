@@ -31,42 +31,42 @@ function VibeChipButton({
   selected: boolean;
   onToggle: (id: string) => void;
 }) {
-  const label = (
-    <>
-      <span aria-hidden>{chip.emoji}</span>
-      {chip.label}
-      {selected ? (
-        <VibeCheckIcon className="size-4 text-hello-lime-500" />
-      ) : null}
-    </>
-  );
-
-  if (selected) {
-    return (
-      <div
-        className={cn("shrink-0 rounded-full p-px", vibeChipSelectedBorderClass)}
-      >
-        <button
-          type="button"
-          aria-pressed
-          onClick={() => onToggle(chip.id)}
-          className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-medium text-gray-900"
-        >
-          {label}
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <button
-      type="button"
-      aria-pressed={false}
-      onClick={() => onToggle(chip.id)}
-      className="inline-flex shrink-0 items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:border-gray-300"
+    <div
+      className={cn(
+        "shrink-0 rounded-full p-px transition-[background] duration-300 ease-out motion-reduce:transition-none",
+        selected ? vibeChipSelectedBorderClass : "bg-transparent",
+      )}
     >
-      {label}
-    </button>
+      <button
+        type="button"
+        aria-pressed={selected}
+        onClick={() => onToggle(chip.id)}
+        className={cn(
+          "inline-flex items-center rounded-full bg-white px-3 py-2 text-sm font-medium",
+          "transition-[color,border-color,background-color] duration-300 ease-out motion-reduce:transition-none",
+          selected
+            ? "border border-transparent text-gray-900"
+            : "border border-gray-200 text-gray-600 hover:border-gray-300",
+        )}
+      >
+        <span aria-hidden className="mr-2 shrink-0">
+          {chip.emoji}
+        </span>
+        <span className="whitespace-nowrap">{chip.label}</span>
+        <span
+          aria-hidden
+          className={cn(
+            "inline-flex overflow-hidden transition-[width,margin,opacity] duration-300 ease-out motion-reduce:transition-none",
+            selected
+              ? "ml-2 w-4 opacity-100"
+              : "ml-0 w-0 opacity-0",
+          )}
+        >
+          <VibeCheckIcon className="size-4 shrink-0 text-hello-lime-500" />
+        </span>
+      </button>
+    </div>
   );
 }
 

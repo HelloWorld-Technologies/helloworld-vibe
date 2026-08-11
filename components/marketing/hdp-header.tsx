@@ -69,10 +69,10 @@ export function HdpHeader({
 
   return (
     <header className={cn("space-y-4 md:space-y-6", className)}>
-      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div className="space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="font-satoshi text-2xl font-bold text-gray-800 md:text-3xl">
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <h1 className="font-satoshi text-2xl font-bold leading-tight text-gray-800 md:text-3xl">
               {pageTitle}
             </h1>
             {badge ? (
@@ -81,47 +81,48 @@ export function HdpHeader({
               </span>
             ) : null}
           </div>
-          <p className="text-base font-medium text-gray-600 md:text-lg">
-            {locality}
-          </p>
-        </div>
 
-        <div className="flex shrink-0 items-center gap-4 self-start">
-          {mapUrl ? (
-            <a
-              href={mapUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-gray-800 underline-offset-4 hover:underline"
-            >
-              <MapPinIcon className="size-4" />
-              Show on Maps
-            </a>
-          ) : null}
-          <WishlistButton
-            saved={saved}
-            aria-label={saved ? "Remove from saved" : "Save property"}
-            iconClassName="size-5"
-            onClick={() => {
-              void wishlist?.toggleWishlist(propertyId, pageTitle);
-            }}
-          />
-          <div className="relative">
-            <button
-              type="button"
-              onClick={handleShare}
-              aria-label={`Share ${pageTitle}`}
-              className="text-hello-lime-900 transition-colors hover:text-hello-lime-800"
-            >
-              <ShareIcon className="size-5" />
-            </button>
-            {shareStatus ? (
-              <span className="absolute right-0 top-full mt-1 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white">
-                {shareStatus}
-              </span>
+          <div className="flex shrink-0 items-center gap-4">
+            {mapUrl ? (
+              <a
+                href={mapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-gray-800 underline-offset-4 hover:underline"
+              >
+                <MapPinIcon className="size-4" />
+                Show on Maps
+              </a>
             ) : null}
+            <WishlistButton
+              saved={saved}
+              aria-label={saved ? "Remove from saved" : "Save property"}
+              iconClassName="size-5"
+              onClick={() => {
+                void wishlist?.toggleWishlist(propertyId, pageTitle);
+              }}
+            />
+            <div className="relative">
+              <button
+                type="button"
+                onClick={handleShare}
+                aria-label={`Share ${pageTitle}`}
+                className="inline-flex items-center text-hello-lime-900 transition-colors hover:text-hello-lime-800"
+              >
+                <ShareIcon className="size-5" />
+              </button>
+              {shareStatus ? (
+                <span className="absolute right-0 top-full mt-1 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white">
+                  {shareStatus}
+                </span>
+              ) : null}
+            </div>
           </div>
         </div>
+
+        <p className="text-base font-medium text-gray-600 md:text-lg">
+          {locality}
+        </p>
       </div>
     </header>
   );

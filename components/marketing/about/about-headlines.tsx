@@ -20,7 +20,7 @@ export function AboutHeadlines() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Read ${logo.name} article`}
-              className="relative h-10 w-36 grayscale opacity-80 transition-opacity hover:opacity-100 md:h-11 md:w-44"
+              className="relative z-10 h-10 w-36 cursor-pointer grayscale opacity-80 transition-opacity hover:opacity-100 md:h-11 md:w-44"
             >
               <Image
                 src={logo.src}
