@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fetchAllProperty } from "@/src/apis/srp";
 import {
   PropertyActionsProvider,
@@ -10,7 +10,11 @@ import { WishlistSrpCard } from "@/components/marketing/wishlist-srp-card";
 import { HomepageSectionHeading } from "@/components/marketing/homepage-section-heading";
 import { PaginatedCarousel } from "@/components/ui/paginated-carousel";
 import { mapPropertiesToSrpCards } from "@/src/lib/map-property";
+import { useDebounce } from "@/src/lib/use-debounce";
 import { useSelectedCity } from "@/src/lib/use-selected-city";
+import { useSelectedVibes } from "@/src/lib/use-selected-vibes";
+import { useVibeList } from "@/src/lib/use-vibe-list";
+import { selectedVibeApiIds } from "@/src/lib/vibe-list-storage";
 import { pageShell } from "@/src/tokens/layout";
 import { getCityLabel } from "@/src/tokens/cities";
 import type { LocalityProperty } from "@/src/tokens/locality";
@@ -18,6 +22,7 @@ import { cn } from "@/src/lib/cn";
 
 const HOMEPAGE_PROPERTIES_PAGE_SIZE = 12;
 const VISIBLE_DESKTOP_COUNT = 3;
+const VIBE_FILTER_DEBOUNCE_MS = 400;
 
 function PropertyCardSkeleton({ className }: { className?: string }) {
   return (
@@ -48,6 +53,7 @@ function PropertyCard({
   className?: string;
 }) {
   const propertyActions = useOptionalPropertyActions();
+  const location = property.location?.trim() || getCityLabel(city);
 
   return (
     <WishlistSrpCard
@@ -66,13 +72,14 @@ function PropertyCard({
       genderLabel={property.genderLabel}
       propertyUrl={property.propertyUrl}
       className={className}
+      vibeMatchScore={property.vibeMatchScore}
       onRequestCallback={
         propertyActions
           ? () =>
               propertyActions.openRequestCallback({
                 propertyId: property.propertyId,
                 propertyName: property.name,
-                location: property.location,
+                location,
                 // Homepage always uses the city stored from location search.
                 city,
               })
@@ -95,6 +102,21 @@ function PropertyCard({
 function HomepagePropertiesCarousel({ city }: { city: string }) {
   const [properties, setProperties] = useState<LocalityProperty[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { selectedVibes } = useSelectedVibes();
+  const { vibes } = useVibeList();
+  const vibeIds = useMemo(
+    () => selectedVibeApiIds(selectedVibes, vibes),
+    [selectedVibes, vibes],
+  );
+  const vibeKey = vibeIds.join(",");
+  const debouncedVibeKey = useDebounce(vibeKey, VIBE_FILTER_DEBOUNCE_MS);
+  const debouncedVibeIds = useMemo(() => {
+    if (!debouncedVibeKey) return [] as number[];
+    return debouncedVibeKey
+      .split(",")
+      .map((id) => Number(id))
+      .filter((id) => Number.isFinite(id) && id > 0);
+  }, [debouncedVibeKey]);
 
   useEffect(() => {
     let cancelled = false;
@@ -103,7 +125,13 @@ function HomepagePropertiesCarousel({ city }: { city: string }) {
       setIsLoading(true);
 
       const { data, success } = await fetchAllProperty(
-        { city },
+        {
+          city,
+          filter:
+            debouncedVibeIds.length > 0
+              ? { amenities: [], vibes: debouncedVibeIds }
+              : undefined,
+        },
         { page: 1, page_size: HOMEPAGE_PROPERTIES_PAGE_SIZE },
       );
 
@@ -130,14 +158,14 @@ function HomepagePropertiesCarousel({ city }: { city: string }) {
     return () => {
       cancelled = true;
     };
-  }, [city]);
+  }, [city, debouncedVibeKey, debouncedVibeIds]);
 
   return (
     <PaginatedCarousel
       items={properties}
       getItemKey={(property) => property.id}
-      resetKey={city}
-      isLoading={isLoading}
+      resetKey={`${city}:${debouncedVibeKey}`}
+      isLoading={isLoading || vibeKey !== debouncedVibeKey}
       visibleDesktopCount={VISIBLE_DESKTOP_COUNT}
       mobileScrollGap={16}
       desktopItemClassName="w-full"

@@ -37,6 +37,7 @@ export interface SrpCardProps {
   statusLabel?: SrpCardStatusLabel;
   visitsToday?: number;
   genderLabel?: string;
+  vibeMatchScore?: number;
   saved?: boolean;
   className?: string;
   href?: string;
@@ -331,6 +332,7 @@ export function SrpCard({
   statusLabel,
   visitsToday,
   genderLabel,
+  vibeMatchScore,
   saved = false,
   className,
   href,
@@ -342,6 +344,10 @@ export function SrpCard({
 }: SrpCardProps) {
   const router = useRouter();
   const hasOffer = originalRent != null && originalRent > rent;
+  const showVibeMatch =
+    vibeMatchScore != null &&
+    Number.isFinite(vibeMatchScore) &&
+    vibeMatchScore > 0;
   const leftBadge = (
     <LeftImageBadge statusLabel={statusLabel} visitsToday={visitsToday} />
   );
@@ -411,6 +417,14 @@ export function SrpCard({
           ) : null}
         </div>
       </div>
+
+      {showVibeMatch ? (
+        <div className="bg-gradient-property-vibe-match px-4 py-2.5 text-center text-sm text-gray-900">
+          <span aria-hidden>✨ </span>
+          <span className="font-bold">{Math.round(vibeMatchScore)}%</span> Vibe
+          Match
+        </div>
+      ) : null}
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         <div className="flex items-center justify-between gap-3">

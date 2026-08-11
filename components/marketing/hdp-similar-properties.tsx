@@ -70,6 +70,7 @@ export function HdpSimilarProperties({
         visitsToday={property.visitsToday}
         genderLabel={property.genderLabel}
         propertyUrl={localityProperty?.propertyUrl}
+        vibeMatchScore={localityProperty?.vibeMatchScore}
         onRequestCallback={
           usingApiCards && propertyActions && localityProperty
             ? () =>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
@@ -25,15 +25,35 @@ import {
   resolveHdpPage,
   type HdpPageConfig,
 } from "@/src/lib/hdp/resolve-hdp-page";
+import { useDebounce } from "@/src/lib/use-debounce";
+import { useSelectedVibes } from "@/src/lib/use-selected-vibes";
+import { useVibeList } from "@/src/lib/use-vibe-list";
+import { selectedVibeApiIds } from "@/src/lib/vibe-list-storage";
 import { cn } from "@/src/lib/cn";
 import { pageLayout } from "@/src/tokens/layout";
 import { formatCityDisplayName } from "@/src/tokens/cities";
 import type { HdpSectionId } from "@/src/tokens/hdp";
 
 const HIDDEN_WHEN_NO_MOMENTS = ["moments"] as const satisfies readonly HdpSectionId[];
+const VIBE_FILTER_DEBOUNCE_MS = 400;
 
 export function HdpPageContent({ config }: { config: HdpPageConfig }) {
   const [liveConfig, setLiveConfig] = useState(config);
+  const { selectedVibes } = useSelectedVibes();
+  const { vibes } = useVibeList();
+  const vibeIds = useMemo(
+    () => selectedVibeApiIds(selectedVibes, vibes),
+    [selectedVibes, vibes],
+  );
+  const vibeKey = vibeIds.join(",");
+  const debouncedVibeKey = useDebounce(vibeKey, VIBE_FILTER_DEBOUNCE_MS);
+  const debouncedVibeIds = useMemo(() => {
+    if (!debouncedVibeKey) return [] as number[];
+    return debouncedVibeKey
+      .split(",")
+      .map((id) => Number(id))
+      .filter((id) => Number.isFinite(id) && id > 0);
+  }, [debouncedVibeKey]);
 
   useEffect(() => {
     setLiveConfig(config);
@@ -47,6 +67,7 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
         config.srpSlug,
         config.localitySlug,
         config.hdpSlug,
+        debouncedVibeIds.length > 0 ? { vibes: debouncedVibeIds } : undefined,
       );
       if (!cancelled && fresh) {
         setLiveConfig(fresh);
@@ -57,7 +78,13 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
     return () => {
       cancelled = true;
     };
-  }, [config.srpSlug, config.localitySlug, config.hdpSlug]);
+  }, [
+    config.srpSlug,
+    config.localitySlug,
+    config.hdpSlug,
+    debouncedVibeKey,
+    debouncedVibeIds,
+  ]);
 
   const { view } = liveConfig;
   const cityRaw =
@@ -102,7 +129,12 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
                 <div className="hidden md:block">
                   <HdpRatingCard view={view} />
                 </div>
-                <HdpVibeMatch displayName={view.displayName} />
+                <HdpVibeMatch
+                  displayName={view.displayName}
+                  overallScore={view.vibeMatchScore}
+                  selectedVibes={view.selectedVibeMatches}
+                  residentInterests={view.residentInterests}
+                />
               </div>
 
               <HdpSectionNav

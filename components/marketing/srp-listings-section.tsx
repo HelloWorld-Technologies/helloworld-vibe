@@ -160,6 +160,7 @@ export function SrpListingsSection({
             visitsToday={property.visitsToday}
             genderLabel={property.genderLabel}
             propertyUrl={property.propertyUrl}
+            vibeMatchScore={property.vibeMatchScore}
             onRequestCallback={
               propertyActions
                 ? () =>

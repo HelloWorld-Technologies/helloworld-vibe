@@ -15,6 +15,7 @@ export function hasActiveSrpQueryFilters(query: SrpQuery): boolean {
 export function buildSrpApiFilter(
   query: SrpQuery,
   slugGender?: "male only" | "female only",
+  vibeIds: readonly number[] = [],
 ): Filters | undefined {
   const gender = genderFilterApiValue(query.gender, slugGender);
   const [minRaw, maxRaw] = query.price?.split(",") ?? [];
@@ -24,13 +25,15 @@ export function buildSrpApiFilter(
     ? query.amenity.split(",").map((item) => item.trim()).filter(Boolean)
     : [];
   const food = query.food === "available";
+  const vibes = vibeIds.filter((id) => Number.isFinite(id) && id > 0);
 
   if (
     !gender &&
     minPrice === undefined &&
     maxPrice === undefined &&
     amenities.length === 0 &&
-    !food
+    !food &&
+    vibes.length === 0
   ) {
     return slugGender
       ? { gender: genderFilterApiValue(undefined, slugGender), amenities: [] }
@@ -45,6 +48,7 @@ export function buildSrpApiFilter(
     },
     amenities,
     food: food || undefined,
+    ...(vibes.length > 0 ? { vibes } : {}),
   };
 }
 

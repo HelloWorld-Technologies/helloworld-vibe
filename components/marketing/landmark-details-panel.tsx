@@ -150,6 +150,7 @@ export function LandmarkDetailsPanel({ className }: { className?: string }) {
               visitsToday={property.visitsToday}
               genderLabel={property.genderLabel}
               className="w-[min(100%,25.6875rem)] shrink-0"
+              vibeMatchScore={property.vibeMatchScore}
             />
           ))}
         </div>
@@ -171,6 +172,7 @@ export function LandmarkDetailsPanel({ className }: { className?: string }) {
                 rent={property.rent}
                 genderLabel={property.genderLabel}
                 className="w-[min(100%,25.6875rem)] shrink-0 snap-center"
+                vibeMatchScore={property.vibeMatchScore}
               />
             ))}
           </div>
