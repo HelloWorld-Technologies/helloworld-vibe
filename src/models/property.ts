@@ -101,6 +101,11 @@ export interface NearbyData {
   types?: Array<string>;
   latitude?: string | number;
   longitude?: string | number;
+  /** Optional place photo from house / Google nearby payloads. */
+  image?: string | null;
+  photo?: string | null;
+  image_url?: string | null;
+  icon?: string | null;
 }
 
 export interface SimilarProperty extends Property {

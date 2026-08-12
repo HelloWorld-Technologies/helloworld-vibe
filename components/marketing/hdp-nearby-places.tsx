@@ -10,11 +10,6 @@ import {
   type NearbyMapProperty,
 } from "@/components/marketing/hdp-nearby-map-modal";
 import type { NeighborhoodCardData } from "@/src/tokens/neighborhood-card";
-import {
-  neighborhoodRoutineSamples,
-  neighborhoodSectionSubtitle,
-  neighborhoodSectionTitle,
-} from "@/src/tokens/neighborhood-card";
 import { cn } from "@/src/lib/cn";
 
 const CARD_SCROLL_STEP_PX = NEIGHBORHOOD_CARD_WIDTH_PX + 16;
@@ -79,9 +74,7 @@ export function HdpNearbyPlaces({
   className?: string;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const resolvedItems =
-    items && items.length > 0 ? items : neighborhoodRoutineSamples;
-  const hasApiItems = Boolean(items && items.length > 0);
+  const resolvedItems = items && items.length > 0 ? items : [];
   const [mapOpen, setMapOpen] = useState(false);
   const [activeCategoryId, setActiveCategoryId] = useState(
     () => resolvedItems[0]?.id ?? "",
@@ -100,6 +93,9 @@ export function HdpNearbyPlaces({
     [property],
   );
 
+  // Hide the whole nearby block when the API has no places.
+  if (resolvedItems.length === 0) return null;
+
   function scrollCarousel(direction: "prev" | "next") {
     scrollRef.current?.scrollBy({
       left: direction === "next" ? CARD_SCROLL_STEP_PX : -CARD_SCROLL_STEP_PX,
@@ -115,8 +111,7 @@ export function HdpNearbyPlaces({
     setMapOpen(true);
   }
 
-  const canOpenMapModal =
-    hasApiItems || mapProperty.latitude != null;
+  const canOpenMapModal = mapProperty.latitude != null;
 
   return (
     <section
@@ -127,13 +122,11 @@ export function HdpNearbyPlaces({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-[2rem] md:leading-10">
-            {hasApiItems ? "What's nearby?" : neighborhoodSectionTitle}
+            What&apos;s nearby?
           </h2>
           <p className="mt-1 text-base text-gray-600">
             {subtitle ||
-              (hasApiItems
-                ? "See nearby utilities, facilities, transport, hospitals and more."
-                : neighborhoodSectionSubtitle)}
+              "See nearby utilities, facilities, transport, hospitals and more."}
           </p>
         </div>
 
