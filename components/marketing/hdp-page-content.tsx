@@ -35,6 +35,7 @@ import { formatCityDisplayName } from "@/src/tokens/cities";
 import type { HdpSectionId } from "@/src/tokens/hdp";
 
 const HIDDEN_WHEN_NO_MOMENTS = ["moments"] as const satisfies readonly HdpSectionId[];
+const HIDDEN_WHEN_NO_NEARBY = ["nearby"] as const satisfies readonly HdpSectionId[];
 const VIBE_FILTER_DEBOUNCE_MS = 400;
 
 export function HdpPageContent({ config }: { config: HdpPageConfig }) {
@@ -139,9 +140,10 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
 
               <HdpSectionNav
                 className="mt-6"
-                hiddenIds={
-                  view.moments.length === 0 ? HIDDEN_WHEN_NO_MOMENTS : undefined
-                }
+                hiddenIds={[
+                  ...(view.moments.length === 0 ? HIDDEN_WHEN_NO_MOMENTS : []),
+                  ...(view.nearbyItems.length === 0 ? HIDDEN_WHEN_NO_NEARBY : []),
+                ]}
               />
 
               <div className="mt-8 space-y-10 md:mt-10 md:space-y-12">

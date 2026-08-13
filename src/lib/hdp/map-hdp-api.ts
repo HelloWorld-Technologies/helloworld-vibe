@@ -1,4 +1,5 @@
 import { capitalizeFirstLetter } from "@/src/lib/string-utils";
+import { formatSrpCardImageSrc } from "@/src/lib/images";
 import type { GoogleData, NearByArea, NearbyData } from "@/src/models/property";
 import type { NeighborhoodCardData } from "@/src/tokens/neighborhood-card";
 import {
@@ -45,6 +46,20 @@ function nearbyEmoji(key: string): string {
     if (normalized.includes(token)) return emoji;
   }
   return "📍";
+}
+
+function resolveNearbyPlaceImage(place: NearbyData): string {
+  const raw = [place.image, place.photo, place.image_url, place.icon]
+    .map((value) => String(value ?? "").trim())
+    .find(Boolean);
+
+  if (raw) {
+    if (raw.startsWith("/") || raw.startsWith("data:")) return raw;
+    const formatted = formatSrpCardImageSrc(raw);
+    if (formatted) return formatted;
+  }
+
+  return nearbyComingSoonImage;
 }
 
 function parseDistanceKm(distance?: string | number): number | null {
@@ -173,7 +188,7 @@ export function mapNearByToNeighborhoodCards(
       id: `${def.id}-${placeIndex}`,
       placeName: place.name,
       walkTime: formatDistanceAway(place.distance) || "Nearby",
-      imageSrc: nearbyComingSoonImage,
+      imageSrc: resolveNearbyPlaceImage(place),
       imageAlt: place.name,
       latitude: parseCoord(place.latitude),
       longitude: parseCoord(place.longitude),
@@ -187,7 +202,7 @@ export function mapNearByToNeighborhoodCards(
         emoji: def.emoji,
         category: def.category,
         placeName: primary.placeName,
-        imageSrc: nearbyComingSoonImage,
+        imageSrc: primary.imageSrc,
         imageAlt: primary.imageAlt,
         walkTime: primary.walkTime,
         linkLabel: def.linkLabel,
@@ -211,7 +226,7 @@ export function mapNearByToNeighborhoodCards(
       id: `${categoryKey}-${placeIndex}`,
       placeName: place.name,
       walkTime: formatDistanceAway(place.distance) || "Nearby",
-      imageSrc: nearbyComingSoonImage,
+      imageSrc: resolveNearbyPlaceImage(place),
       imageAlt: place.name,
       latitude: parseCoord(place.latitude),
       longitude: parseCoord(place.longitude),
@@ -223,7 +238,7 @@ export function mapNearByToNeighborhoodCards(
       emoji: nearbyEmoji(categoryKey),
       category,
       placeName: primary.placeName,
-      imageSrc: primary.imageSrc ?? nearbyComingSoonImage,
+      imageSrc: primary.imageSrc,
       imageAlt: primary.imageAlt,
       walkTime: primary.walkTime,
       linkLabel: `View ${category} Nearby`,
