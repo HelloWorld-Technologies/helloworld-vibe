@@ -48,10 +48,7 @@ function nearbyEmoji(key: string): string {
   return "📍";
 }
 
-function resolveNearbyPlaceImage(
-  place: NearbyData,
-  fallbackSrc?: string,
-): string {
+function resolveNearbyPlaceImage(place: NearbyData): string {
   const raw = [place.image, place.photo, place.image_url, place.icon]
     .map((value) => String(value ?? "").trim())
     .find(Boolean);
@@ -62,7 +59,7 @@ function resolveNearbyPlaceImage(
     if (formatted) return formatted;
   }
 
-  return fallbackSrc || nearbyComingSoonImage;
+  return nearbyComingSoonImage;
 }
 
 function parseDistanceKm(distance?: string | number): number | null {
@@ -187,12 +184,11 @@ export function mapNearByToNeighborhoodCards(
     if (places.length === 0) return [];
 
     const nearestFirst = sortPlacesByDistance(places);
-    const categoryImage = def.imageSrc || nearbyComingSoonImage;
     const options = nearestFirst.map((place, placeIndex) => ({
       id: `${def.id}-${placeIndex}`,
       placeName: place.name,
       walkTime: formatDistanceAway(place.distance) || "Nearby",
-      imageSrc: resolveNearbyPlaceImage(place, categoryImage),
+      imageSrc: resolveNearbyPlaceImage(place),
       imageAlt: place.name,
       latitude: parseCoord(place.latitude),
       longitude: parseCoord(place.longitude),
@@ -230,7 +226,7 @@ export function mapNearByToNeighborhoodCards(
       id: `${categoryKey}-${placeIndex}`,
       placeName: place.name,
       walkTime: formatDistanceAway(place.distance) || "Nearby",
-      imageSrc: resolveNearbyPlaceImage(place, nearbyComingSoonImage),
+      imageSrc: resolveNearbyPlaceImage(place),
       imageAlt: place.name,
       latitude: parseCoord(place.latitude),
       longitude: parseCoord(place.longitude),
