@@ -33,6 +33,33 @@ function vibeMatchScore(property: Property): number | undefined {
   return Math.round(score);
 }
 
+/** Prefer property locality; list APIs often leave `locality` null and put it in address.line2. */
+export function resolvePropertyLocality(property: Property): string | undefined {
+  const candidates = [
+    property.locality,
+    property.address?.line2,
+    property.address?.landmark,
+  ];
+  for (const candidate of candidates) {
+    const label = String(candidate ?? "").trim();
+    if (label && label.toLowerCase() !== "null" && label.toLowerCase() !== "undefined") {
+      return label;
+    }
+  }
+  return undefined;
+}
+
+export function colivingPgSubtitle(
+  property: Property,
+  fallbackLocality?: string,
+): string {
+  const locality =
+    resolvePropertyLocality(property) ||
+    String(fallbackLocality ?? "").trim() ||
+    formatCityDisplayName(property.city || property.address?.city || "");
+  return `Coliving PG in ${locality || "your city"}`;
+}
+
 function propertyImages(property: Property): readonly string[] {
   const candidates = [
     property.image,
@@ -74,7 +101,10 @@ export function mapPropertyToSrpCard(
     city: formatCityDisplayName(
       context?.city ?? property.address?.city ?? property.city ?? "",
     ),
-    location: context?.locality ?? property.locality,
+    location:
+      context?.locality ||
+      resolvePropertyLocality(property) ||
+      undefined,
     href,
     propertyUrl,
     vibeMatchScore: vibeMatchScore(property),
@@ -89,11 +119,8 @@ export function mapPropertiesToSrpCards(
   return properties.map((property) =>
     mapPropertyToSrpCard(property, subtitleBuilder(property), {
       city: context?.city,
-      locality:
-        context?.locality ||
-        property.locality ||
-        property.address?.line2 ||
-        undefined,
+      // Page-level locality only when provided; otherwise each property's own.
+      locality: context?.locality || resolvePropertyLocality(property),
     }),
   );
 }
@@ -101,8 +128,6 @@ export function mapPropertiesToSrpCards(
 export function mapWishlistCardToSrpCard(
   card: WishlistPropertyCard,
 ): LocalityProperty {
-  const localityLabel =
-    card.locality || card.address?.line2 || card.city || "your city";
   const property = {
     id: card.id,
     name: card.name,
@@ -121,8 +146,10 @@ export function mapWishlistCardToSrpCard(
     free_rent: card.free_rent,
     sold_out: card.sold_out,
   } as Property;
+  const localityLabel =
+    resolvePropertyLocality(property) || card.city || "your city";
 
-  return mapPropertyToSrpCard(property, `Coliving PG in ${localityLabel}`, {
+  return mapPropertyToSrpCard(property, colivingPgSubtitle(property, card.city), {
     city: card.city,
     locality: localityLabel,
   });

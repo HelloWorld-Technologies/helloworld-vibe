@@ -6,7 +6,7 @@ export interface Property {
   property_image: Array<string>;
   address: Address;
   city: string;
-  locality: string;
+  locality: string | null;
   state: string;
   country: string;
   pincode: number;
