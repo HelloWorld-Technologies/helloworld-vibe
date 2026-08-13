@@ -22,12 +22,16 @@ import { SrpLocalitySeoLinks } from "@/components/marketing/srp-locality-seo-lin
 import { SrpPopularLocalities } from "@/components/marketing/srp-popular-localities";
 import { PropertyActionsProvider } from "@/components/booking/property-actions-provider";
 import { JsonLd } from "@/components/seo/json-ld";
-import { mapPropertiesToSrpCards } from "@/src/lib/map-property";
+import {
+  colivingPgSubtitle,
+  mapPropertiesToSrpCards,
+} from "@/src/lib/map-property";
 import type { SrpPageConfig } from "@/src/lib/srp/resolve-srp-page";
 import { resolveSrpHeroImageSrc } from "@/src/lib/srp/srp-hero-image";
 import { useSrpFilters } from "@/src/lib/srp/use-srp-filters";
 import { useSrpPagination } from "@/src/lib/srp/use-srp-pagination";
 import { cn } from "@/src/lib/cn";
+import { getCityLabel } from "@/src/tokens/cities";
 import { pageLayout } from "@/src/tokens/layout";
 import type { CitySlug } from "@/src/tokens/cities";
 import {
@@ -141,17 +145,19 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
 
   const subtitleBuilder = (property: (typeof properties)[number]) => {
     if (config.kind === "landmark") {
-      return `Coliving PG near ${config.localityName ?? config.city}`;
+      return `Coliving PG near ${config.localityName ?? getCityLabel(config.city)}`;
     }
-    if (config.localityName) {
-      return `Coliving PG in ${config.localityName}`;
-    }
-    return `Coliving PG in ${config.city}`;
+    // Prefer each property's locality so city SRPs don't show the city slug.
+    return colivingPgSubtitle(
+      property,
+      config.localityName ?? getCityLabel(config.city),
+    );
   };
 
   const cardProperties = mapPropertiesToSrpCards(properties, subtitleBuilder, {
     city: config.city,
-    locality: config.localityName ?? config.city,
+    // Only pin page locality on locality pages; city pages use each property.
+    locality: config.kind === "city" ? undefined : config.localityName,
   });
 
   const contactLocation = config.localityName ?? config.city;

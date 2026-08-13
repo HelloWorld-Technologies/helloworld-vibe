@@ -9,7 +9,10 @@ import {
 import { WishlistSrpCard } from "@/components/marketing/wishlist-srp-card";
 import { HomepageSectionHeading } from "@/components/marketing/homepage-section-heading";
 import { PaginatedCarousel } from "@/components/ui/paginated-carousel";
-import { mapPropertiesToSrpCards } from "@/src/lib/map-property";
+import {
+  colivingPgSubtitle,
+  mapPropertiesToSrpCards,
+} from "@/src/lib/map-property";
 import { useDebounce } from "@/src/lib/use-debounce";
 import { useSelectedCity } from "@/src/lib/use-selected-city";
 import { useSelectedVibes } from "@/src/lib/use-selected-vibes";
@@ -141,8 +144,7 @@ function HomepagePropertiesCarousel({ city }: { city: string }) {
         setProperties(
           mapPropertiesToSrpCards(
             data,
-            (property) =>
-              `Coliving PG in ${property.locality || getCityLabel(city)}`,
+            (property) => colivingPgSubtitle(property, getCityLabel(city)),
             { city },
           ),
         );

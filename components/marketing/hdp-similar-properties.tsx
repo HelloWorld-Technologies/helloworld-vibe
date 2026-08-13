@@ -3,7 +3,11 @@
 import { WishlistSrpCard } from "@/components/marketing/wishlist-srp-card";
 import { useOptionalPropertyActions } from "@/components/booking/property-actions-provider";
 import { PaginatedCarousel } from "@/components/ui/paginated-carousel";
-import { mapPropertyToSrpCard } from "@/src/lib/map-property";
+import {
+  colivingPgSubtitle,
+  mapPropertyToSrpCard,
+  resolvePropertyLocality,
+} from "@/src/lib/map-property";
 import type { SimilarProperty } from "@/src/models/property";
 import type { HomepageFeaturedProperty } from "@/src/tokens/homepage";
 import type { LocalityProperty } from "@/src/tokens/locality";
@@ -32,15 +36,17 @@ export function HdpSimilarProperties({
   className?: string;
 }) {
   const propertyActions = useOptionalPropertyActions();
+  const fallbackLocality = localitySlug?.replace(/-/g, " ");
   const apiCards: LocalityProperty[] =
     properties && properties.length > 0
       ? properties.map((property) =>
           mapPropertyToSrpCard(
             property,
-            property.locality || localitySlug?.replace(/-/g, " ") || "",
+            colivingPgSubtitle(property, fallbackLocality),
             {
               city: property.address?.city || property.city,
-              locality: property.locality || localitySlug?.replace(/-/g, " "),
+              locality:
+                resolvePropertyLocality(property) || fallbackLocality,
             },
           ),
         )
