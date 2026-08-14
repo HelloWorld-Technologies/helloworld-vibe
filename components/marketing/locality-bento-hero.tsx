@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Breadcrumbs, type BreadcrumbItem } from "@/components/navigation/breadcrumbs";
 import {
   localityBentoDesktopLayout,
-  localityBentoTiles,
   type LocalityBentoTile,
 } from "@/src/tokens/locality";
 import { cn } from "@/src/lib/cn";
@@ -53,8 +52,18 @@ function BentoTile({
   );
 }
 
-function BentoDesktopGrid() {
-  const { transit, nightLife, dining, health } = localityBentoDesktopLayout;
+function bentoLayout(tiles: readonly LocalityBentoTile[]) {
+  const byId = new Map(tiles.map((tile) => [tile.id, tile]));
+  return {
+    transit: byId.get("transit") ?? localityBentoDesktopLayout.transit,
+    nightLife: byId.get("night-life") ?? localityBentoDesktopLayout.nightLife,
+    dining: byId.get("dining") ?? localityBentoDesktopLayout.dining,
+    health: byId.get("health") ?? localityBentoDesktopLayout.health,
+  };
+}
+
+function BentoDesktopGrid({ tiles }: { tiles: readonly LocalityBentoTile[] }) {
+  const { transit, nightLife, dining, health } = bentoLayout(tiles);
 
   return (
     <div className="flex min-h-0 flex-1 gap-3.5">
@@ -70,11 +79,11 @@ function BentoDesktopGrid() {
   );
 }
 
-function BentoMobileRatings() {
+function BentoMobileRatings({ tiles }: { tiles: readonly LocalityBentoTile[] }) {
   return (
     <div className="mt-5 overflow-hidden rounded-3xl bg-gradient-locality-ratings">
       <div className="grid grid-cols-4 gap-2 px-3 py-4">
-        {localityBentoTiles.map((tile) => (
+        {tiles.map((tile) => (
           <div key={tile.id} className="min-w-0 text-center">
             <p className="text-base font-bold text-gray-900 sm:text-lg">
               {tile.rating}{" "}
@@ -122,6 +131,7 @@ export type LocalityBentoHeroProps = {
   heroImageSrc: string;
   heroImageAlt: string;
   breadcrumbItems?: readonly BreadcrumbItem[];
+  bentoTiles?: readonly LocalityBentoTile[];
 };
 
 export function LocalityBentoHero({
@@ -130,7 +140,10 @@ export function LocalityBentoHero({
   heroImageSrc,
   heroImageAlt,
   breadcrumbItems,
+  bentoTiles,
 }: LocalityBentoHeroProps) {
+  const showRatings = Boolean(bentoTiles && bentoTiles.length > 0);
+
   return (
     <section aria-label="Search results overview">
       <div className="hidden space-y-2 lg:block">
@@ -140,8 +153,18 @@ export function LocalityBentoHero({
         <p className="text-base font-medium text-gray-600">{subtitle}</p>
       </div>
 
-      <div className="mt-6 hidden items-stretch gap-6 lg:flex lg:h-[24.875rem]">
-        <div className="relative min-h-0 flex-[2.06] overflow-hidden rounded-2xl bg-gray-200">
+      <div
+        className={cn(
+          "mt-6 hidden items-stretch gap-6 lg:flex",
+          showRatings ? "lg:h-[24.875rem]" : "lg:h-[22rem]",
+        )}
+      >
+        <div
+          className={cn(
+            "relative min-h-0 overflow-hidden rounded-2xl bg-gray-200",
+            showRatings ? "flex-[2.06]" : "flex-1",
+          )}
+        >
           <HeroImage
             src={heroImageSrc}
             alt={heroImageAlt}
@@ -149,7 +172,7 @@ export function LocalityBentoHero({
             className="object-cover"
           />
         </div>
-        <BentoDesktopGrid />
+        {showRatings && bentoTiles ? <BentoDesktopGrid tiles={bentoTiles} /> : null}
       </div>
 
       <div className="-mx-4 sm:-mx-6 lg:hidden">
@@ -169,7 +192,9 @@ export function LocalityBentoHero({
             {title}
           </h1>
           <p className="mt-2 text-base font-medium text-gray-600">{subtitle}</p>
-          <BentoMobileRatings />
+          {showRatings && bentoTiles ? (
+            <BentoMobileRatings tiles={bentoTiles} />
+          ) : null}
         </div>
       </div>
     </section>

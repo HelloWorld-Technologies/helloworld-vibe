@@ -21,6 +21,10 @@ import {
   propertyGalleryItems,
   propertyGalleryTotal,
 } from "@/src/tokens/property-gallery";
+import {
+  isSrpComingSoonImage,
+  srpCardComingSoonImage,
+} from "@/src/tokens/srp-card";
 
 type PropertyGalleryProps = {
   images?: readonly string[];
@@ -38,7 +42,19 @@ function GalleryBadge({ children }: { children: React.ReactNode }) {
 }
 
 function galleryMediaAlt(item: GalleryMediaItem): string {
+  if (isSrpComingSoonImage(item.imageSrc)) return "Photos coming soon";
   return item.caption || item.label || "Property photo";
+}
+
+function comingSoonGalleryItems(): GalleryMediaItem[] {
+  return buildGalleryItemsFromImages([srpCardComingSoonImage]);
+}
+
+function isComingSoonOnlyGallery(items: readonly GalleryMediaItem[]): boolean {
+  return (
+    items.length > 0 &&
+    items.every((item) => isSrpComingSoonImage(item.imageSrc))
+  );
 }
 
 function GalleryChevron({
@@ -367,8 +383,12 @@ function GalleryVideoTile({
           onClick={onViewAllImages}
         />
       ) : null}
-      <GalleryChevron direction="prev" label="Previous" onClick={onPrev} />
-      <GalleryChevron direction="next" label="Next" onClick={onNext} />
+      {onPrev && onNext ? (
+        <>
+          <GalleryChevron direction="prev" label="Previous" onClick={onPrev} />
+          <GalleryChevron direction="next" label="Next" onClick={onNext} />
+        </>
+      ) : null}
     </div>
   );
 }
@@ -395,6 +415,15 @@ function useGallerySource({
         galleryItems,
         desktop: buildGalleryDesktopFromImages(images),
         photoItems: getGalleryItemsByCategory(galleryItems, "photos"),
+      };
+    }
+
+    if (items || images) {
+      const galleryItems = comingSoonGalleryItems();
+      return {
+        galleryItems,
+        desktop: buildGalleryDesktopFromImages([srpCardComingSoonImage]),
+        photoItems: galleryItems,
       };
     }
 
@@ -687,7 +716,29 @@ export function PropertyGalleryDesktop({
     );
   }
 
-  if (images?.length === 0 && items?.length === 0) return null;
+  const canCycle = sequence.length > 1;
+  const isPlaceholderGallery = isComingSoonOnlyGallery(galleryItems);
+  const showViewAll = !isPlaceholderGallery && totalCount > 1;
+
+  if (isPlaceholderGallery) {
+    return (
+      <div
+        className={cn(
+          "relative h-[min(360px,55vw)] min-h-[280px] overflow-hidden rounded-2xl bg-[#faf7f0]",
+          className,
+        )}
+      >
+        <Image
+          src={srpCardComingSoonImage}
+          alt="Photos coming soon"
+          fill
+          className="object-contain"
+          sizes="(max-width: 768px) 100vw, 960px"
+          priority
+        />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -702,8 +753,8 @@ export function PropertyGalleryDesktop({
           className="h-full"
           autoPlay={featuredShouldAutoPlay}
           paused={momentsSidePlaying}
-          onPrev={goFeaturedPrev}
-          onNext={goFeaturedNext}
+          onPrev={canCycle ? goFeaturedPrev : undefined}
+          onNext={canCycle ? goFeaturedNext : undefined}
           swipeDirection={swipeDirection}
           slideKey={slideKey}
           imageIndex={
@@ -714,7 +765,7 @@ export function PropertyGalleryDesktop({
               ? carouselImages.length || totalCount
               : undefined
           }
-          onViewAllImages={() => setPhotosOpen(true)}
+          onViewAllImages={showViewAll ? () => setPhotosOpen(true) : undefined}
         />
         <GalleryImageTile
           item={momentsTile}
@@ -726,7 +777,7 @@ export function PropertyGalleryDesktop({
           <GalleryImageTile
             item={washroom}
             className="min-h-0"
-            showViewAll={totalCount > 0}
+            showViewAll={showViewAll}
             totalCount={totalCount}
             onViewAll={() => setPhotosOpen(true)}
           />
@@ -790,13 +841,16 @@ export function PropertyGalleryMobile({
   );
   const [slideKey, setSlideKey] = useState(0);
   const { galleryItems, photoItems } = useGallerySource({ images, items });
+  const isPlaceholderGallery = isComingSoonOnlyGallery(galleryItems);
   const totalCount = galleryItems.length || propertyGalleryTotal;
   const activeItem = galleryItems[activeIndex] ?? galleryItems[0];
   const activeCategory = activeItem?.category;
   const availableTabs = galleryCategoryTabs.filter((tab) =>
     galleryItems.some((item) => item.category === tab.value),
   );
-  const showCategoryTabs = availableTabs.length > 1;
+  const showCategoryTabs =
+    !isPlaceholderGallery && availableTabs.length > 1;
+  const canCycle = !isPlaceholderGallery && galleryItems.length > 1;
   const mediaAnimClass =
     swipeDirection === "prev"
       ? "animate-gallery-swipe-prev"
@@ -841,7 +895,8 @@ export function PropertyGalleryMobile({
       <div className={cn(!isHero && "mx-auto w-full max-w-[320px]", className)}>
         <div
           className={cn(
-            "relative overflow-hidden bg-black",
+            "relative overflow-hidden",
+            isPlaceholderGallery ? "bg-[#fcfcf5]" : "bg-black",
             isHero ? "aspect-[4/5] w-full" : "aspect-4/5 rounded-3xl",
           )}
         >
@@ -880,7 +935,10 @@ export function PropertyGalleryMobile({
               src={activeItem.imageSrc}
               alt={galleryMediaAlt(activeItem)}
               fill
-              className={cn("object-cover", mediaAnimClass)}
+              className={cn(
+                isPlaceholderGallery ? "object-contain" : "object-cover",
+                mediaAnimClass,
+              )}
               sizes={isHero ? "100vw" : "320px"}
               priority={isHero}
             />
@@ -915,24 +973,39 @@ export function PropertyGalleryMobile({
             </>
           ) : null}
 
-          <GalleryChevron direction="prev" label="Previous" onClick={goPrev} />
-          <GalleryChevron direction="next" label="Next" onClick={goNext} />
+          {canCycle ? (
+            <>
+              <GalleryChevron
+                direction="prev"
+                label="Previous"
+                onClick={goPrev}
+              />
+              <GalleryChevron
+                direction="next"
+                label="Next"
+                onClick={goNext}
+              />
+            </>
+          ) : null}
 
-          <GalleryImageCountBadge
-            current={activeIndex + 1}
-            total={totalCount}
-            onClick={() => setPhotosOpen(true)}
-            className={
-              isHero
-                ? showCategoryTabs
-                  ? "bottom-28 right-4"
-                  : "bottom-16 right-4"
-                : showCategoryTabs
-                  ? "bottom-24 right-3"
-                  : "bottom-12 right-3"
-            }
-          />
+          {!isPlaceholderGallery ? (
+            <GalleryImageCountBadge
+              current={activeIndex + 1}
+              total={totalCount}
+              onClick={() => setPhotosOpen(true)}
+              className={
+                isHero
+                  ? showCategoryTabs
+                    ? "bottom-28 right-4"
+                    : "bottom-16 right-4"
+                  : showCategoryTabs
+                    ? "bottom-24 right-3"
+                    : "bottom-12 right-3"
+              }
+            />
+          ) : null}
 
+          {!isPlaceholderGallery ? (
           <div
             className={cn(
               "absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 pt-16",
@@ -968,6 +1041,7 @@ export function PropertyGalleryMobile({
               />
             </div>
           </div>
+          ) : null}
         </div>
       </div>
 

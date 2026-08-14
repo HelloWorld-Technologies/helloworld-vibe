@@ -39,6 +39,8 @@ export function HdpMoments({
   const [activePage, setActivePage] = useState(0);
   const [pageCount, setPageCount] = useState(1);
 
+  const hasMoments = moments.length > 0;
+
   function updateScrollState() {
     const node = scrollRef.current;
     if (!node) return;
@@ -91,6 +93,8 @@ export function HdpMoments({
     });
     setActivePage(nextPage);
   }
+
+  if (!hasMoments) return null;
 
   return (
     <section

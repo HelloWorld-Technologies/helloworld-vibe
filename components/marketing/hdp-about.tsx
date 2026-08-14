@@ -1,5 +1,4 @@
 import type { HdpPageView } from "@/src/lib/hdp/hdp-page-view";
-import { hdpAbout, hdpProperty } from "@/src/tokens/hdp";
 import { cn } from "@/src/lib/cn";
 
 export function HdpAbout({
@@ -9,8 +8,9 @@ export function HdpAbout({
   view?: HdpPageView;
   className?: string;
 }) {
-  const displayName = view?.displayName ?? hdpProperty.name;
-  const about = view?.about || hdpAbout;
+  const displayName = view?.displayName ?? "this home";
+  const about = view?.about?.trim() ?? "";
+  if (!about) return null;
 
   return (
     <section

@@ -27,6 +27,7 @@ import {
   mapPropertiesToSrpCards,
 } from "@/src/lib/map-property";
 import type { SrpPageConfig } from "@/src/lib/srp/resolve-srp-page";
+import type { SrpQuery } from "@/src/models/srp-query";
 import { resolveSrpHeroImageSrc } from "@/src/lib/srp/srp-hero-image";
 import { useSrpFilters } from "@/src/lib/srp/use-srp-filters";
 import { useSrpPagination } from "@/src/lib/srp/use-srp-pagination";
@@ -36,9 +37,10 @@ import { pageLayout } from "@/src/tokens/layout";
 import type { CitySlug } from "@/src/tokens/cities";
 import {
   localityAmenities,
-  localityDayFromHereItems,
   localityDayFromHereTitle,
 } from "@/src/tokens/locality";
+
+const EMPTY_SRP_QUERY: SrpQuery = {};
 
 function SrpHero({
   config,
@@ -56,6 +58,7 @@ function SrpHero({
       heroImageSrc={resolvedSrc}
       heroImageAlt={config.pageTitle}
       breadcrumbItems={config.breadcrumbItems}
+      bentoTiles={config.bentoTiles}
     />
   );
 }
@@ -122,7 +125,7 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
 
   const { query, setQuery } = useSrpFilters();
   const isCityPage = config.kind === "city";
-  const activeQuery = isCityPage ? query : {};
+  const activeQuery = isCityPage ? query : EMPTY_SRP_QUERY;
 
   const {
     properties,
@@ -161,7 +164,21 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
   });
 
   const contactLocation = config.localityName ?? config.city;
+  const dayFromHereItems = config.dayFromHereItems ?? [];
   const dayFromHereSubtitle = `What living at ${contactLocation} actually looks like.`;
+  const hasAbout = Boolean(config.aboutText?.trim());
+  const hasLandmarks = config.relatedLandmarkLinks.length > 0;
+  const hasDetails =
+    dayFromHereItems.length > 0 ||
+    localityAmenities.length > 0 ||
+    hasAbout ||
+    hasLandmarks;
+  const mobileTabs = [
+    { id: "properties" as const, label: "Coliving PGs" },
+    ...(hasDetails
+      ? [{ id: "details" as const, label: "Locality Details" }]
+      : []),
+  ];
   const contactCardProps = {
     city: config.city,
     location: contactLocation,
@@ -200,6 +217,7 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
           <LocalityMobileTabs
             value={mobileTab}
             onChange={setMobileTab}
+            tabs={mobileTabs}
             className="mb-6"
           />
 
@@ -230,13 +248,15 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
           >
             <div className={pageLayout.twoColumn}>
               <div className={cn(pageLayout.mainColumn, "space-y-10 md:space-y-12")}>
-                <LocalityDayFromHereSection
-                  title={localityDayFromHereTitle}
-                  subtitle={dayFromHereSubtitle}
-                  items={localityDayFromHereItems}
-                />
+                {dayFromHereItems.length > 0 ? (
+                  <LocalityDayFromHereSection
+                    title={localityDayFromHereTitle}
+                    subtitle={dayFromHereSubtitle}
+                    items={dayFromHereItems}
+                  />
+                ) : null}
                 <LocalityAmenitiesSection amenities={localityAmenities} />
-                <SrpAboutSection config={config} />
+                {hasAbout ? <SrpAboutSection config={config} /> : null}
                 <RelatedLandmarkLinks links={config.relatedLandmarkLinks} />
               </div>
               <div className={pageLayout.sidebarColumn}>
@@ -270,7 +290,9 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
       </main>
 
       <SiteFooter />
-      <LocalityMobileActions onShowDetails={showDetails} />
+      {hasDetails ? (
+        <LocalityMobileActions onShowDetails={showDetails} />
+      ) : null}
     </div>
     </PropertyActionsProvider>
   );

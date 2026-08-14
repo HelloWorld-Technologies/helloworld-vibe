@@ -4,11 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PaginatedCarousel } from "@/components/ui/paginated-carousel";
 import type { HdpReviewSummaryView } from "@/src/lib/hdp/map-hdp-api";
-import {
-  hdpResidentReviews,
-  hdpReviewSummary,
-  type HdpResidentReview,
-} from "@/src/tokens/hdp-reviews";
+import type { HdpResidentReview } from "@/src/tokens/hdp-reviews";
 import { cn } from "@/src/lib/cn";
 
 const VISIBLE_DESKTOP_COUNT = 3;
@@ -126,14 +122,11 @@ export function HdpReviews({
   googleLink?: string;
   className?: string;
 }) {
-  const summary = reviewSummary ?? hdpReviewSummary;
-  const reviews =
-    residentReviews && residentReviews.length > 0
-      ? residentReviews
-      : hdpResidentReviews;
+  const summary = reviewSummary ?? null;
+  const reviews = residentReviews ?? [];
   const allReviewsLink = googleLink;
 
-  if (reviews.length === 0) return null;
+  if (!summary && reviews.length === 0) return null;
 
   return (
     <section
@@ -157,6 +150,7 @@ export function HdpReviews({
       </div>
 
       <div className="space-y-4">
+        {summary ? (
         <div
           className={cn(
             "rounded-2xl border border-gray-300/60 p-4 md:p-[1.0625rem]",
@@ -241,7 +235,9 @@ export function HdpReviews({
             </div>
           </div>
         </div>
+        ) : null}
 
+        {reviews.length > 0 ? (
         <PaginatedCarousel
           items={reviews}
           getItemKey={(review) => review.id}
@@ -255,6 +251,7 @@ export function HdpReviews({
             <ReviewCard review={review} className={cardClassName} />
           )}
         />
+        ) : null}
       </div>
     </section>
   );

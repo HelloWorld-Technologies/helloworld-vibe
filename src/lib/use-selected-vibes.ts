@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useSyncExternalStore } from "react";
 import {
   persistSelectedVibes,
   readStoredSelectedVibes,
@@ -64,7 +64,7 @@ export function useSelectedVibes() {
     hydrateFromStorage();
   }, []);
 
-  const selectedVibes = new Set(ids);
+  const selectedVibes = useMemo(() => new Set(ids), [ids]);
 
   const toggleVibe = useCallback((id: string) => {
     hydrateFromStorage();

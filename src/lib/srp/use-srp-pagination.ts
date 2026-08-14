@@ -113,11 +113,15 @@ export function useSrpPagination(
   const contextRef = useRef(context);
   const queryRef = useRef(query);
   const vibeIdsRef = useRef(debouncedVibeIds);
+  const initialPropertiesRef = useRef(initialProperties);
+  const initialTotalRef = useRef(initialTotal);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   contextRef.current = context;
   queryRef.current = query;
   vibeIdsRef.current = debouncedVibeIds;
+  initialPropertiesRef.current = initialProperties;
+  initialTotalRef.current = initialTotal;
   totalRef.current = total;
 
   const queryKey = serializeSrpQuery(query);
@@ -133,11 +137,16 @@ export function useSrpPagination(
     let cancelled = false;
 
     async function syncListings() {
-      if (!hasActiveSrpQueryFilters(query) && debouncedVibeIds.length === 0) {
-        setProperties(initialProperties);
-        setTotal(initialTotal);
+      const currentQuery = queryRef.current;
+      const currentVibeIds = vibeIdsRef.current;
+      const currentInitialProperties = initialPropertiesRef.current;
+      const currentInitialTotal = initialTotalRef.current;
+
+      if (!hasActiveSrpQueryFilters(currentQuery) && currentVibeIds.length === 0) {
+        setProperties(currentInitialProperties);
+        setTotal(currentInitialTotal);
         pageRef.current = 1;
-        const more = initialTotal > initialProperties.length;
+        const more = currentInitialTotal > currentInitialProperties.length;
         hasMoreRef.current = more;
         setHasMore(more);
         loadingRef.current = false;
@@ -152,9 +161,9 @@ export function useSrpPagination(
       try {
         const response = await fetchSrpPage(
           contextRef.current,
-          query,
+          currentQuery,
           1,
-          debouncedVibeIds,
+          currentVibeIds,
         );
         if (cancelled) return;
 
@@ -190,15 +199,7 @@ export function useSrpPagination(
     return () => {
       cancelled = true;
     };
-  }, [
-    resetSnapshot,
-    initialProperties,
-    initialTotal,
-    query,
-    queryKey,
-    debouncedVibeIds,
-    debouncedVibeKey,
-  ]);
+  }, [resetSnapshot]);
 
   const loadMore = useCallback(async () => {
     if (loadingRef.current || !hasMoreRef.current) return;
