@@ -2,9 +2,11 @@ import type { GalleryMediaItem } from "@/src/models/gallery";
 import type { PropertyMoment } from "@/src/models/moment";
 import type { PropertyMediaItem } from "@/src/models/property-media";
 import { imageUrlFormatter } from "@/src/lib/images";
+import { srpCardComingSoonImage } from "@/src/tokens/srp-card";
 
 function formatMediaUrl(url: string | null | undefined): string {
   if (!url) return "";
+  if (url.includes("coming-soon")) return srpCardComingSoonImage;
   if (url.startsWith("/") || url.includes("http")) {
     return url.includes("http")
       ? url.replace(/\(/g, "%28").replace(/\)/g, "%29").replace(/ /g, "%20")

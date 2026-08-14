@@ -63,6 +63,7 @@ import type {
   Property,
   SimilarProperty,
 } from "@/src/models/property";
+import { srpCardComingSoonImage } from "@/src/tokens/srp-card";
 import { buildGalleryItemsFromMedia } from "@/src/tokens/property-gallery";
 import type { HdpRoomType } from "@/src/tokens/hdp";
 
@@ -143,10 +144,10 @@ function propertyGalleryImages(
   );
   if (fromMedia.length > 0) return fromMedia;
 
-  const legacy = legacyPropertyPhotoUrls(property).map((url) =>
-    imageUrlFormatter("hdp", url),
-  );
-  return legacy.length > 0 ? legacy : ["/assets/community/hero/hero-1.png"];
+  const legacy = legacyPropertyPhotoUrls(property)
+    .map((url) => imageUrlFormatter("hdp", url))
+    .filter(Boolean);
+  return legacy.length > 0 ? legacy : [srpCardComingSoonImage];
 }
 
 function buildGalleryItems(
@@ -176,9 +177,7 @@ function buildGalleryItems(
 
   return items.length > 0
     ? items
-    : mapLegacyPropertyPhotosToGalleryItems([
-        "/assets/community/hero/hero-1.png",
-      ]);
+    : mapLegacyPropertyPhotosToGalleryItems([srpCardComingSoonImage]);
 }
 
 function buildHdpView(options: {
