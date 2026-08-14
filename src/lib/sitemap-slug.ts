@@ -35,7 +35,7 @@ function getLocalityFromAddress(property: {
 }
 
 export const getLocalitySlug = (property: {
-  locality?: string;
+  locality?: string | null;
   address?: { line2?: string };
 }): string => {
   if (property?.locality) {
@@ -159,7 +159,7 @@ export function marketingSrpSlugFromProperty(property: {
 export function getPropertyHref(property: {
   name?: string;
   display_name?: string;
-  locality?: string;
+  locality?: string | null;
   address?: { line2?: string; city?: string };
   city?: string;
   gender?: string;
