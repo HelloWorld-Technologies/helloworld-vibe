@@ -4,7 +4,7 @@ import { cn } from "@/src/lib/cn";
 
 export type LocalityMobileTab = "properties" | "details";
 
-const tabs: { id: LocalityMobileTab; label: string }[] = [
+const DEFAULT_TABS: { id: LocalityMobileTab; label: string }[] = [
   { id: "properties", label: "Coliving PGs" },
   { id: "details", label: "Locality Details" },
 ];
@@ -13,11 +13,14 @@ export function LocalityMobileTabs({
   value,
   onChange,
   className,
+  tabs = DEFAULT_TABS,
 }: {
   value: LocalityMobileTab;
   onChange: (tab: LocalityMobileTab) => void;
   className?: string;
+  tabs?: readonly { id: LocalityMobileTab; label: string }[];
 }) {
+  if (tabs.length < 2) return null;
   return (
     <div
       className={cn(

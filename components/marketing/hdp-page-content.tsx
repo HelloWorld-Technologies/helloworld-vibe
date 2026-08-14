@@ -36,6 +36,9 @@ import type { HdpSectionId } from "@/src/tokens/hdp";
 
 const HIDDEN_WHEN_NO_MOMENTS = ["moments"] as const satisfies readonly HdpSectionId[];
 const HIDDEN_WHEN_NO_NEARBY = ["nearby"] as const satisfies readonly HdpSectionId[];
+const HIDDEN_WHEN_NO_REVIEWS = ["reviews"] as const satisfies readonly HdpSectionId[];
+const HIDDEN_WHEN_NO_AMENITIES = ["amenities"] as const satisfies readonly HdpSectionId[];
+const HIDDEN_WHEN_NO_ABOUT = ["about"] as const satisfies readonly HdpSectionId[];
 const VIBE_FILTER_DEBOUNCE_MS = 400;
 
 export function HdpPageContent({ config }: { config: HdpPageConfig }) {
@@ -88,6 +91,10 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
   ]);
 
   const { view } = liveConfig;
+  const hasReviews =
+    view.reviewSummary != null || view.residentReviews.length > 0;
+  const hasAbout = Boolean(view.about?.trim());
+  const hasAmenities = view.amenities.length > 0;
   const cityRaw =
     liveConfig.property.address?.city || liveConfig.property.city || "";
   const city = cityRaw ? formatCityDisplayName(cityRaw) : undefined;
@@ -141,8 +148,11 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
               <HdpSectionNav
                 className="mt-6"
                 hiddenIds={[
-                  ...(view.moments.length === 0 ? HIDDEN_WHEN_NO_MOMENTS : []),
+                  ...(hasAbout ? [] : HIDDEN_WHEN_NO_ABOUT),
+                  ...(hasAmenities ? [] : HIDDEN_WHEN_NO_AMENITIES),
                   ...(view.nearbyItems.length === 0 ? HIDDEN_WHEN_NO_NEARBY : []),
+                  ...(view.moments.length === 0 ? HIDDEN_WHEN_NO_MOMENTS : []),
+                  ...(hasReviews ? [] : HIDDEN_WHEN_NO_REVIEWS),
                 ]}
               />
 
@@ -169,13 +179,15 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
                   displayName={view.displayName}
                   moments={view.moments}
                 />
-                <section id="hdp-reviews" className="scroll-mt-32">
-                  <HdpReviews
-                    reviewSummary={view.reviewSummary}
-                    residentReviews={view.residentReviews}
-                    googleLink={view.googleLink}
-                  />
-                </section>
+                {hasReviews ? (
+                  <section id="hdp-reviews" className="scroll-mt-32">
+                    <HdpReviews
+                      reviewSummary={view.reviewSummary}
+                      residentReviews={view.residentReviews}
+                      googleLink={view.googleLink}
+                    />
+                  </section>
+                ) : null}
               </div>
             </div>
 

@@ -23,6 +23,12 @@ export function HdpSectionNav({
   const [active, setActive] = useState<HdpSectionId>(items[0]?.id ?? "about");
 
   useEffect(() => {
+    if (!items.some((item) => item.id === active)) {
+      setActive(items[0]?.id ?? "about");
+    }
+  }, [items, active]);
+
+  useEffect(() => {
     const sections = items
       .map((item) => document.getElementById(`hdp-${item.id}`))
       .filter(Boolean) as HTMLElement[];
@@ -53,6 +59,8 @@ export function HdpSectionNav({
     });
     setActive(id);
   }
+
+  if (items.length === 0) return null;
 
   return (
     <div

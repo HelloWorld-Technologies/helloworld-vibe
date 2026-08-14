@@ -32,6 +32,7 @@ export function resolveSrpHeroImageSrc(
   const property = config.properties[0];
   const raw =
     override?.trim() ||
+    normalizeImageSource(config.heroImageSrc) ||
     normalizeImageSource(property?.image) ||
     normalizeImageSource(property?.srp_image) ||
     normalizeImageSource(property?.hdp_image) ||

@@ -4,6 +4,10 @@ import type {
   NearbyPlaceApiItem,
   NearbyPlacesApiResponse,
 } from "@/src/models/nearby-place";
+import {
+  parseLocalityInfo,
+  type LocalityInfo,
+} from "@/src/models/locality-info";
 import type { Property } from "@/src/models/property";
 
 export const SRP_LIST_PAGE_SIZE = 32;
@@ -51,6 +55,17 @@ interface PropertyListResponse {
   nearBy?: Property[];
   message?: string;
   place?: LandmarkPlaceApi;
+  localityInfo?: LocalityInfo;
+}
+
+function asPropertyListResponse(body: object): PropertyListResponse {
+  const response = body as PropertyListResponse;
+  return {
+    ...response,
+    localityInfo: parseLocalityInfo(
+      (body as { localityInfo?: unknown }).localityInfo,
+    ),
+  };
 }
 
 export async function fetchAllProperty(
@@ -65,7 +80,7 @@ export async function fetchAllProperty(
     if (body == null || typeof body !== "object" || Array.isArray(body)) {
       return { success: false, data: [] };
     }
-    return body as PropertyListResponse;
+    return asPropertyListResponse(body);
   } catch {
     return { success: false, data: [] };
   }
@@ -85,7 +100,7 @@ export async function fetchPropertiesBySlug(
     if (body == null || typeof body !== "object" || Array.isArray(body)) {
       return { success: false, data: [] };
     }
-    return body as PropertyListResponse;
+    return asPropertyListResponse(body);
   } catch {
     return { success: false, data: [] };
   }

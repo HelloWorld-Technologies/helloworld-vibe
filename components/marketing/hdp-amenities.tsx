@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { formatAmenityForDisplay } from "@/src/lib/amenity-display";
-import { hdpAmenities } from "@/src/tokens/hdp";
 import { cn } from "@/src/lib/cn";
 
 const VISIBLE_COUNT = 11;
@@ -16,8 +15,8 @@ export function HdpAmenities({
 }) {
   const [showAll, setShowAll] = useState(false);
 
-  const source =
-    amenities && amenities.length > 0 ? amenities : hdpAmenities;
+  const source = amenities ?? [];
+  if (source.length === 0) return null;
 
   const items = source.map((raw, index) => {
     const display = formatAmenityForDisplay(raw);

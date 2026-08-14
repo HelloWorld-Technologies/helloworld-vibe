@@ -57,6 +57,16 @@ import {
 } from "@/src/lib/schema";
 import { capitalizeFirstLetter } from "@/src/lib/string-utils";
 import type { Property } from "@/src/models/property";
+import type { NeighborhoodCardData } from "@/src/tokens/neighborhood-card";
+import type { LocalityBentoTile } from "@/src/tokens/locality";
+import {
+  localityAboutText,
+  localityHeroImageSrc,
+  localityStartingRent,
+  mapLocalityBentoTiles,
+  mapLocalityNearbyToDayFromHere,
+} from "@/src/lib/srp/map-locality-info";
+import type { LocalityInfo } from "@/src/models/locality-info";
 
 export type SrpPageKind = "city" | "locality" | "landmark";
 
@@ -81,6 +91,9 @@ export type SrpPageConfig = {
   headerH1: string;
   propertiesHeading: string;
   heroSubtitle: string;
+  heroImageSrc?: string;
+  bentoTiles?: LocalityBentoTile[];
+  dayFromHereItems?: NeighborhoodCardData[];
   aboutTitle: string;
   aboutText: string;
   breadcrumbItems: SrpBreadcrumbItem[];
@@ -162,6 +175,26 @@ async function loadLocalityLinks(
   return localityLinks;
 }
 
+function localityPageFields(
+  localityInfo: LocalityInfo | undefined,
+  fallbacks: { startingRent: number; total: number; aboutText: string },
+) {
+  const startingRent = localityStartingRent(
+    localityInfo,
+    fallbacks.startingRent,
+  );
+  const dayFromHereItems = mapLocalityNearbyToDayFromHere(localityInfo?.nearby);
+  return {
+    heroSubtitle: formatStartingSubtitle(startingRent, fallbacks.total),
+    heroImageSrc: localityHeroImageSrc(localityInfo),
+    bentoTiles: localityInfo?.ratings
+      ? mapLocalityBentoTiles(localityInfo.ratings)
+      : undefined,
+    dayFromHereItems: localityInfo ? dayFromHereItems : undefined,
+    aboutText: localityAboutText(localityInfo, fallbacks.aboutText),
+  };
+}
+
 function emptyResult(): null {
   return null;
 }
@@ -179,7 +212,7 @@ export async function resolveSrpPage(
   if (nearLandmark) {
     const { landmarkSlug, slugGender, livingType } = nearLandmark;
     const apiGender = genderFilterApiValue(undefined, slugGender);
-    const { data, success, pageInfo, place } = await fetchPropertiesBySlug(
+    const { data, success, pageInfo, place, localityInfo } = await fetchPropertiesBySlug(
       {
         slug: landmarkSlug,
         filter: apiGender ? { gender: apiGender, amenities: [] } : undefined,
@@ -252,6 +285,12 @@ export async function resolveSrpPage(
       )
       .slice(0, 32);
 
+    const localityFields = localityPageFields(localityInfo, {
+      startingRent: minRent ?? data[0]?.min_rent ?? 0,
+      total,
+      aboutText: seo.pageDescription,
+    });
+
     return {
       kind: "landmark",
       canonicalPath: slug,
@@ -273,9 +312,8 @@ export async function resolveSrpPage(
         livingType,
         isLandmark: true,
       }),
-      heroSubtitle: formatStartingSubtitle(minRent ?? data[0]?.min_rent ?? 0, total),
+      ...localityFields,
       aboutTitle: "About this place",
-      aboutText: seo.pageDescription,
       breadcrumbItems,
       localityLinks: [],
       relatedLandmarkLinks,
@@ -313,7 +351,7 @@ export async function resolveSrpPage(
     const localityName = localitySlugToName(branch.localitySlug);
     const localityFilter = branch.localitySlug.replace(/-/g, " ");
     const apiGender = genderFilterApiValue(undefined, branch.slugGender);
-    const { data, success, pageInfo } = await fetchAllProperty(
+    const { data, success, pageInfo, localityInfo } = await fetchAllProperty(
       {
         city: branch.city,
         localityName: localityFilter || undefined,
@@ -335,6 +373,11 @@ export async function resolveSrpPage(
       branch.pageMetaDescription,
       total,
     );
+    const localityFields = localityPageFields(localityInfo, {
+      startingRent: minRentFromProperties(data) ?? data[0]?.min_rent ?? 0,
+      total,
+      aboutText: branch.pageMetaDescription,
+    });
 
     return {
       kind: "locality",
@@ -357,12 +400,8 @@ export async function resolveSrpPage(
         slugGender: branch.slugGender,
         livingType: branch.livingType,
       }),
-      heroSubtitle: formatStartingSubtitle(
-        minRentFromProperties(data) ?? data[0]?.min_rent ?? 0,
-        total,
-      ),
+      ...localityFields,
       aboutTitle: `About ${localityName}`,
-      aboutText: branch.pageMetaDescription,
       breadcrumbItems: branch.breadcrumbItems,
       localityLinks,
       relatedLandmarkLinks: [],
@@ -559,7 +598,7 @@ export async function resolveSrpPage(
 
   const { city, livingType, slugGender } = parsed;
   const apiGender = genderFilterApiValue(undefined, slugGender);
-  const { data, success, pageInfo } = await fetchAllProperty(
+  const { data, success, pageInfo, localityInfo } = await fetchAllProperty(
     {
       city,
       filter: apiGender ? { gender: apiGender, amenities: [] } : undefined,
@@ -618,6 +657,11 @@ export async function resolveSrpPage(
     pageMetaDescription,
     total,
   );
+  const localityFields = localityPageFields(localityInfo, {
+    startingRent: minRentFromProperties(data) ?? data[0]?.min_rent ?? 0,
+    total,
+    aboutText: pageDescription,
+  });
 
   return {
     kind: "city",
@@ -637,12 +681,8 @@ export async function resolveSrpPage(
       slugGender,
       livingType,
     }),
-    heroSubtitle: formatStartingSubtitle(
-      minRentFromProperties(data) ?? data[0]?.min_rent ?? 0,
-      total,
-    ),
+    ...localityFields,
     aboutTitle: `About ${cityLabel}`,
-    aboutText: pageDescription,
     breadcrumbItems,
     localityLinks,
     relatedLandmarkLinks: [],
