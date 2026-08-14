@@ -3,7 +3,7 @@ export type HdpTitleProperty = {
   name?: string;
   gender?: string;
   address?: { line2?: string; city?: string };
-  locality?: string;
+  locality?: string | null;
 };
 
 function toTitleCase(s: string): string {
