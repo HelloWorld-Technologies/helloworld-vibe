@@ -344,6 +344,35 @@ export function parseMarketingSrpSlug(
   return null;
 }
 
+function firstPathSegment(asPath: string): string {
+  return String(asPath || "")
+    .split("?")[0]
+    .replace(/^\/+/, "")
+    .split("/")[0]
+    .trim()
+    .toLowerCase();
+}
+
+/** City key from an SRP-like path, when the first segment parses to a known city. */
+export function cityFromSrpPath(asPath: string): string | null {
+  const slug = firstPathSegment(asPath);
+  if (!slug) return null;
+  const parsed =
+    parseFlatKotaGenderHostelSlug(slug) ||
+    parseFlatKotaGenericHostelSlug(slug) ||
+    parseFlatGenderLocalitySlug(slug, cities) ||
+    parseFlatColivingLocalitySlug(slug, cities) ||
+    parseFlatPgLocalitySlug(slug, cities) ||
+    parseFlatRoomForRentLocalitySlug(slug, cities) ||
+    parseMarketingSrpSlug(slug);
+  const city = parsed?.city ? String(parsed.city).trim().toLowerCase() : "";
+  if (!city) return null;
+  const known = new Set(
+    cities.map((item) => String(item).trim().toLowerCase()).filter(Boolean)
+  );
+  return known.has(city) ? city : null;
+}
+
 /** API gender filter: explicit query wins; otherwise slug default (boys/girls pages). */
 export function genderFilterApiValue(
   queryGender: string | undefined,

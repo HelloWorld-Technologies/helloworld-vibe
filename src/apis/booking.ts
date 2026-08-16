@@ -13,8 +13,10 @@ export async function getPaymentDetails(payload: GetPaymentDetailsPayload) {
       payload,
     );
     return data;
-  } catch {
-    return { success: false };
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to load payment details";
+    return { success: false, message };
   }
 }
 
@@ -37,8 +39,12 @@ export async function postValidateReferral(payload: PostValidateReferralPayload)
       payload,
     );
     return data;
-  } catch {
-    return { success: false };
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Unable to validate referral code";
+    return { isValid: false, message };
   }
 }
 

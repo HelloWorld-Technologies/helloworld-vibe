@@ -13,6 +13,7 @@ import {
 } from "@/src/apis/booking";
 import { bookingTermsAndConditions } from "@/src/constants/booking-policy";
 import {
+  firstPricingRow,
   formatRupee,
   getBookingPricing,
   numberOfDaysForRent,
@@ -35,6 +36,13 @@ const defaultPaymentSelections: PaymentSelections = {
   advanceRent: false,
   utilityCharges: false,
 };
+
+const COUPON_INVALID_MESSAGE =
+  "This coupon is invalid or has expired. Please try again.";
+
+function bookingPropertyName(property: Property) {
+  return property.display_name?.trim() || property.name;
+}
 
 export interface BookingPaymentPanelProps {
   property: Property;
@@ -77,6 +85,7 @@ export function BookingPaymentPanel({
       const activeCoupon = options?.clearCoupon
         ? undefined
         : options?.couponCode ?? (couponApplied ? couponCode : undefined);
+      const propertyName = bookingPropertyName(property);
 
       const payload = {
         categoryId: category.id,
@@ -87,7 +96,7 @@ export function BookingPaymentPanel({
         ...(activeCoupon
           ? {
               couponCode: activeCoupon,
-              propertyName: property.name,
+              propertyName,
               sdKey: pricingDetails?.sdKey,
             }
           : {}),
@@ -96,27 +105,49 @@ export function BookingPaymentPanel({
       const response = await getPaymentDetails(payload);
       setLoadingPricing(false);
 
-      if (response?.data?.length === 0) {
-        setErrorMessage("No plans available for this selection.");
-        return false;
+      if (!response?.success) {
+        const message = activeCoupon
+          ? response?.message || COUPON_INVALID_MESSAGE
+          : (response?.message ?? "Could not load payment details.");
+        if (!activeCoupon) {
+          setErrorMessage(message);
+        }
+        return { ok: false as const, message };
       }
 
-      if (response?.success) {
-        if (activeCoupon) {
-          setDiscountPricingDetails(response.data);
-          setCouponApplied(true);
-          setCouponCode(activeCoupon);
-          return true;
+      if (activeCoupon) {
+        const discountedPricing = firstPricingRow<DiscountPricingDetails>(
+          response.data,
+        );
+        if (!discountedPricing) {
+          const message =
+            response.discountMessage ||
+            response.message ||
+            COUPON_INVALID_MESSAGE;
+          return { ok: false as const, message };
         }
 
-        setPricingDetails(response.data?.[0] ?? null);
-        setDiscountPricingDetails(null);
-        setCouponApplied(false);
-        return false;
+        setDiscountPricingDetails(discountedPricing);
+        setCouponApplied(true);
+        setCouponCode(activeCoupon);
+        return {
+          ok: true as const,
+          discountedPricing,
+          message: response.discountMessage || response.message,
+        };
       }
 
-      setErrorMessage(response?.message ?? "Could not load payment details.");
-      return false;
+      const nextPricing = firstPricingRow<PricingDetails>(response.data);
+      if (!nextPricing) {
+        const message = "No plans available for this selection.";
+        setErrorMessage(message);
+        return { ok: false as const, message };
+      }
+
+      setPricingDetails(nextPricing);
+      setDiscountPricingDetails(null);
+      setCouponApplied(false);
+      return { ok: true as const };
     },
     [
       category.id,
@@ -124,9 +155,7 @@ export function BookingPaymentPanel({
       couponCode,
       moveInDate,
       pricingDetails?.sdKey,
-      property.id,
-      property.name,
-      property.security_deposit_months,
+      property,
       sharingType,
     ],
   );
@@ -161,32 +190,64 @@ export function BookingPaymentPanel({
   }
 
   async function handleApplyCoupon(code: string) {
-    const success = await fetchPricing({ couponCode: code });
-    if (success) {
-      return { success: true as const, discountAmount: undefined };
+    const trimmed = code.trim();
+    if (!trimmed) {
+      return {
+        success: false as const,
+        message: COUPON_INVALID_MESSAGE,
+      };
     }
+
+    const originalTotal =
+      getBookingPricing({
+        paymentDetails,
+        pricingDetails,
+        couponApplied: false,
+      })?.totalAmount ?? 0;
+    const result = await fetchPricing({ couponCode: trimmed });
+    if (!result.ok || !result.discountedPricing) {
+      return {
+        success: false as const,
+        message: result.message || COUPON_INVALID_MESSAGE,
+      };
+    }
+
+    const discounted = getBookingPricing({
+      paymentDetails,
+      pricingDetails,
+      discountPricingDetails: result.discountedPricing,
+      couponApplied: true,
+    });
+    const discountAmount = Math.max(
+      0,
+      originalTotal - (discounted?.totalAmount ?? originalTotal),
+    );
+
     return {
-      success: false as const,
-      message: "This coupon is invalid or has expired. Please try again.",
+      success: true as const,
+      discountAmount: discountAmount > 0 ? discountAmount : undefined,
+      message: result.message?.trim() || undefined,
     };
   }
 
   async function handleApplyReferral(code: string) {
+    const trimmed = code.trim();
     const response = await postValidateReferral({
-      referralCode: code,
-      propertyName: property.display_name,
+      referralCode: trimmed,
+      propertyName: bookingPropertyName(property),
     });
 
     if (response?.isValid) {
-      setReferralCode(code);
-      return { success: true as const };
+      setReferralCode(trimmed);
+      return {
+        success: true as const,
+        message: `Your referral code ${trimmed} has been applied`,
+      };
     }
 
     return {
       success: false as const,
-      message:
-        response?.message ??
-        "This referral code is invalid. Please check and try again.",
+      message: response?.message || "Invalid referral code",
     };
   }
 
@@ -310,7 +371,6 @@ export function BookingPaymentPanel({
             placeholder="Enter referral code"
             onApply={handleApplyReferral}
             onRemove={handleRemoveReferral}
-            successMessage={() => "Referral code applied successfully."}
           />
           <PromoCodeInput
             label="Coupon Code"
@@ -350,8 +410,8 @@ export function BookingPaymentPanel({
               lastName: occupantInfo?.lastName ?? "",
               email: occupantInfo?.email ?? "",
               gender: occupantInfo?.gender ?? "",
-              couponCode: couponApplied ? couponCode : "",
-              referralCode,
+              couponCode: couponApplied ? couponCode : undefined,
+              referralCode: referralCode || undefined,
               sdKey: pricing.sdKey,
             },
             payments: {
