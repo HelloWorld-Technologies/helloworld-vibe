@@ -131,7 +131,9 @@ export function PromoCodeInput({
         setAppliedCode(code);
         setDiscountAmount(result.discountAmount);
         setStatus("applied");
-        setFeedbackMessage(result.message ?? successMessage(result.discountAmount));
+        setFeedbackMessage(
+          result.message?.trim() || successMessage(result.discountAmount),
+        );
         return;
       }
 
@@ -183,6 +185,9 @@ export function PromoCodeInput({
           readOnly={isApplied}
           aria-invalid={isError || undefined}
           aria-describedby={feedbackMessage ? messageId : undefined}
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
           onChange={(event) => handleChange(event.target.value)}
           onKeyDown={handleKeyDown}
           className={cn(

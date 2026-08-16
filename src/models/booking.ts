@@ -77,8 +77,8 @@ export interface PostInitBookingPayload {
     lastName: string;
     email: string;
     gender: string;
-    couponCode: string;
-    referralCode: string;
+    couponCode?: string;
+    referralCode?: string;
     sdKey: string;
   };
   payments: {

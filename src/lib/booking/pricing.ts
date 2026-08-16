@@ -102,6 +102,22 @@ function pricingFromPlan(
   return pricing;
 }
 
+export function firstPricingRow<T extends DiscountPricingDetails | PricingDetails>(
+  data: unknown,
+): T | null {
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row || typeof row !== "object") {
+    return null;
+  }
+
+  const token = (row as { token?: unknown }).token;
+  if (typeof token !== "number" || !Number.isFinite(token)) {
+    return null;
+  }
+
+  return row as T;
+}
+
 export function getBookingPricing({
   paymentDetails,
   pricingDetails,
