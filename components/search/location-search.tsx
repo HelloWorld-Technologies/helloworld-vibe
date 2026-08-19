@@ -9,7 +9,6 @@ import {
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { fetchLocalitySuggest } from "@/src/apis/search";
 import { cn } from "@/src/lib/cn";
 import { persistCity, readStoredCity } from "@/src/lib/city-storage";
@@ -59,18 +58,29 @@ export interface LocationSearchProps {
 
 type Panel = "city" | "locality" | null;
 
-const locationIconSrc = "/assets/search/location-icon.png";
-
 function LocationIcon({ className }: { className?: string }) {
   return (
-    <Image
-      src={locationIconSrc}
-      alt=""
+    <svg
       aria-hidden
-      width={20}
-      height={20}
-      className={className}
-    />
+      viewBox="0 0 24 24"
+      fill="none"
+      className={cn("aspect-square shrink-0", className)}
+    >
+      <path
+        d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0Z"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle
+        cx="12"
+        cy="10"
+        r="3"
+        stroke="currentColor"
+        strokeWidth="1.75"
+      />
+    </svg>
   );
 }
 
@@ -479,11 +489,11 @@ export function LocationSearch({
             }
             className="flex w-auto min-w-0 items-center gap-2 rounded-full px-1.5 py-1 transition-colors hover:bg-gray-50 sm:gap-3 sm:px-2 sm:py-1.5"
           >
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-900 sm:size-10">
-              <LocationIcon className="size-4 sm:size-5" />
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gray-100 sm:size-10">
+              <LocationIcon className="size-4 text-black sm:size-5" />
             </span>
             <span className="min-w-0 text-left">
-              <span className="block text-[0.625rem] leading-3 text-gray-500 sm:text-xs sm:leading-4">
+              <span className="block opacity-50 font-satoshi text-xs font-bold leading-[18px] text-[#0A0F14]">
                 You are in
               </span>
               <span className="flex min-w-0 items-center gap-0.5 text-xs font-bold text-hello-lime-700 sm:gap-1 sm:text-sm">
@@ -631,7 +641,7 @@ export function LocationSearch({
                         onMouseLeave={() => setHighlightedLocalityIndex(-1)}
                         onClick={() => selectSuggestion(item)}
                         className={cn(
-                          "w-full px-4 py-3.5 text-left text-sm text-gray-900 transition-colors",
+                          "w-full px-4 py-3.5 text-left text-sm font-medium text-[#0A0F14] transition-colors",
                           index < suggestions.length - 1 && "border-b border-gray-100",
                           item.kind === "property" && "flex items-center gap-2.5",
                           isHighlighted ? "bg-gray-100" : "hover:bg-gray-25",

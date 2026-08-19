@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  hdpResidentColleges,
-  hdpResidentWorkplaces,
-} from "@/src/tokens/hdp";
+// import {
+//   hdpResidentColleges,
+//   hdpResidentWorkplaces,
+// } from "@/src/tokens/hdp";
 import type {
   HdpResidentInterest,
   HdpSelectedVibeMatch,
@@ -79,6 +79,7 @@ function ChevronIcon({
   );
 }
 
+/* Hidden until workplaces/colleges API is wired up.
 function ResidentInsightCard({
   emoji,
   label,
@@ -109,6 +110,7 @@ function ResidentInsightCard({
     </div>
   );
 }
+*/
 
 export function HdpVibeMatch({
   displayName,
@@ -184,6 +186,7 @@ export function HdpVibeMatch({
         </div>
       ) : null}
 
+      {/* Hidden until workplaces/colleges API is wired up.
       <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:gap-3">
         <ResidentInsightCard
           emoji="👨‍💻"
@@ -198,6 +201,7 @@ export function HdpVibeMatch({
           extraCount={hdpResidentColleges.extraCount}
         />
       </div>
+      */}
 
       <div className="mt-5 flex items-start justify-between gap-3">
         <p className="min-w-0 flex-1 text-sm font-medium leading-5 text-gray-600">

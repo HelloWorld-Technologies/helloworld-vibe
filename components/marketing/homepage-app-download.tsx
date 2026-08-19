@@ -27,7 +27,7 @@ function StoreBadge({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex h-10 min-w-0 flex-1 items-center gap-1.5 rounded-lg bg-hello-lime-400 px-2 text-black transition-colors hover:bg-hello-lime-500 sm:h-[3.375rem] sm:gap-2 sm:px-4 lg:flex-none"
+      className="inline-flex h-10 min-w-0 flex-1 items-center gap-1.5 rounded-lg bg-hello-lime-400 px-2 text-gray-800 transition-colors hover:bg-hello-lime-500 sm:h-[3.375rem] sm:gap-2 sm:px-4 lg:flex-none"
     >
       {icon}
       <span className="min-w-0 text-left">
@@ -62,7 +62,7 @@ function StoreBadges({ compact = false }: { compact?: boolean }) {
   return (
     <div
       className={cn(
-        "flex w-full items-center",
+        "flex w-full items-center justify-start",
         compact ? "gap-2" : "gap-4",
       )}
     >
@@ -72,7 +72,7 @@ function StoreBadges({ compact = false }: { compact?: boolean }) {
         bottomLabel="Google Play"
         icon={
           <PlayStoreIcon
-            className={cn("text-black", compact ? "size-4" : "size-7")}
+            className={cn("text-gray-800", compact ? "size-4" : "size-7")}
           />
         }
       />
@@ -82,7 +82,7 @@ function StoreBadges({ compact = false }: { compact?: boolean }) {
         bottomLabel="App Store"
         icon={
           <AppStoreIcon
-            className={cn("text-black", compact ? "size-4" : "size-7")}
+            className={cn("text-gray-800", compact ? "size-4" : "size-7")}
           />
         }
       />
@@ -105,13 +105,13 @@ export function HomepageAppDownload() {
       >
         <Logo
           variant={whiteWordmark}
-          width={250}
+          width={220}
           height={143}
           className={cn(
-            "absolute bottom-0 right-0 h-auto w-[14rem] max-w-none opacity-[0.35]",
+            "absolute bottom-0 right-0 h-auto w-[14rem] max-w-none object-bottom opacity-[0.35]",
             "sm:w-[18rem] sm:opacity-[0.25]",
-            "lg:bottom-8 lg:left-2 lg:right-auto lg:w-[28rem] lg:opacity-[0.4]",
-            "xl:w-[32rem]",
+            "lg:left-2 lg:right-auto lg:w-[28rem] lg:opacity-[0.4]",
+            "xl:w-[26rem]",
           )}
         />
       </div>
@@ -128,36 +128,36 @@ export function HomepageAppDownload() {
             />
           </div>
 
-          <div className="relative z-10 flex min-w-0 flex-1 flex-col gap-2 pt-0">
+          <div className="relative z-10 flex min-w-0 flex-1 flex-col items-start gap-2 pt-0 text-left">
             <AppDownloadHeading className="text-[1.125rem] leading-6" />
             <p className="text-xs leading-4 text-gray-600">
               Find homes, manage stays, and stay connected.
             </p>
-            <div className="mt-1">
+            <div className="mt-1 w-full">
               <StoreBadges compact />
             </div>
           </div>
         </div>
 
-        <div className="hidden lg:grid lg:min-h-[25.375rem] lg:grid-cols-[minmax(0,31.75rem)_minmax(0,1fr)] lg:items-center lg:gap-6">
-          <div className="relative z-10 h-[25.375rem] w-full max-w-[31.75rem]">
+        <div className="hidden lg:flex lg:min-h-[25.375rem] lg:items-center lg:justify-center lg:gap-10">
+          <div className="relative z-10 h-[25.375rem] w-[24rem] shrink-0">
             <Image
               src={homepageAppScreenshot1.file}
               alt=""
               width={250}
               height={497}
-              className="absolute bottom-12 left-[2%] z-10 w-[49%] object-contain drop-shadow-[0_8px_24px_rgba(16,24,40,0.12)]"
+              className="absolute bottom-22 left-[2%] z-10 w-[49%] object-contain drop-shadow-[0_8px_24px_rgba(16,24,40,0.12)]"
             />
             <Image
               src={homepageAppScreenshot2.file}
               alt="HelloWorld app screens"
               width={262}
               height={497}
-              className="absolute left-[47%] top-16 z-0 w-[51%] object-contain drop-shadow-[0_8px_24px_rgba(16,24,40,0.12)]"
+              className="absolute left-[47%] top-22 z-0 w-[51%] object-contain drop-shadow-[0_8px_24px_rgba(16,24,40,0.12)]"
             />
           </div>
 
-          <div className="relative z-10 flex min-w-0 flex-col gap-3 text-left lg:max-w-2xl">
+          <div className="relative z-10 flex min-w-0 flex-col items-start gap-3 text-left">
             <AppDownloadHeading className="text-[2.25rem] leading-11 tracking-[-0.02em] whitespace-nowrap" />
             <p className="text-lg leading-7 text-gray-600">
               Find homes, manage stays, and stay connected.

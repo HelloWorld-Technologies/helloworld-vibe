@@ -10,6 +10,7 @@ export function ErrorStatePage({
   return (
     <ErrorPageShell>
       <ErrorState
+        id={config.id}
         title={config.title}
         description={config.description}
         image={config.image}

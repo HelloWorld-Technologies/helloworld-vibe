@@ -25,7 +25,10 @@ function TapeStrip() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute left-1/2 top-3 h-3 w-16 -translate-x-1/2 rounded-[1px] bg-[#f5e6b8]/80 shadow-[0_1px_1px_rgba(0,0,0,0.08)]"
+      className="pointer-events-none absolute left-1/2 top-0 z-10 h-7 w-[4.5rem] -translate-x-1/2 -translate-y-[40%] rounded-[1px] shadow-[0_1px_3px_rgba(0,0,0,0.12)]"
+      style={{
+        background: "linear-gradient(180deg, #f8efc4 0%, #e6d07a 100%)",
+      }}
     />
   );
 }
@@ -58,16 +61,16 @@ function ReviewCard({
       <div style={{ transform: `rotate(${review.rotation}deg)` }}>
         <article
           className={cn(
-            "relative h-72 w-[min(18rem,calc(100vw-3rem))] shadow-[0_1px_12px_rgba(0,0,0,0.22)] sm:h-80 sm:w-80",
+            "relative h-72 w-[min(18rem,calc(100vw-3rem))] overflow-visible shadow-[0_8px_20px_rgba(0,0,0,0.12)] sm:h-80 sm:w-80",
             "transition-[transform,box-shadow] duration-300 ease-out",
-            "hover:-translate-y-1 hover:shadow-[0_14px_32px_rgba(0,0,0,0.26)]",
+            "hover:-translate-y-1 hover:shadow-[0_14px_28px_rgba(0,0,0,0.16)]",
             "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
           )}
           style={{ backgroundColor: review.backgroundColor }}
         >
           <TapeStrip />
           <div className="flex h-full flex-col justify-between p-6 pt-9 sm:p-8 sm:pt-10">
-            <p className="text-sm font-medium leading-5 text-[#1e2939]">
+            <p className="text-sm font-normal leading-5 text-[#1e2939]">
               {review.quote}
             </p>
             <div>
@@ -125,7 +128,7 @@ export function HomepageReviews({
       <div
         ref={scrollRef}
         onScroll={onScroll}
-        className="-mx-2 flex gap-4 overflow-x-auto px-2 py-4 scrollbar-none sm:gap-5 sm:py-6 md:gap-6"
+        className="-mx-2 flex gap-4 overflow-x-auto px-2 py-6 scrollbar-none sm:gap-5 sm:py-8 md:gap-6"
       >
         {reviews.map((review, index) => (
           <ReviewCard

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { HomepageAsset } from "@/components/marketing/homepage-asset";
-import { cn } from "@/src/lib/cn";
 import { pageShell } from "@/src/tokens/layout";
 import { homepageStats, homepageVideo } from "@/src/tokens/homepage";
 
@@ -8,7 +7,7 @@ function StatDivider() {
   return (
     <div
       aria-hidden
-      className="h-9 w-px shrink-0 self-center bg-gray-200 sm:h-10 lg:mx-1"
+      className="h-10 w-px shrink-0 self-center bg-gray-200 sm:h-12 lg:mx-1"
     />
   );
 }
@@ -16,22 +15,15 @@ function StatDivider() {
 function WeekendsHeading() {
   return (
     <div className="relative inline-block text-center lg:text-left">
-      <h2 className="font-playfair text-[1.75rem] font-bold leading-[1.15] tracking-tight text-gray-900 sm:text-display-sm md:text-display-md">
+      <h2 className="font-playfair text-display-md font-bold leading-[1.08] tracking-tight text-gray-900 sm:text-display-lg lg:text-display-2xl lg:leading-[1.05]">
         <span className="block">Weekends hit</span>
         <span className="mt-1 block leading-none sm:mt-2">
-          <span
-            className={cn(
-              "font-satoshi text-[2.5rem] font-bold italic leading-[1.05] text-gradient-different",
-              "sm:text-display-lg md:text-display-xl lg:text-display-2xl",
-            )}
-          >
-            Different
-          </span>{" "}
+          <span className="italic text-gradient-different">Different</span>{" "}
           <span className="relative inline-block align-baseline">
-            here
+            <span className="relative z-0">here</span>
             <span
               aria-hidden
-              className="absolute -bottom-4 left-1/2 w-max -translate-x-1/2 rotate-[-2.4deg] bg-blue-light-300 px-3 py-0.5 font-caveat text-sm text-gray-900 sm:-bottom-5 sm:left-0 sm:translate-x-0 sm:px-5 sm:text-base lg:left-0"
+              className="absolute -bottom-4 left-1/2 z-10 w-max -translate-x-1/3 rotate-[-4deg] bg-blue-light-300 px-3 py-0.5 font-caveat text-base leading-none text-gray-900 sm:left-0 sm:translate-x-0 sm:px-5 sm:text-lg lg:left-0 lg:text-xl"
             >
               ✦ ps. Good vibes only!
             </span>
@@ -60,40 +52,42 @@ export function HomepageWeekends() {
           </div>
 
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-            <div className="pb-8 sm:pb-10">
+            <div className="pb-10 sm:pb-12">
               <WeekendsHeading />
             </div>
 
-            <div className="flex w-full items-stretch justify-between gap-0 sm:max-w-xl sm:justify-center sm:gap-0 lg:max-w-none lg:justify-start">
-              {homepageStats.map((stat, index) => (
-                <div key={stat.id} className="contents">
-                  {index > 0 ? <StatDivider /> : null}
-                  <div className="flex min-w-0 flex-1 items-center gap-1.5 px-1 sm:min-w-[5rem] sm:flex-none sm:gap-2 sm:px-3 lg:px-4">
-                    <HomepageAsset
-                      asset={stat.icon}
-                      width={28}
-                      height={28}
-                      className="size-6 shrink-0 sm:size-8"
-                    />
-                    <div className="min-w-0 text-left">
-                      <p className="text-sm font-bold leading-5 text-gray-900 sm:text-xl sm:leading-7 md:text-2xl md:leading-8">
-                        {stat.value}
-                      </p>
-                      <p className="text-[0.625rem] leading-[0.875rem] text-gray-600 sm:text-xs sm:leading-[18px]">
-                        {stat.label}
-                      </p>
+            <div className="flex w-full flex-col items-center lg:w-auto">
+              <div className="flex w-full items-stretch justify-between gap-0 sm:w-auto sm:justify-center">
+                {homepageStats.map((stat, index) => (
+                  <div key={stat.id} className="contents">
+                    {index > 0 ? <StatDivider /> : null}
+                    <div className="flex min-w-0 flex-1 items-center gap-1.5 px-1 sm:min-w-[5rem] sm:flex-none sm:gap-2 sm:px-3 lg:px-4">
+                      <HomepageAsset
+                        asset={stat.icon}
+                        width={40}
+                        height={40}
+                        className="size-8 shrink-0 sm:size-10 opacity-80"
+                      />
+                      <div className="min-w-0 text-left">
+                        <p className="text-lg font-bold leading-6 text-gray-900 sm:text-xl sm:leading-7 lg:text-2xl lg:leading-8">
+                          {stat.value}
+                        </p>
+                        <p className="text-xs leading-[1.125rem] text-gray-600 sm:text-sm sm:leading-5">
+                          {stat.label}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
 
-            <Link
-              href="/community"
-              className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-hello-lime-400 px-8 text-base font-bold text-gray-900 transition-colors hover:bg-hello-lime-500 sm:mt-10 sm:w-auto lg:self-start"
-            >
-              See What&apos;s Happening!
-            </Link>
+              <Link
+                href="/community"
+                className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-lg bg-hello-lime-400 px-8 text-base font-bold text-gray-900 transition-colors hover:bg-hello-lime-500 sm:mt-10 sm:h-14 sm:w-auto sm:text-lg lg:h-12"
+              >
+                See What&apos;s Happening!
+              </Link>
+            </div>
           </div>
         </div>
       </div>

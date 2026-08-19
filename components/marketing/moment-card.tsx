@@ -12,7 +12,7 @@ function PlayIcon({ className }: { className?: string }) {
     <span
       aria-hidden
       className={cn(
-        "pointer-events-none absolute inset-0 z-10 flex items-center justify-center",
+        "pointer-events-none absolute inset-0 z-10 flex items-center justify-center opacity-50",
         className,
       )}
     >

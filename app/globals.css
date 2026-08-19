@@ -212,8 +212,8 @@
 @utility bg-gradient-property-vibe-match {
   background-image: linear-gradient(
     to right,
-    var(--color-gradient-purple) 0%,
-    var(--color-gradient-cyan) 100%
+    color-mix(in srgb, var(--color-gradient-cyan) 50%, transparent) 0%,
+    color-mix(in srgb, var(--color-gradient-purple) 40%, transparent) 100%
   );
 }
 

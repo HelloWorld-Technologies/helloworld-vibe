@@ -16,6 +16,8 @@ import type { VibeChip } from "@/src/tokens/vibes";
 const heroImageBlendOverlayClass =
   "pointer-events-none absolute inset-y-0 left-0 w-[55%] bg-[linear-gradient(to_right,#FAFAFA_0%,color-mix(in_srgb,#FAFAFA_96%,transparent)_30%,color-mix(in_srgb,#ffffff_70%,transparent)_48%,color-mix(in_srgb,#FAFAFA_30%,transparent)_66%,transparent_84%)]";
 
+const homepageSearchBarClassName = "shadow-[0px_6px_0px_0px_#5F5F5F]";
+
 function HomepageHeroHeading({
   className,
   size = "desktop",
@@ -118,7 +120,7 @@ export function HomepageHero() {
             <div className="pointer-events-auto">
               <LocationSearch
                 localityPlaceholder="Search Localities"
-                barClassName="border-gray-300 shadow-[0_8px_0_0_#8b8f96]"
+                barClassName={homepageSearchBarClassName}
               />
             </div>
           </div>
@@ -157,7 +159,10 @@ export function HomepageHero() {
             <HomepageHeroHeading />
 
             <div className="relative z-20 mt-8">
-              <LocationSearch localityPlaceholder="Search for Localities" />
+              <LocationSearch
+                localityPlaceholder="Search for Localities"
+                barClassName={homepageSearchBarClassName}
+              />
             </div>
 
             <VibeFilters

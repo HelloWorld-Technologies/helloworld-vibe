@@ -164,7 +164,7 @@ function FooterSocialLinks({ variant }: { variant: "desktop" | "mobile" }) {
   return (
     <div>
       <h3 className="text-base font-bold text-[#0a0e14]/80">Follow us</h3>
-      <div className="mt-4 flex items-center gap-4 lg:mt-8">
+      <div className="mt-4 flex items-center gap-4 lg:mt-4">
         {socialLinks.map((link) => (
           <a
             key={link.id}
@@ -219,7 +219,7 @@ export function SiteFooter() {
                 <span className="lg:hidden">Our cozy homes in</span>
                 <span className="hidden lg:inline">Our Coliving PGs in</span>
               </h3>
-              <div className="mt-4 grid grid-cols-2 gap-x-4 lg:mt-10 lg:gap-x-16">
+              <div className="mt-4 grid grid-cols-2 gap-x-4 lg:mt-4 lg:gap-x-16">
                 {footerCityColumns.map((column, columnIndex) => (
                   <FooterLinkList
                     key={columnIndex}
@@ -237,7 +237,7 @@ export function SiteFooter() {
                 <h3 className="text-base font-bold text-[#0a0e14]/80">Product</h3>
                 <FooterLinkList
                   links={footerProductLinks}
-                  className="mt-4 space-y-0 lg:mt-10 lg:space-y-1"
+                  className="mt-4 space-y-0 lg:mt-4 lg:space-y-1"
                 />
               </div>
 
@@ -249,7 +249,7 @@ export function SiteFooter() {
                 />
                 <FooterLinkList
                   links={footerAboutLinks}
-                  className="mt-4 hidden space-y-0 lg:mt-10 lg:block lg:space-y-1"
+                  className="mt-4 hidden space-y-0 lg:mt-4 lg:block lg:space-y-1"
                 />
               </div>
             </div>
