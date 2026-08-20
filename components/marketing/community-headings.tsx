@@ -51,7 +51,7 @@ export function CommunityWeekendsHeading({
         </span>
       </h1>
       {isDesktop ? (
-        <div className="pointer-events-none absolute -bottom-1 right-0 translate-x-[30%] rotate-[-5.2deg] whitespace-nowrap">
+        <div className="pointer-events-none absolute -bottom-5 right-4 translate-x-[30%] rotate-[-5.2deg] whitespace-nowrap">
           <p className="font-caveat text-[2rem] leading-none text-[#3d4a3e]">
             srsly though
           </p>

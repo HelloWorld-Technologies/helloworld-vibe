@@ -104,7 +104,7 @@ export function HdpMoments({
     >
       <h2
         id="hdp-moments-heading"
-        className="text-2xl font-bold tracking-tight text-gray-900 sm:text-[1.75rem] sm:leading-9"
+        className="text-2xl font-medium tracking-tight text-gray-900 sm:text-[1.75rem] sm:leading-9"
       >
         <span className="font-satoshi font-bold italic text-gradient-vibe">
           Moments

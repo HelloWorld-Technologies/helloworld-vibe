@@ -33,9 +33,11 @@ export function HdpAmenities({
     <section
       id="hdp-amenities"
       className={cn("scroll-mt-32 space-y-6", className)}
-      aria-label="Amenities section"
+      aria-label="Amenities included"
     >
-      <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">Amenities</h2>
+      <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
+        Amenities Included
+      </h2>
       <div className="flex flex-wrap gap-2">
         {visible.map((item) => (
           <span

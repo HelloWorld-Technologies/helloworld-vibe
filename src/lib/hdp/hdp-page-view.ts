@@ -30,9 +30,14 @@ export type HdpPageView = {
   minStayMonths: number;
   rating: number;
   reviewCount: number;
-  visitsToday?: number;
+  /** From `v2/property/visits` `total_visits`. */
+  visitsScheduled?: number;
+  /** Show rating card when visit stats report ≥ 5 scheduled visits. */
+  showRatingCard?: boolean;
   trendingLabel?: string;
   topChoiceCopy?: string;
+  /** Formatted `top_choice_date` / fallback date from visits API. */
+  topChoiceDate?: string;
   about: string;
   amenities: readonly string[];
   galleryImages: readonly string[];

@@ -217,6 +217,14 @@
   );
 }
 
+@utility bg-gradient-property-card-vibe-match {
+  background-image: linear-gradient(
+    to right,
+    var(--color-gradient-purple) 0%,
+    var(--color-gradient-cyan) 100%
+  );
+}
+
 @utility bg-gradient-contact-card {
   background-image: linear-gradient(
     to bottom,

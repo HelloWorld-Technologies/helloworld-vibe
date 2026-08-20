@@ -65,7 +65,7 @@ export function HdpSectionNav({
   return (
     <div
       className={cn(
-        "sticky top-[4.5rem] z-30 -mx-4 bg-white/95 backdrop-blur-sm md:top-18",
+        "sticky top-[4.5rem] z-30 bg-white/95 py-3 backdrop-blur-sm md:top-18",
         className,
       )}
     >
@@ -75,7 +75,6 @@ export function HdpSectionNav({
         onChange={scrollToSection}
         heading=""
         aria-label="Property sections"
-        className="px-4"
       />
     </div>
   );

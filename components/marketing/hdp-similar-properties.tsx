@@ -105,11 +105,11 @@ export function HdpSimilarProperties({
   return (
     <section
       className={cn("space-y-6", className)}
-      aria-label="Similar properties section"
+      aria-label="More places you'll like"
     >
       <div className="flex items-end justify-between gap-4">
-        <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
-          Similar Properties
+        <h2 className="text-2xl font-medium text-gray-900 md:text-3xl">
+          More Places you&apos;ll Like
         </h2>
       </div>
 

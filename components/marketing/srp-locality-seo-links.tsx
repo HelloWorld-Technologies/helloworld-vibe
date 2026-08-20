@@ -193,7 +193,7 @@ export function SrpLocalitySeoLinks({
       aria-label={`Localities in ${cityLabel}`}
       className={cn(className)}
     >
-      <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
+      <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
         Explore localities in {cityLabel}
       </h2>
       <ul className="mt-5 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-4">

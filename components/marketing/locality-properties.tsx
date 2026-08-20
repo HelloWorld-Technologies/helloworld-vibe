@@ -57,14 +57,14 @@ export function LocalityProperties({ className }: { className?: string }) {
   return (
     <section className={cn("space-y-6", className)} aria-label="Coliving listings">
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
+        <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
           {localityPropertiesHeading}
         </h2>
 
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm text-gray-600">
-              Pick your interests, We&apos;ll match you with the right home!
+              Pick upto 5 interests for better matches
             </p>
             <div className="hidden shrink-0 items-center gap-4 sm:flex">
               <button

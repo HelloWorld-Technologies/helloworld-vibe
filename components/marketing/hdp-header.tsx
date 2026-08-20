@@ -3,28 +3,12 @@
 import type { HdpPageView } from "@/src/lib/hdp/hdp-page-view";
 import { buildPropertyMapUrlFromView } from "@/src/lib/hdp/map-url";
 import { ShareIcon } from "@/components/icons/share-icon";
+import { ShowOnMapsLink } from "@/components/icons/show-on-maps-icon";
 import { useOptionalWishlist } from "@/components/wishlist/wishlist-provider";
 import { WishlistButton } from "@/components/wishlist/wishlist-button";
 import { hdpProperty } from "@/src/tokens/hdp";
 import { cn } from "@/src/lib/cn";
 import { useState } from "react";
-
-function MapPinIcon({ className }: { className?: string }) {
-  return (
-    <svg aria-hidden viewBox="0 0 16 16" fill="none" className={className}>
-      <path
-        d="M8 8.667a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
-        stroke="currentColor"
-        strokeWidth="1.33"
-      />
-      <path
-        d="M8 14.667s5.333-3.58 5.333-8A5.333 5.333 0 1 0 2.667 6.667c0 4.42 5.333 8 5.333 8Z"
-        stroke="currentColor"
-        strokeWidth="1.33"
-      />
-    </svg>
-  );
-}
 
 export function HdpHeader({
   view,
@@ -83,17 +67,7 @@ export function HdpHeader({
           </div>
 
           <div className="flex shrink-0 items-center gap-4">
-            {mapUrl ? (
-              <a
-                href={mapUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-gray-800 underline-offset-4 hover:underline"
-              >
-                <MapPinIcon className="size-4" />
-                Show on Maps
-              </a>
-            ) : null}
+            {mapUrl ? <ShowOnMapsLink href={mapUrl} /> : null}
             <WishlistButton
               saved={saved}
               aria-label={saved ? "Remove from saved" : "Save property"}

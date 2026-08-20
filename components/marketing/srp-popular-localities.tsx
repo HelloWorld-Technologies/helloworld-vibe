@@ -62,7 +62,7 @@ export function SrpPopularLocalities({
         onNext={() => scroll("next")}
       />
 
-      <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
+      <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
         Popular {cityLabel} Localities
       </h2>
 
@@ -75,7 +75,7 @@ export function SrpPopularLocalities({
             startingRent={locality.startingRent}
             propertyCount={locality.propertyCount}
             imageSrc={locality.imageSrc}
-            className="w-[min(100%,25.6875rem)] shrink-0"
+            className="w-[min(100%,16rem)] shrink-0"
           />
         ))}
       </div>

@@ -49,7 +49,7 @@ export const landmarkHeroSubtitle = formatLocalityDetails(
 
 export const landmarkDayFromHereTitle = "A Day from here";
 export const landmarkDayFromHereSubtitle =
-  `What living near ${landmarkPage.name} actually looks like.`;
+  "See nearby utilities, facilities, transport, hospitals and more.";
 
 export const landmarkDayFromHereItems: readonly NeighborhoodCardData[] = [
   {

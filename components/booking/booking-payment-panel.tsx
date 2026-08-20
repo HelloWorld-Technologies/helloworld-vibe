@@ -28,6 +28,11 @@ import type {
 import type { Property } from "@/src/models/property";
 import type { BookingOccupantInfo } from "@/src/lib/booking/url";
 import { cn } from "@/src/lib/cn";
+import {
+  clearReferCode,
+  readReferCode,
+  storeReferCode,
+} from "@/src/lib/refer-code";
 
 const defaultPaymentSelections: PaymentSelections = {
   token: true,
@@ -73,6 +78,10 @@ export function BookingPaymentPanel({
   const [couponCode, setCouponCode] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [referralCode, setReferralCode] = useState("");
+  const [referralDefaultApplied, setReferralDefaultApplied] = useState<{
+    code: string;
+    message?: string;
+  } | null>(null);
   const [loadingPricing, setLoadingPricing] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [paymentSnackbar, setPaymentSnackbar] = useState<string | null>(null);
@@ -166,6 +175,35 @@ export function BookingPaymentPanel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category.id, moveInDate, sharingType, property.id]);
 
+  useEffect(() => {
+    const storedCode = readReferCode();
+    if (!storedCode) return;
+
+    let cancelled = false;
+
+    void (async () => {
+      const response = await postValidateReferral({
+        referralCode: storedCode,
+        propertyName: bookingPropertyName(property),
+      });
+      if (cancelled) return;
+
+      if (response?.isValid) {
+        setReferralCode(storedCode);
+        setReferralDefaultApplied({
+          code: storedCode,
+          message: `Your referral code ${storedCode} has been applied`,
+        });
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // Auto-apply stored refer link code once per booking property.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [property.id]);
+
   const pricing = useMemo(
     () =>
       getBookingPricing({
@@ -239,6 +277,7 @@ export function BookingPaymentPanel({
 
     if (response?.isValid) {
       setReferralCode(trimmed);
+      storeReferCode(trimmed);
       return {
         success: true as const,
         message: `Your referral code ${trimmed} has been applied`,
@@ -260,6 +299,8 @@ export function BookingPaymentPanel({
 
   function handleRemoveReferral() {
     setReferralCode("");
+    setReferralDefaultApplied(null);
+    clearReferCode();
   }
 
   const propertyAddress = [
@@ -367,8 +408,10 @@ export function BookingPaymentPanel({
 
         <div className="grid gap-6 sm:grid-cols-2">
           <PromoCodeInput
+            key={referralDefaultApplied?.code ?? "referral-idle"}
             label="Referral Code"
             placeholder="Enter referral code"
+            defaultApplied={referralDefaultApplied ?? undefined}
             onApply={handleApplyReferral}
             onRemove={handleRemoveReferral}
           />

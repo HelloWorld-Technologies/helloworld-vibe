@@ -11,7 +11,7 @@ export function TabNavDemo() {
   const [value, setValue] = useState<PropertyDetailTab>("about");
 
   return (
-    <div className="max-w-[280px] sm:max-w-xs">
+    <div className="w-full max-w-xl">
       <TabNav
         items={propertyDetailTabs}
         value={value}

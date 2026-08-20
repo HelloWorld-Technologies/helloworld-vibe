@@ -21,7 +21,7 @@ export interface UnderlineTabsProps<T extends string = string> {
   onChange: (id: T) => void;
   className?: string;
   baseId?: string;
-  layout?: "stretch" | "inline";
+  layout?: "stretch" | "inline" | "start";
   "aria-label"?: string;
 }
 
@@ -46,6 +46,8 @@ export function UnderlineTabs<T extends string>({
   const hasMountedRef = useRef(false);
   const [indicator, setIndicator] = useState<IndicatorStyle | null>(null);
   const isInline = layout === "inline";
+  const isStart = layout === "start";
+  const isCompact = isInline || isStart;
 
   const updateIndicator = useCallback(() => {
     const list = listRef.current;
@@ -96,7 +98,9 @@ export function UnderlineTabs<T extends string>({
           "relative flex overflow-x-auto scroll-smooth scrollbar-none",
           isInline
             ? "justify-center gap-8 sm:overflow-visible"
-            : "sm:overflow-visible",
+            : isStart
+              ? "justify-start gap-8 sm:overflow-visible"
+              : "sm:overflow-visible",
         )}
       >
         {items.map((item) => {
@@ -120,7 +124,7 @@ export function UnderlineTabs<T extends string>({
               onClick={() => onChange(item.id as T)}
               className={cn(
                 "relative shrink-0 py-2.5 text-sm font-semibold transition-colors duration-300",
-                isInline
+                isCompact
                   ? "px-0"
                   : "px-3 py-4 sm:flex-1 sm:px-4 sm:text-center",
                 "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-hello-lime-100",

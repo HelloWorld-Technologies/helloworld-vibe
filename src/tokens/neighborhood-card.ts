@@ -113,4 +113,4 @@ export const neighborhoodRoutineSamples: readonly NeighborhoodCardData[] = [
 
 export const neighborhoodSectionTitle = "A Day from here";
 export const neighborhoodSectionSubtitle =
-  "What living at HW Park Square actually looks like.";
+  "See nearby utilities, facilities, transport, hospitals and more.";

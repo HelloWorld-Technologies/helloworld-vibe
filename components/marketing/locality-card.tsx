@@ -17,6 +17,23 @@ export interface LocalityCardProps {
   className?: string;
 }
 
+/** Title Case each word when the source is uniform case (e.g. ALL CAPS / lowercase). */
+function toTitleCaseName(name: string): string {
+  const trimmed = name.trim();
+  if (!trimmed) return trimmed;
+  const isUniformCase =
+    trimmed === trimmed.toUpperCase() || trimmed === trimmed.toLowerCase();
+  if (!isUniformCase) return trimmed;
+  return trimmed
+    .split(/\s+/)
+    .map((word) =>
+      word
+        ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        : word,
+    )
+    .join(" ");
+}
+
 function ArrowRightIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -37,8 +54,8 @@ function ArrowRightIcon({ className }: { className?: string }) {
 }
 
 const layoutClassName: Record<LocalityCardLayout, string> = {
-  desktop: "aspect-[5/4] w-full max-w-[480px]",
-  mobile: "aspect-[3/4] w-[260px] shrink-0 snap-center",
+  desktop: "aspect-[5/4] w-full max-w-[280px]",
+  mobile: "aspect-[3/4] w-[170px] shrink-0 snap-center",
 };
 
 function LocalityCardContent({
@@ -59,39 +76,41 @@ function LocalityCardContent({
   | "layout"
   | "showArrow"
 >) {
+  const displayName = toTitleCaseName(name);
+
   return (
     <>
       <Image
         src={imageSrc}
-        alt={imageAlt ?? name}
+        alt={imageAlt ?? displayName}
         fill
         className="object-cover"
         sizes={
           layout === "mobile"
-            ? "260px"
-            : "(max-width: 640px) 100vw, 480px"
+            ? "170px"
+            : "(max-width: 640px) 100vw, 280px"
         }
       />
       <div
         aria-hidden
         className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"
       />
-      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 text-white sm:p-6">
+      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3 text-white sm:p-4">
         <div className="min-w-0">
           <h3
             className={cn(
-              "font-bold leading-tight",
-              layout === "mobile" ? "text-xl" : "text-2xl",
+              "font-medium leading-tight",
+              layout === "mobile" ? "text-sm" : "text-base",
             )}
           >
-            {name}
+            {displayName}
           </h3>
-          <p className="mt-1 text-sm text-white/90">
+          <p className="mt-0.5 text-[11px] text-white/90 sm:text-xs">
             {formatLocalityDetails(startingRent, propertyCount)}
           </p>
         </div>
         {showArrow ? (
-          <ArrowRightIcon className="mb-0.5 size-6 shrink-0" />
+          <ArrowRightIcon className="mb-0.5 size-4 shrink-0" />
         ) : null}
       </div>
     </>
@@ -110,7 +129,7 @@ export function LocalityCard({
   className,
 }: LocalityCardProps) {
   const sharedClassName = cn(
-    "relative overflow-hidden rounded-3xl bg-gray-200",
+    "relative overflow-hidden rounded-2xl bg-gray-200",
     layoutClassName[layout],
     className,
   );

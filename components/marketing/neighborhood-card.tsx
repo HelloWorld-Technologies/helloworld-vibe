@@ -64,12 +64,12 @@ export function NeighborhoodCard({
   );
 
   const linkClassName =
-    "group/link mt-3 inline-flex items-center gap-0.5 text-sm font-semibold text-hello-lime-600 transition-colors hover:text-hello-lime-700";
+    "group/link mt-1 inline-flex items-center gap-0.5 text-sm font-semibold text-hello-lime-600 transition-colors hover:text-hello-lime-700";
 
   return (
     <article
       className={cn(
-        "flex w-[220px] shrink-0 flex-col rounded-2xl border border-blue-light-200 bg-white p-4",
+        "flex w-[220px] shrink-0 flex-col rounded-2xl border-[0.5px] border-blue-light-300 bg-blue-light-50 p-4",
         className,
       )}
     >
@@ -80,7 +80,7 @@ export function NeighborhoodCard({
         <h3 className="text-sm font-bold text-blue-light-700">{category}</h3>
       </div>
 
-      <div className="relative mt-3 aspect-[5/4] overflow-hidden rounded-xl bg-blue-light-50">
+      <div className="relative mt-3 aspect-[5/4] overflow-hidden rounded-xl bg-white">
         <Image
           key={displayImageSrc}
           src={displayImageSrc}
@@ -93,8 +93,8 @@ export function NeighborhoodCard({
         />
       </div>
 
-      <p className="mt-3 text-sm font-bold text-gray-900">{placeName}</p>
-      <p className="mt-1 text-sm font-medium text-blue-light-500">{walkTime}</p>
+      <p className="mt-3 text-sm font-semibold text-gray-900">{placeName}</p>
+      <p className="mt-1 text-sm font-medium text-blue-light-800">{walkTime}</p>
 
       {onLinkClick ? (
         <button type="button" onClick={onLinkClick} className={linkClassName}>
@@ -150,7 +150,7 @@ function TimelineDot({
       <span
         aria-hidden
         className={cn(
-          "relative z-10 size-3 rounded-full bg-blue-light-500 ring-4 ring-white",
+          "relative z-10 size-3 rounded-full bg-blue-light-900 ring-4 ring-white",
           "transition-[opacity,transform] ease-out motion-reduce:transition-none",
           !shouldAnimate || isActive ? "scale-100 opacity-100" : "scale-0 opacity-0",
         )}

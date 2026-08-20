@@ -9,6 +9,7 @@ import { LocalityBentoHero } from "@/components/marketing/locality-bento-hero";
 import { LocalityAmenitiesSection } from "@/components/marketing/locality-amenities-section";
 import { LocalityContactCard } from "@/components/marketing/locality-contact-card";
 import { LocalityDayFromHereSection } from "@/components/marketing/locality-day-from-here";
+import type { NearbyMapProperty } from "@/components/marketing/hdp-nearby-map-modal";
 import {
   LocalityMobileActions,
 } from "@/components/marketing/locality-mobile-actions";
@@ -20,6 +21,7 @@ import { SrpFaq } from "@/components/marketing/srp-faq";
 import { SrpListingsSection } from "@/components/marketing/srp-listings-section";
 import { SrpLocalitySeoLinks } from "@/components/marketing/srp-locality-seo-links";
 import { SrpPopularLocalities } from "@/components/marketing/srp-popular-localities";
+import { SrpSectionToggle } from "@/components/marketing/srp-section-toggle";
 import { PropertyActionsProvider } from "@/components/booking/property-actions-provider";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
@@ -27,6 +29,7 @@ import {
   mapPropertiesToSrpCards,
 } from "@/src/lib/map-property";
 import type { SrpPageConfig } from "@/src/lib/srp/resolve-srp-page";
+import type { Property } from "@/src/models/property";
 import type { SrpQuery } from "@/src/models/srp-query";
 import { resolveSrpHeroImageSrc } from "@/src/lib/srp/srp-hero-image";
 import { useSrpFilters } from "@/src/lib/srp/use-srp-filters";
@@ -41,6 +44,70 @@ import {
 } from "@/src/tokens/locality";
 
 const EMPTY_SRP_QUERY: SrpQuery = {};
+
+function resolvePropertyCoords(property: Property): {
+  latitude: number;
+  longitude: number;
+} | null {
+  const latitude = Number(property.address?.latitude ?? property.latitude);
+  const longitude = Number(property.address?.longitude ?? property.longitude);
+  if (
+    !Number.isFinite(latitude) ||
+    !Number.isFinite(longitude) ||
+    !latitude ||
+    !longitude
+  ) {
+    return null;
+  }
+  return { latitude, longitude };
+}
+
+function resolveSrpNearbyMap(
+  config: SrpPageConfig,
+  heroImageSrc?: string,
+): { property: NearbyMapProperty; mapUrl?: string } {
+  const cityLabel = getCityLabel(config.city as CitySlug) || config.city;
+  const locality = config.localityName?.trim() || undefined;
+  const name = locality || cityLabel;
+  const addressLine = [locality, cityLabel].filter(Boolean).join(", ");
+
+  const anchor =
+    config.properties.find((property) => resolvePropertyCoords(property)) ??
+    config.properties[0];
+  const propertyCoords = anchor ? resolvePropertyCoords(anchor) : null;
+  const coords = config.nearbyMapCenter ?? propertyCoords;
+  const startingRent =
+    typeof anchor?.min_rent === "number" && anchor.min_rent > 0
+      ? anchor.min_rent
+      : undefined;
+  const imageSrc =
+    heroImageSrc ||
+    config.heroImageSrc ||
+    anchor?.image ||
+    anchor?.hdp_image ||
+    undefined;
+
+  const mapUrl =
+    anchor?.map_url?.trim() ||
+    (coords
+      ? `https://www.google.com/maps/place/${coords.latitude},${coords.longitude}`
+      : addressLine
+        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addressLine)}`
+        : undefined);
+
+  return {
+    property: {
+      name,
+      addressLine,
+      locality,
+      imageSrc,
+      startingRent,
+      latitude: coords?.latitude,
+      longitude: coords?.longitude,
+    },
+    mapUrl,
+  };
+}
 
 function SrpHero({
   config,
@@ -66,7 +133,7 @@ function SrpHero({
 function SrpAboutSection({ config }: { config: SrpPageConfig }) {
   return (
     <section aria-label="About" className="space-y-6">
-      <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
+      <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
         {config.aboutTitle}
       </h2>
       <p className="text-base leading-7 text-gray-600">{config.aboutText}</p>
@@ -83,7 +150,7 @@ function RelatedLandmarkLinks({
 
   return (
     <section aria-label="Explore nearby landmarks" className="space-y-5">
-      <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
+      <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
         Explore nearby landmarks
       </h2>
       <ul className="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -104,6 +171,9 @@ function RelatedLandmarkLinks({
 
 export function SrpPageContent({ config }: { config: SrpPageConfig }) {
   const [mobileTab, setMobileTab] = useState<LocalityMobileTab>("properties");
+  const [desktopSection, setDesktopSection] =
+    useState<"properties" | "details">("properties");
+  const listingsRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
 
   const paginationContext = useMemo(
@@ -165,7 +235,12 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
 
   const contactLocation = config.localityName ?? config.city;
   const dayFromHereItems = config.dayFromHereItems ?? [];
-  const dayFromHereSubtitle = `What living at ${contactLocation} actually looks like.`;
+  const dayFromHereSubtitle =
+    "See nearby utilities, facilities, transport, hospitals and more.";
+  const nearbyMap = useMemo(
+    () => resolveSrpNearbyMap(config),
+    [config],
+  );
   const hasAbout = Boolean(config.aboutText?.trim());
   const hasLandmarks = config.relatedLandmarkLinks.length > 0;
   const hasDetails =
@@ -173,6 +248,8 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
     localityAmenities.length > 0 ||
     hasAbout ||
     hasLandmarks;
+  const hasProperties = total > 0 || properties.length > 0;
+  const showSectionToggle = hasProperties && hasDetails;
   const mobileTabs = [
     { id: "properties" as const, label: "Coliving PGs" },
     ...(hasDetails
@@ -187,7 +264,14 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
 
   function showDetails() {
     setMobileTab("details");
+    setDesktopSection("details");
     detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function showProperties() {
+    setMobileTab("properties");
+    setDesktopSection("properties");
+    listingsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   return (
@@ -195,7 +279,13 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
       defaultCity={config.city}
       defaultLocation={config.localityName ?? config.city}
     >
-    <div className={cn("bg-white", pageLayout.mobileStickyBottomPadding)}>
+    <div
+      className={cn(
+        "bg-white",
+        pageLayout.mobileStickyBottomPadding,
+        showSectionToggle && "md:pb-24",
+      )}
+    >
       <JsonLd schema={config.schema} />
       <SiteHeaderSearch
         city={config.city as CitySlug}
@@ -222,6 +312,7 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
           />
 
           <div
+            ref={listingsRef}
             className={cn(
               mobileTab === "properties" ? "block" : "hidden md:block",
             )}
@@ -253,6 +344,8 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
                     title={localityDayFromHereTitle}
                     subtitle={dayFromHereSubtitle}
                     items={dayFromHereItems}
+                    mapUrl={nearbyMap.mapUrl}
+                    property={nearbyMap.property}
                   />
                 ) : null}
                 <LocalityAmenitiesSection amenities={localityAmenities} />
@@ -292,6 +385,13 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
       <SiteFooter />
       {hasDetails ? (
         <LocalityMobileActions onShowDetails={showDetails} />
+      ) : null}
+      {showSectionToggle ? (
+        <SrpSectionToggle
+          activeSection={desktopSection}
+          onShowDetails={showDetails}
+          onShowProperties={showProperties}
+        />
       ) : null}
     </div>
     </PropertyActionsProvider>

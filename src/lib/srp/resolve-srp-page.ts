@@ -94,6 +94,8 @@ export type SrpPageConfig = {
   heroImageSrc?: string;
   bentoTiles?: LocalityBentoTile[];
   dayFromHereItems?: NeighborhoodCardData[];
+  /** Preferred map pin for the nearby modal (e.g. landmark place coords). */
+  nearbyMapCenter?: { latitude: number; longitude: number };
   aboutTitle: string;
   aboutText: string;
   breadcrumbItems: SrpBreadcrumbItem[];
@@ -291,6 +293,16 @@ export async function resolveSrpPage(
       aboutText: seo.pageDescription,
     });
 
+    const placeLat = Number(place?.latitude);
+    const placeLng = Number(place?.longitude);
+    const nearbyMapCenter =
+      Number.isFinite(placeLat) &&
+      Number.isFinite(placeLng) &&
+      placeLat &&
+      placeLng
+        ? { latitude: placeLat, longitude: placeLng }
+        : undefined;
+
     return {
       kind: "landmark",
       canonicalPath: slug,
@@ -313,6 +325,7 @@ export async function resolveSrpPage(
         isLandmark: true,
       }),
       ...localityFields,
+      nearbyMapCenter,
       aboutTitle: "About this place",
       breadcrumbItems,
       localityLinks: [],

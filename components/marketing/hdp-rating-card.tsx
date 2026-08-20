@@ -62,11 +62,14 @@ export function HdpRatingCard({
   showTrophy?: boolean;
 }) {
   const displayName = view?.displayName ?? hdpProperty.name;
-  const trendingLabel = view?.trendingLabel ?? hdpProperty.trendingLabel;
+  const trendingLabel = view ? view.trendingLabel : hdpProperty.trendingLabel;
   const topChoiceCopy = view?.topChoiceCopy ?? hdpProperty.topChoiceCopy;
+  const topChoiceDate = view?.topChoiceDate;
   const rating = view?.rating ?? hdpProperty.rating;
-  const visitsToday = view?.visitsToday ?? hdpProperty.visitsToday;
+  const visitsScheduled = view?.visitsScheduled ?? hdpProperty.visitsToday;
   const reviewCount = view?.reviewCount ?? hdpProperty.reviewCount;
+  const ratingLabel =
+    rating != null && Number.isFinite(rating) ? rating.toFixed(1) : "—";
 
   return (
     <section
@@ -82,7 +85,7 @@ export function HdpRatingCard({
       />
 
       <div className="relative flex flex-col gap-5 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-5 md:p-6">
-        <div className="min-w-0 flex-1 space-y-3">
+        <div className="min-w-0 flex-1 space-y-2">
           {trendingLabel ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-hello-lime-50 px-2 py-0.5 text-xs font-semibold text-hello-lime-800">
               <TrendingIcon className="size-3" />
@@ -93,19 +96,22 @@ export function HdpRatingCard({
             <span className="font-semibold text-gray-900">{displayName}</span>{" "}
             <span className="text-gray-600">{topChoiceCopy}</span>
           </p>
+          {topChoiceDate ? (
+            <p className="text-sm text-gray-500">{topChoiceDate}</p>
+          ) : null}
         </div>
 
         <div className="flex shrink-0 items-center justify-between gap-4 sm:justify-end sm:gap-5 md:gap-6">
           <div className="flex items-center gap-4 sm:gap-5 md:gap-6">
             <Stat
-              value={rating.toFixed(1)}
+              value={ratingLabel}
               label="Rating"
               icon={<StarIcon className="size-3 text-amber-400" />}
             />
-            {visitsToday != null ? (
+            {visitsScheduled != null ? (
               <>
                 <StatDivider />
-                <Stat value={visitsToday} label="Visits today" />
+                <Stat value={visitsScheduled} label="Visits scheduled" />
               </>
             ) : null}
             <StatDivider />

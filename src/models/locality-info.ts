@@ -2,6 +2,8 @@ export interface LocalityInfoPlace {
   id: string;
   name: string;
   distance_meters: number | null;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface LocalityInfoRatings {
@@ -44,10 +46,14 @@ function parsePlace(value: unknown): LocalityInfoPlace | null {
   const name = String(record.name ?? "").trim();
   if (!name || /^test$/i.test(name)) return null;
   const meters = parseNumber(record.distance_meters);
+  const latitude = parseNumber(record.latitude ?? record.lat);
+  const longitude = parseNumber(record.longitude ?? record.lng ?? record.lon);
   return {
     id: String(record.id ?? name),
     name,
     distance_meters: meters ?? null,
+    ...(latitude != null ? { latitude } : {}),
+    ...(longitude != null ? { longitude } : {}),
   };
 }
 

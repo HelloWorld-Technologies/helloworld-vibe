@@ -18,7 +18,7 @@ export function HdpAbout({
       className={cn("scroll-mt-32 space-y-4", className)}
       aria-label="About section"
     >
-      <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
+      <h2 className="text-2xl font-medium text-gray-900 md:text-3xl">
         About {displayName}
       </h2>
       <p className="text-base leading-7 text-gray-700">{about}</p>

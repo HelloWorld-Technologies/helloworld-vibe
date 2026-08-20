@@ -72,6 +72,7 @@ export const SITEMAP_STATIC_LIST = [
   "about-us",
   "owner",
   "contact",
+  "investors",
   "policy",
   "tenant-policy",
   "sitemap",
