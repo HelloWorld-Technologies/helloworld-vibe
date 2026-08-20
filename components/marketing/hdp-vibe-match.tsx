@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  hdpResidentColleges,
-  hdpResidentWorkplaces,
-} from "@/src/tokens/hdp";
+// import {
+//   hdpResidentColleges,
+//   hdpResidentWorkplaces,
+// } from "@/src/tokens/hdp";
 import type {
   HdpResidentInterest,
   HdpSelectedVibeMatch,
@@ -12,25 +12,25 @@ import type {
 import { cn } from "@/src/lib/cn";
 
 function VibeScoreRing({ score }: { score: number }) {
-  const radius = 24;
+  const radius = 28;
   const circumference = 2 * Math.PI * radius;
   const clamped = Math.min(Math.max(score, 0), 100);
   const offset = circumference - (clamped / 100) * circumference;
 
   return (
-    <div className="relative size-14 shrink-0">
-      <svg viewBox="0 0 56 56" className="size-full rotate-90" aria-hidden>
+    <div className="relative size-16 shrink-0">
+      <svg viewBox="0 0 64 64" className="size-full rotate-90" aria-hidden>
         <circle
-          cx="28"
-          cy="28"
+          cx="32"
+          cy="32"
           r={radius}
           fill="none"
           stroke="#E5E7EB"
           strokeWidth="4"
         />
         <circle
-          cx="28"
-          cy="28"
+          cx="32"
+          cy="32"
           r={radius}
           fill="none"
           stroke="url(#vibe-ring)"
@@ -47,7 +47,7 @@ function VibeScoreRing({ score }: { score: number }) {
           </linearGradient>
         </defs>
       </svg>
-      <span className="text-gradient-score-vibe absolute inset-0 flex items-center justify-center text-sm font-bold">
+      <span className="text-gradient-score-vibe absolute inset-0 flex items-center justify-center text-base font-bold">
         {clamped}%
       </span>
     </div>
@@ -79,6 +79,7 @@ function ChevronIcon({
   );
 }
 
+/* Hidden until workplaces/colleges API is wired up.
 function ResidentInsightCard({
   emoji,
   label,
@@ -109,6 +110,7 @@ function ResidentInsightCard({
     </div>
   );
 }
+*/
 
 export function HdpVibeMatch({
   displayName,
@@ -148,10 +150,10 @@ export function HdpVibeMatch({
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <h2 className="text-lg font-bold leading-6 tracking-tight text-gray-900 md:text-xl md:leading-7">
+          <h2 className="text-lg font-medium leading-6 tracking-tight text-gray-900 md:text-xl md:leading-7">
             How well this home matches your vibe
           </h2>
-          <p className="mt-1 text-sm leading-5 text-gray-500">
+          <p className="mt-5 text-sm leading-5 text-gray-500">
             {selectedCount > 0
               ? `Based on the ${selectedCount} vibe${selectedCount === 1 ? "" : "s"} you selected`
               : "Pick vibes on search to see your match score here"}
@@ -161,7 +163,7 @@ export function HdpVibeMatch({
       </div>
 
       {vibeCards.length > 0 ? (
-        <div className="-mx-1 mt-5 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="-mx-1 mt-2 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex w-max gap-2.5 md:gap-3">
             {vibeCards.map((vibe) => (
               <div
@@ -184,6 +186,7 @@ export function HdpVibeMatch({
         </div>
       ) : null}
 
+      {/* Hidden until workplaces/colleges API is wired up.
       <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:gap-3">
         <ResidentInsightCard
           emoji="👨‍💻"
@@ -198,9 +201,10 @@ export function HdpVibeMatch({
           extraCount={hdpResidentColleges.extraCount}
         />
       </div>
+      */}
 
       <div className="mt-5 flex items-start justify-between gap-3">
-        <p className="min-w-0 flex-1 text-sm font-medium leading-5 text-gray-600">
+        <p className="min-w-0 flex-1 text-sm font-medium leading-5 text-gray-900">
           See what residents at {propertyLabel} are usually into
         </p>
         <button

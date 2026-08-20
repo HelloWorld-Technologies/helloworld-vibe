@@ -419,7 +419,7 @@ export function SrpCard({
       </div>
 
       {showVibeMatch ? (
-        <div className="bg-gradient-property-vibe-match px-4 py-2.5 text-center text-sm text-gray-900">
+        <div className="bg-gradient-property-card-vibe-match px-4 py-2.5 text-center text-sm text-gray-900">
           <span aria-hidden>✨ </span>
           <span className="font-bold">{Math.round(vibeMatchScore)}%</span> Vibe
           Match
@@ -451,6 +451,7 @@ export function SrpCard({
           <div className="flex shrink-0 items-center gap-2">
             <WishlistButton
               saved={saved}
+              iconClassName="size-6"
               aria-label={saved ? "Remove from saved" : "Save property"}
               onClick={(event) => {
                 event.stopPropagation();
@@ -472,7 +473,7 @@ export function SrpCard({
         </div>
 
         <span className="inline-flex w-fit items-center gap-1 rounded-2xl bg-[#e9eaeb] px-2 py-0.5 text-xs font-medium text-gray-900">
-          <BedIcon className="size-3 text-gray-700" />
+          <BedIcon className="size-3.5 text-gray-900" />
           {roomTypes.join(" · ")}
         </span>
 
@@ -501,8 +502,8 @@ export function SrpCard({
         <div className="mt-1 grid grid-cols-2 gap-2">
           <Button
             hierarchy="secondary-gray"
-            size="md"
-            className="w-full rounded-lg border-gray-300 text-gray-600"
+            size="lg"
+            className="w-full min-w-0 rounded-lg border-gray-300 !px-2.5 text-gray-800 whitespace-nowrap sm:!px-[18px]"
             onClick={(event) => {
               event.stopPropagation();
               onRequestCallback?.();
@@ -512,8 +513,8 @@ export function SrpCard({
           </Button>
           <Button
             hierarchy="primary"
-            size="md"
-            className="w-full rounded-lg bg-hello-lime-400 text-gray-800 ring-0 hover:bg-hello-lime-500 focus-visible:ring-hello-lime-100"
+            size="lg"
+            className="w-full min-w-0 rounded-lg bg-hello-lime-400 !px-2.5 text-gray-800 ring-0 whitespace-nowrap hover:bg-hello-lime-500 focus-visible:ring-hello-lime-100 sm:!px-[18px]"
             onClick={(event) => {
               event.stopPropagation();
               onTakeTour?.();

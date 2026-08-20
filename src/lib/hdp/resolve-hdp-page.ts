@@ -9,6 +9,10 @@ import {
   fetchPropertyCategories,
   fetchSimilarProperties,
 } from "@/src/apis/hdp";
+import {
+  fetchPropertyVisitStats,
+  formatHdpReviewDate,
+} from "@/src/apis/property-visits";
 import { fetchPropertyMoments } from "@/src/apis/moments";
 import { getHdpPageTitle } from "@/src/lib/hdp-page-title";
 import { buildHdpMetaDescription } from "@/src/lib/hdp/hdp-description";
@@ -63,6 +67,7 @@ import type {
   Property,
   SimilarProperty,
 } from "@/src/models/property";
+import type { PropertyVisitStats } from "@/src/models/property-visits";
 import { srpCardComingSoonImage } from "@/src/tokens/srp-card";
 import { buildGalleryItemsFromMedia } from "@/src/tokens/property-gallery";
 import type { HdpRoomType } from "@/src/tokens/hdp";
@@ -191,6 +196,7 @@ function buildHdpView(options: {
   media: readonly PropertyMediaItem[];
   moments: readonly PropertyMoment[];
   galleryImages: readonly string[];
+  visitStats?: PropertyVisitStats | null;
   vibeMatchScore?: number;
   selectedVibeMatches?: HdpPageView["selectedVibeMatches"];
   residentInterests?: HdpPageView["residentInterests"];
@@ -206,16 +212,27 @@ function buildHdpView(options: {
     media,
     moments,
     galleryImages,
+    visitStats,
     vibeMatchScore,
     selectedVibeMatches,
     residentInterests,
   } = options;
   const displayName = property.display_name || property.name;
-  const reviewCount =
+  const googleReviewCount =
     googleData?.google_reviews_new?.length ??
     googleData?.google_reviews?.length ??
     0;
-  const rating = Number(googleData?.google_rating ?? 4.5);
+  const googleRating = Number(googleData?.google_rating);
+  const visitRating = visitStats?.rating;
+  const rating =
+    visitRating != null && Number.isFinite(visitRating)
+      ? visitRating
+      : Number.isFinite(googleRating) && googleRating > 0
+        ? googleRating
+        : 4.5;
+  const reviewCount =
+    visitStats != null ? visitStats.totalReviews : googleReviewCount;
+  const visitsScheduled = visitStats?.totalVisits ?? 0;
   const depositMonths = property.security_deposit_months ?? property.sd_month ?? 1;
   const locality =
     property.locality ||
@@ -258,11 +275,15 @@ function buildHdpView(options: {
     minStayMonths: property.lockin_period ?? 3,
     rating: Number.isFinite(rating) ? rating : 4.5,
     reviewCount,
-    visitsToday: undefined,
-    trendingLabel: property.lightning_deal ? "Trending" : undefined,
-    topChoiceCopy: property.address?.city
-      ? `is the top choice in ${formatCityDisplayName(property.address.city)}.`
-      : undefined,
+    visitsScheduled,
+    showRatingCard: visitsScheduled >= 5,
+    trendingLabel: visitStats?.isTrending === true ? "Trending" : undefined,
+    topChoiceCopy: locality
+      ? `is the top choice in ${locality}.`
+      : property.address?.city
+        ? `is the top choice in ${formatCityDisplayName(property.address.city)}.`
+        : undefined,
+    topChoiceDate: formatHdpReviewDate(visitStats?.topChoiceDate),
     about: property.description || property.nearby_description || "",
     amenities: dedupeAmenityLabels([
       ...(property.amenities ?? []),
@@ -333,11 +354,12 @@ export async function resolveHdpPage(
     Array.isArray(response.moments) ? response.moments : []
   ) as PropertyMoment[];
 
-  const [categoriesResponse, similarResponse, momentsResponse] =
+  const [categoriesResponse, similarResponse, momentsResponse, visitStats] =
     await Promise.all([
       fetchPropertyCategories(propertyId),
       fetchSimilarProperties(propertyId),
       fetchPropertyMoments(propertyId),
+      fetchPropertyVisitStats(propertyId),
     ]);
 
   const momentsFromApi = (momentsResponse?.data ?? []) as PropertyMoment[];
@@ -442,6 +464,7 @@ export async function resolveHdpPage(
     media,
     moments,
     galleryImages: galleryImageUrls,
+    visitStats,
     vibeMatchScore: parseVibeMatchScore(response.vibeMatchScore),
     selectedVibeMatches: mapVibeBadgesToSelectedMatches(
       response.vibeBadges as HdpVibeBadgeApi[] | undefined,

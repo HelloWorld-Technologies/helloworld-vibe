@@ -147,10 +147,10 @@ export function LocalityBentoHero({
   return (
     <section aria-label="Search results overview">
       <div className="hidden space-y-2 lg:block">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
+        <h1 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
           {title}
         </h1>
-        <p className="text-base font-medium text-gray-600">{subtitle}</p>
+        <p className="text-base font-medium text-gray-900">{subtitle}</p>
       </div>
 
       <div
@@ -188,10 +188,10 @@ export function LocalityBentoHero({
           {breadcrumbItems && breadcrumbItems.length > 0 ? (
             <Breadcrumbs items={breadcrumbItems} className="mb-4" />
           ) : null}
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+          <h1 className="text-2xl font-medium tracking-tight text-gray-900">
             {title}
           </h1>
-          <p className="mt-2 text-base font-medium text-gray-600">{subtitle}</p>
+          <p className="mt-2 text-base font-medium text-gray-900">{subtitle}</p>
           {showRatings && bentoTiles ? (
             <BentoMobileRatings tiles={bentoTiles} />
           ) : null}

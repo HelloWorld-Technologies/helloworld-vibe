@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useId,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useId } from "react";
 import { cn } from "@/src/lib/cn";
 
 export interface TabNavItem {
@@ -24,13 +18,6 @@ export interface TabNavProps<T extends string = string> {
   "aria-label"?: string;
 }
 
-type IndicatorStyle = {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-};
-
 export function TabNav<T extends string>({
   items,
   value,
@@ -40,79 +27,41 @@ export function TabNav<T extends string>({
   "aria-label": ariaLabel = "Property sections",
 }: TabNavProps<T>) {
   const tabListId = useId();
-  const listRef = useRef<HTMLDivElement>(null);
-  const tabRefs = useRef(new Map<string, HTMLButtonElement>());
-  const hasMountedRef = useRef(false);
-  const [indicator, setIndicator] = useState<IndicatorStyle | null>(null);
   const activeItem = items.find((item) => item.id === value) ?? items[0];
-  const sectionHeading = heading ?? activeItem?.heading ?? activeItem?.label ?? "";
-
-  const updateIndicator = useCallback(() => {
-    const list = listRef.current;
-    const activeTab = tabRefs.current.get(value);
-
-    if (!list || !activeTab) {
-      return;
-    }
-
-    setIndicator({
-      left: activeTab.offsetLeft,
-      top: activeTab.offsetTop,
-      width: activeTab.offsetWidth,
-      height: activeTab.offsetHeight,
-    });
-
-    list.scrollTo({
-      left: activeTab.offsetLeft,
-      behavior: hasMountedRef.current ? "smooth" : "instant",
-    });
-    hasMountedRef.current = true;
-  }, [value]);
-
-  useLayoutEffect(() => {
-    updateIndicator();
-  }, [updateIndicator, items]);
-
-  useLayoutEffect(() => {
-    const list = listRef.current;
-    if (!list) {
-      return;
-    }
-
-    const observer = new ResizeObserver(() => {
-      updateIndicator();
-    });
-
-    observer.observe(list);
-
-    return () => observer.disconnect();
-  }, [updateIndicator]);
+  const sectionHeading =
+    heading ?? activeItem?.heading ?? activeItem?.label ?? "";
+  const selectedIndex = Math.max(
+    0,
+    items.findIndex((item) => item.id === value),
+  );
+  const count = Math.max(items.length, 1);
 
   return (
     <div className={cn("w-full min-w-0", className)}>
       <div
-        ref={listRef}
         role="tablist"
         aria-label={ariaLabel}
         aria-orientation="horizontal"
-        className="relative flex gap-2 overflow-x-auto scroll-smooth border-y border-gray-200 bg-white py-3 scrollbar-none sm:gap-3"
+        className={cn(
+          "relative grid w-full items-center rounded-full bg-white p-1",
+          "shadow-[0_2px_10px_rgba(16,24,40,0.08)]",
+        )}
+        style={{
+          gridTemplateColumns: `repeat(${count}, minmax(0, 1fr))`,
+        }}
       >
-        {indicator ? (
-          <span
-            aria-hidden
-            className={cn(
-              "pointer-events-none absolute rounded-full bg-hello-lime-50",
-              "transition-[left,width,top,height] duration-300 ease-in-out",
-              "motion-reduce:transition-none",
-            )}
-            style={{
-              left: indicator.left,
-              top: indicator.top,
-              width: indicator.width,
-              height: indicator.height,
-            }}
-          />
-        ) : null}
+        <span
+          aria-hidden
+          className={cn(
+            "pointer-events-none absolute inset-y-1 left-1 rounded-full bg-hello-lime-100",
+            "transition-transform duration-300 ease-in-out",
+            "motion-reduce:transition-none",
+          )}
+          style={{
+            width: `calc((100% - 0.5rem) / ${count})`,
+            transform: `translateX(calc(${selectedIndex} * 100%))`,
+          }}
+        />
 
         {items.map((item) => {
           const isActive = item.id === value;
@@ -120,13 +69,6 @@ export function TabNav<T extends string>({
           return (
             <button
               key={item.id}
-              ref={(element) => {
-                if (element) {
-                  tabRefs.current.set(item.id, element);
-                } else {
-                  tabRefs.current.delete(item.id);
-                }
-              }}
               id={`${tabListId}-${item.id}`}
               type="button"
               role="tab"
@@ -134,15 +76,13 @@ export function TabNav<T extends string>({
               aria-controls={`${tabListId}-${item.id}-panel`}
               onClick={() => onChange(item.id as T)}
               className={cn(
-                "relative cursor-pointer z-10 shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300",
+                "relative z-10 min-w-0 cursor-pointer rounded-full px-2 py-2.5 text-center text-sm font-semibold transition-colors duration-300",
                 "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-hello-lime-100",
                 "motion-reduce:transition-none",
-                isActive
-                  ? "text-gray-900"
-                  : "text-gray-900 hover:bg-gray-50",
+                isActive ? "text-gray-900" : "text-gray-900 hover:text-gray-700",
               )}
             >
-              {item.label}
+              <span className="block truncate">{item.label}</span>
             </button>
           );
         })}

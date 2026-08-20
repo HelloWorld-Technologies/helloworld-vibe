@@ -5,28 +5,12 @@ import type { BreadcrumbItem } from "@/components/navigation/breadcrumbs";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { HdpRatingCard } from "@/components/marketing/hdp-rating-card";
 import { PropertyGalleryMobile } from "@/components/marketing/property-gallery";
+import { ShowOnMapsIcon } from "@/components/icons/show-on-maps-icon";
 import { WishlistButton } from "@/components/wishlist/wishlist-button";
 import { useOptionalWishlist } from "@/components/wishlist/wishlist-provider";
 import type { HdpPageView } from "@/src/lib/hdp/hdp-page-view";
 import { cn } from "@/src/lib/cn";
 import { hdpProperty } from "@/src/tokens/hdp";
-
-function MapPinIcon({ className }: { className?: string }) {
-  return (
-    <svg aria-hidden viewBox="0 0 16 16" fill="none" className={className}>
-      <path
-        d="M8 8.667a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
-        stroke="currentColor"
-        strokeWidth="1.33"
-      />
-      <path
-        d="M8 14.667s5.333-3.58 5.333-8A5.333 5.333 0 1 0 2.667 6.667c0 4.42 5.333 8 5.333 8Z"
-        stroke="currentColor"
-        strokeWidth="1.33"
-      />
-    </svg>
-  );
-}
 
 export function HdpMobileHero({
   view,
@@ -109,15 +93,15 @@ export function HdpMobileHero({
                 href={mapsHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-hello-lime-700 underline underline-offset-2 hover:text-hello-lime-800"
+                className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold leading-none text-hello-lime-700 hover:text-hello-lime-800"
               >
-                <MapPinIcon className="size-4 shrink-0" />
-                <span className="min-w-0">{locationLabel}</span>
+                <ShowOnMapsIcon className="h-[19px] w-[17px] shrink-0" />
+                <span className="min-w-0 leading-none">{locationLabel}</span>
               </a>
             ) : (
-              <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-hello-lime-700">
-                <MapPinIcon className="size-4 shrink-0" />
-                <span className="min-w-0">{locationLabel}</span>
+              <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold leading-none text-hello-lime-700">
+                <ShowOnMapsIcon className="h-[19px] w-[17px] shrink-0" />
+                <span className="min-w-0 leading-none">{locationLabel}</span>
               </p>
             );
           })()
@@ -139,7 +123,9 @@ export function HdpMobileHero({
           </div>
         </div>
 
-        <HdpRatingCard view={view} className="mt-5" showTrophy />
+        {view.showRatingCard ? (
+          <HdpRatingCard view={view} className="mt-5" showTrophy />
+        ) : null}
       </div>
     </section>
   );

@@ -125,7 +125,7 @@ export const localityBentoDesktopLayout = {
 
 export const localityDayFromHereTitle = "A Day from here";
 export const localityDayFromHereSubtitle =
-  `What living at ${localityPage.name} actually looks like.`;
+  "See nearby utilities, facilities, transport, hospitals and more.";
 
 export const localityDayFromHereItems: readonly NeighborhoodCardData[] = [
   {

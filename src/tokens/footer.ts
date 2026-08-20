@@ -13,6 +13,7 @@ export const footerAboutLinks = [
   { label: "For home owners", href: "/owner" },
   { label: "Contact", href: "/contact" },
   { label: "Blog", href: "/blog" },
+  { label: "Investors", href: "/investors" },
   { label: "Sitemap", href: "/sitemap" },
 ] as const;
 

@@ -9,27 +9,14 @@ import {
   HdpNearbyMapModal,
   type NearbyMapProperty,
 } from "@/components/marketing/hdp-nearby-map-modal";
+import {
+  ShowOnMapsButtonLabel,
+  showOnMapsLinkClassName,
+} from "@/components/icons/show-on-maps-icon";
 import type { NeighborhoodCardData } from "@/src/tokens/neighborhood-card";
 import { cn } from "@/src/lib/cn";
 
 const CARD_SCROLL_STEP_PX = NEIGHBORHOOD_CARD_WIDTH_PX + 16;
-
-function MapPinIcon({ className }: { className?: string }) {
-  return (
-    <svg aria-hidden viewBox="0 0 16 16" fill="none" className={className}>
-      <path
-        d="M8 8.667a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
-        stroke="currentColor"
-        strokeWidth="1.33"
-      />
-      <path
-        d="M8 14.667s5.333-3.58 5.333-8A5.333 5.333 0 1 0 2.667 6.667c0 4.42 5.333 8 5.333 8Z"
-        stroke="currentColor"
-        strokeWidth="1.33"
-      />
-    </svg>
-  );
-}
 
 function CarouselChevron({
   direction,
@@ -63,15 +50,21 @@ function CarouselChevron({
 export function HdpNearbyPlaces({
   items,
   mapUrl,
+  title = "A Day from here",
   subtitle,
   property,
   className,
+  sectionId = "hdp-nearby",
+  mapsButtonVariant = "link",
 }: {
   items?: readonly NeighborhoodCardData[];
   mapUrl?: string;
+  title?: string;
   subtitle?: string;
   property?: NearbyMapProperty;
   className?: string;
+  sectionId?: string;
+  mapsButtonVariant?: "link" | "srp";
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const resolvedItems = items && items.length > 0 ? items : [];
@@ -112,60 +105,68 @@ export function HdpNearbyPlaces({
   }
 
   const canOpenMapModal = mapProperty.latitude != null;
+  const mapsButtonClassName =
+    mapsButtonVariant === "srp"
+      ? "inline-flex items-center gap-1.5 rounded-lg bg-hello-lime-700 px-3 py-2 text-sm font-bold leading-none text-white transition-colors hover:bg-hello-lime-800"
+      : showOnMapsLinkClassName;
+
+  const mapsControl = canOpenMapModal ? (
+    <button
+      type="button"
+      onClick={() => openMap()}
+      className={mapsButtonClassName}
+    >
+      <ShowOnMapsButtonLabel />
+    </button>
+  ) : mapUrl ? (
+    <a
+      href={mapUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={mapsButtonClassName}
+    >
+      <ShowOnMapsButtonLabel />
+    </a>
+  ) : null;
+
+  const carouselControls = (
+    <div className="flex items-center gap-1">
+      <CarouselChevron
+        direction="prev"
+        label="Previous nearby place"
+        onClick={() => scrollCarousel("prev")}
+      />
+      <CarouselChevron
+        direction="next"
+        label="Next nearby place"
+        onClick={() => scrollCarousel("next")}
+      />
+    </div>
+  );
 
   return (
     <section
-      id="hdp-nearby"
-      className={cn("scroll-mt-32", className)}
+      id={sectionId}
+      className={cn("scroll-mt-32 mb-4", className)}
       aria-label="Nearby places section"
     >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-[2rem] md:leading-10">
-            What&apos;s nearby?
+      <div>
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="min-w-0 text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
+            {title}
           </h2>
-          <p className="mt-1 text-base text-gray-600">
-            {subtitle ||
-              "See nearby utilities, facilities, transport, hospitals and more."}
-          </p>
-        </div>
-
-        <div className="flex shrink-0 flex-col items-start gap-3 sm:items-end">
-          {canOpenMapModal ? (
-            <button
-              type="button"
-              onClick={() => openMap()}
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-hello-lime-600 transition-colors hover:text-hello-lime-700"
-            >
-              <MapPinIcon className="size-4" />
-              Show on Maps
-            </button>
-          ) : mapUrl ? (
-            <a
-              href={mapUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-hello-lime-600 transition-colors hover:text-hello-lime-700"
-            >
-              <MapPinIcon className="size-4" />
-              Show on Maps
-            </a>
-          ) : null}
-
-          <div className="flex items-center gap-1">
-            <CarouselChevron
-              direction="prev"
-              label="Previous nearby place"
-              onClick={() => scrollCarousel("prev")}
-            />
-            <CarouselChevron
-              direction="next"
-              label="Next nearby place"
-              onClick={() => scrollCarousel("next")}
-            />
+          <div className="flex shrink-0 items-center gap-3">
+            {mapsControl}
+            <div className="hidden sm:block">{carouselControls}</div>
           </div>
         </div>
+        <p className="mt-1 text-base text-gray-600">
+          {subtitle ||
+            "See nearby utilities, facilities, transport, hospitals and more."}
+        </p>
       </div>
+
+      <div className="mt-3 flex justify-end sm:hidden">{carouselControls}</div>
 
       <div className="mt-6">
         <NeighborhoodTimeline

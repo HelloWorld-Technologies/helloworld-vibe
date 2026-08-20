@@ -134,9 +134,11 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
           <div className={pageLayout.hdpTwoColumn}>
             <div className={pageLayout.mainColumn}>
               <div className="space-y-6">
-                <div className="hidden md:block">
-                  <HdpRatingCard view={view} />
-                </div>
+                {view.showRatingCard ? (
+                  <div className="hidden md:block">
+                    <HdpRatingCard view={view} />
+                  </div>
+                ) : null}
                 <HdpVibeMatch
                   displayName={view.displayName}
                   overallScore={view.vibeMatchScore}
@@ -162,7 +164,6 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
                 <HdpNearbyPlaces
                   items={view.nearbyItems}
                   mapUrl={view.mapUrl}
-                  subtitle={view.nearbyDescription}
                   property={{
                     name: view.displayName,
                     addressLine: [view.addressLine, view.locality]

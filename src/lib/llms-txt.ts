@@ -40,6 +40,8 @@ export function buildLlmsTxt(
     "## Key Information",
     "",
     `- [About Us](${base}/about-us): Company and mission`,
+    `- [Investors](${base}/investors): Financial statements and investor disclosures`,
+    `- [HelloWorld Living](${base}/hello-world-living): Subsidiary managing residential living ecosystems`,
     `- [Blog](${base}/blogs): Guides and updates`,
     `- [For property owners](${base}/owner): List your property with HelloWorld`,
     `- [Safety](${base}/safety): How we keep spaces secure`,

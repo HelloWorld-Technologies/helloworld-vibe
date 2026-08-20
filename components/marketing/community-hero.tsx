@@ -4,6 +4,7 @@ import {
   communityHeroFrame,
   communityHeroPolaroids,
 } from "@/src/tokens/community";
+import { cn } from "@/src/lib/cn";
 import { pageShell } from "@/src/tokens/layout";
 
 function toPercent(value: number, total: number) {
@@ -58,23 +59,36 @@ function PolaroidCard({
   );
 }
 
+/** Figma Ellipse 1592 — Hello Lime/100 @ 12%, layer blur 322.26 */
+function BannerGlow({ className }: { className?: string }) {
+  return (
+    <div
+      aria-hidden
+      className={cn(
+        "pointer-events-none absolute left-1/2 top-0 -translate-x-1/2",
+        className,
+      )}
+    >
+      <div
+        className="aspect-square w-[min(677px,90vw)] rounded-full bg-[#D9F99E]/12"
+        style={{ filter: "blur(322.26px)" }}
+      />
+    </div>
+  );
+}
+
 export function CommunityHero() {
   return (
-    <section className="bg-white">
-      <div className={pageShell.communityHeroDesktop}>
+    <section className="relative overflow-hidden bg-white">
+      <BannerGlow />
+
+      <div className={cn(pageShell.communityHeroDesktop, "relative z-10")}>
         <div
           className="relative mx-auto w-full"
-          style={{ aspectRatio: `${communityHeroFrame.width} / ${communityHeroFrame.height}` }}
+          style={{
+            aspectRatio: `${communityHeroFrame.width} / ${communityHeroFrame.height}`,
+          }}
         >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-0 aspect-square w-[58.12%] -translate-x-1/2"
-            style={{
-              background:
-                "radial-gradient(circle, #e8ffc7 0%, #d2f0fe 42%, #e9d7fe 72%, transparent 100%)",
-            }}
-          />
-
           <div className="absolute left-1/2 top-[4.73%] z-30 -translate-x-1/2">
             <CommunityWeekendsHeading size="desktop" />
           </div>
@@ -85,7 +99,7 @@ export function CommunityHero() {
         </div>
       </div>
 
-      <div className="px-4 py-8 sm:px-6 lg:hidden">
+      <div className="relative z-10 px-4 py-8 sm:px-6 lg:hidden">
         <div className={pageShell.communityMobileHero}>
           <CommunityWeekendsHeading size="mobile" className="w-full" />
           <div className="-mx-4 mt-10 overflow-x-auto px-4 pb-2 scrollbar-none">

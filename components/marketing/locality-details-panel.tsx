@@ -67,7 +67,7 @@ export function LocalityDetailsPanel({ className }: { className?: string }) {
       <LocalityAmenitiesSection amenities={localityAmenities} />
 
       <section aria-label="About locality">
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
+        <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
           {localityPage.aboutTitle}
         </h2>
         <p className="mt-6 text-base leading-7 text-gray-600">
@@ -76,7 +76,7 @@ export function LocalityDetailsPanel({ className }: { className?: string }) {
       </section>
 
       <section aria-label="Similar properties">
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
+        <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
           More Places you&apos;ll Like
         </h2>
         <div className="mt-6 hidden gap-6 lg:flex">
@@ -136,7 +136,7 @@ export function LocalityDetailsPanel({ className }: { className?: string }) {
       </section>
 
       <section aria-label="Popular localities">
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
+        <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
           Popular Bangalore Localities
         </h2>
         <div className="mt-6 hidden gap-6 lg:flex">
@@ -147,7 +147,7 @@ export function LocalityDetailsPanel({ className }: { className?: string }) {
               startingRent={locality.startingRent}
               propertyCount={locality.propertyCount}
               imageSrc={locality.imageSrc}
-              className="w-[min(100%,25.6875rem)] shrink-0"
+              className="w-[min(100%,16rem)] shrink-0"
             />
           ))}
         </div>

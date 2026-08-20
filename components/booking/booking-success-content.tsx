@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { AppStoreIcon, PlayStoreIcon } from "@/components/brand/store-icons";
 import { pageLayout } from "@/src/tokens/layout";
 import { cn } from "@/src/lib/cn";
+import { clearReferCode } from "@/src/lib/refer-code";
 
 const PLAY_STORE_URL =
   "https://play.google.com/store/apps/details?id=com.thehelloworld";
@@ -115,6 +116,7 @@ export function BookingSuccessContent({ propertyPath }: { propertyPath: string }
 
     setBookingId(storedBookingId);
     window.localStorage.removeItem("booking_successfull");
+    clearReferCode();
   }, [bookingIdFromQuery, propertyPath, router]);
 
   if (!bookingId) {

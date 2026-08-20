@@ -100,6 +100,8 @@ export function mapLocalityNearbyToDayFromHere(
       walkTime: formatMetersAway(place.distance_meters),
       imageSrc: def.imageSrc,
       imageAlt: place.name,
+      ...(place.latitude != null ? { latitude: place.latitude } : {}),
+      ...(place.longitude != null ? { longitude: place.longitude } : {}),
     }));
     const primary = options[0];
     if (!primary) continue;

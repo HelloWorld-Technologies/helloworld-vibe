@@ -182,7 +182,7 @@ function HdpBookingTourFooter({ minStayMonths }: { minStayMonths: number }) {
 
 function HdpBookingBookFooter({ minStayMonths }: { minStayMonths: number }) {
   return (
-    <p className="mt-4 text-center text-xs leading-relaxed text-gray-500">
+    <p className="mt-4 text-center text-xs leading-relaxed text-gray-900">
       Refund of Security Deposit requires a minimum {minStayMonths}-month stay.*
     </p>
   );
@@ -266,7 +266,9 @@ export function HdpBookingCard({
     minStayMonths: hdpProperty.minStayMonths,
     rating: hdpProperty.rating,
     reviewCount: hdpProperty.reviewCount,
-    visitsToday: hdpProperty.visitsToday,
+    visitsScheduled: hdpProperty.visitsToday,
+    showRatingCard: true,
+    trendingLabel: hdpProperty.trendingLabel,
     about: "",
     amenities: [],
     galleryImages: [],

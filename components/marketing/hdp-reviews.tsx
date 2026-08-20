@@ -181,6 +181,7 @@ export function HdpReviews({
               </div>
             </div>
 
+            {/* Category bars — re-enable when scores are integrated
             <div className="h-px bg-gray-300" />
 
             <div className="flex flex-col gap-3">
@@ -192,6 +193,7 @@ export function HdpReviews({
                 />
               ))}
             </div>
+            */}
           </div>
 
           {/* Desktop */}
@@ -222,6 +224,7 @@ export function HdpReviews({
               </div>
             </div>
 
+            {/* Category bars — re-enable when scores are integrated
             <div className="hidden w-px shrink-0 bg-gray-300 lg:block" />
 
             <div className="flex min-w-0 flex-1 flex-col justify-center gap-4 lg:max-w-[18.875rem]">
@@ -233,6 +236,7 @@ export function HdpReviews({
                 />
               ))}
             </div>
+            */}
           </div>
         </div>
         ) : null}

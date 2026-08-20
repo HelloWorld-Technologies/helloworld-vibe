@@ -13,7 +13,7 @@ export type NearbyCategoryDef = {
 };
 
 /**
- * Display order for HDP “What’s nearby?” cards (design flow).
+ * Display order for HDP “A Day from here” cards (design flow).
  * Categories without API data still render with a coming-soon image.
  */
 export const nearbyCategoryFlow = [

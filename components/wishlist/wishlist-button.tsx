@@ -69,7 +69,7 @@ export function WishlistButton({
             ? "border-error-200 bg-error-50 text-error-500 hover:border-error-300"
             : "border-gray-900 text-gray-900 hover:border-gray-700 hover:text-gray-700"),
         variant === "ghost" &&
-          "transition-colors active:scale-95 text-hello-lime-900 hover:text-hello-lime-800",
+          "transition-colors active:scale-95 text-gray-900 hover:text-gray-700",
         className,
       )}
     >

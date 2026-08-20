@@ -40,11 +40,11 @@ export const errorStates = {
     id: "not-found",
     title: "Uh-oh, We Lost the Scent!",
     description:
-      "Even the finest noses can lose the trail. Let's get you back on track and find what you're looking for.",
+      "Looks like this page wandered off, got moved, or never existed in the first place. Don't worry, we'll help you get back on track.",
     image: requireAsset("404-1"),
     imageWidth: 320,
     imageHeight: 280,
-    actions: [{ label: "Back to Home", href: "/", variant: "primary" }],
+    actions: [{ label: "Take Me Home", href: "/", variant: "primary" }],
   },
   "server-error": {
     id: "server-error",
