@@ -35,7 +35,7 @@ export function HomepageSectionHeading({
       className={cn(
         isProperties
           ? "text-[1.875rem] font-medium leading-[2.375rem] text-gray-900"
-          : "text-display-xs font-bold tracking-tight text-gray-900 sm:text-display-sm md:text-display-md",
+          : "text-display-xs font-medium tracking-tight text-gray-900 sm:text-display-sm md:text-display-md",
         className,
       )}
     >

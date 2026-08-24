@@ -150,20 +150,17 @@ export function HdpNearbyPlaces({
       className={cn("scroll-mt-32 mb-4", className)}
       aria-label="Nearby places section"
     >
-      <div>
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="min-w-0 text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
-            {title}
-          </h2>
-          <div className="flex shrink-0 items-center gap-3">
-            {mapsControl}
-            <div className="hidden sm:block">{carouselControls}</div>
-          </div>
-        </div>
-        <p className="mt-1 text-base text-gray-600">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1">
+        <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
+          {title}
+        </h2>
+        <div className="justify-self-end">{mapsControl}</div>
+
+        <p className="text-base text-gray-600">
           {subtitle ||
             "See nearby utilities, facilities, transport, hospitals and more."}
         </p>
+        <div className="hidden justify-self-end sm:block">{carouselControls}</div>
       </div>
 
       <div className="mt-3 flex justify-end sm:hidden">{carouselControls}</div>

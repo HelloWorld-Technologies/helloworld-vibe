@@ -68,7 +68,7 @@ export function HomepageWeekends() {
                         height={40}
                         className="size-8 shrink-0 sm:size-10 opacity-80"
                       />
-                      <div className="min-w-0 text-left">
+                      <div className="min-w-0 text-center">
                         <p className="text-lg font-bold leading-6 text-gray-900 sm:text-xl sm:leading-7 lg:text-2xl lg:leading-8">
                           {stat.value}
                         </p>

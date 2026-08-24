@@ -681,7 +681,7 @@ export function LocationSearch({
             aria-label="Search localities"
             onClick={handleSearch}
             className={cn(
-              "group ml-1 flex h-9 w-9 shrink-0 items-center justify-center gap-0 overflow-visible rounded-full bg-hello-lime-500 text-white",
+              "group ml-1 flex h-9 w-9 shrink-0 items-center justify-center gap-0 overflow-visible rounded-full bg-hello-lime-600 text-white",
               "transition-[width,background-color,padding,gap] duration-200 ease-out motion-reduce:transition-none",
               "hover:bg-hello-lime-600",
               "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-hello-lime-100",

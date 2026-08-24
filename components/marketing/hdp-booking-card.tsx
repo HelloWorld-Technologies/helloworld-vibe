@@ -182,7 +182,7 @@ function HdpBookingTourFooter({ minStayMonths }: { minStayMonths: number }) {
 
 function HdpBookingBookFooter({ minStayMonths }: { minStayMonths: number }) {
   return (
-    <p className="mt-4 text-center text-xs leading-relaxed text-gray-900">
+    <p className="mt-4 text-center text-xs font-medium leading-relaxed text-black">
       Refund of Security Deposit requires a minimum {minStayMonths}-month stay.*
     </p>
   );
@@ -463,7 +463,7 @@ export function HdpBookingCard({
                         className={cn(
                           "rounded-full px-4 py-2.5 text-sm font-semibold transition-colors",
                           isActive
-                            ? "bg-gray-800 text-white"
+                            ? "bg-blue-light-100 text-blue-light-800"
                             : "bg-gray-100 text-gray-900 hover:bg-gray-200",
                         )}
                       >
@@ -553,7 +553,7 @@ export function HdpBookingCard({
             >
               {resolvedView.soldOut
                 ? "Sold Out"
-                : (confirmLabel ?? (selectionOnly ? "Save" : "Next"))}
+                : (confirmLabel ?? (selectionOnly ? "Save" : "Book Now"))}
             </Button>
             {!selectionOnly ? (
               <HdpBookingBookFooter minStayMonths={resolvedView.minStayMonths} />
