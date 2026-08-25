@@ -34,6 +34,7 @@ import { pageLayout } from "@/src/tokens/layout";
 import { formatCityDisplayName } from "@/src/tokens/cities";
 import type { HdpSectionId } from "@/src/tokens/hdp";
 
+const HIDDEN_WHEN_NO_MOMENTS = ["moments"] as const satisfies readonly HdpSectionId[];
 const HIDDEN_WHEN_NO_NEARBY = ["nearby"] as const satisfies readonly HdpSectionId[];
 const HIDDEN_WHEN_NO_REVIEWS = ["reviews"] as const satisfies readonly HdpSectionId[];
 const HIDDEN_WHEN_NO_AMENITIES = ["amenities"] as const satisfies readonly HdpSectionId[];
@@ -152,6 +153,7 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
                   ...(hasAbout ? [] : HIDDEN_WHEN_NO_ABOUT),
                   ...(hasAmenities ? [] : HIDDEN_WHEN_NO_AMENITIES),
                   ...(view.nearbyItems.length === 0 ? HIDDEN_WHEN_NO_NEARBY : []),
+                  ...(view.moments.length === 0 ? HIDDEN_WHEN_NO_MOMENTS : []),
                   ...(hasReviews ? [] : HIDDEN_WHEN_NO_REVIEWS),
                 ]}
               />
@@ -174,7 +176,10 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
                     longitude: view.longitude,
                   }}
                 />
-                <HdpMoments displayName={view.displayName} />
+                <HdpMoments
+                  displayName={view.displayName}
+                  moments={view.moments}
+                />
                 {hasReviews ? (
                   <section id="hdp-reviews" className="scroll-mt-32">
                     <HdpReviews

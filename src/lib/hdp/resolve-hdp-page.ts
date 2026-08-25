@@ -28,6 +28,8 @@ import {
   mapLegacyPropertyPhotosToGalleryItems,
   mapMomentsToGalleryItems,
   mapPropertyMediaToGalleryItems,
+  mediaUrlKey,
+  momentMediaUrlKeys,
 } from "@/src/lib/hdp/map-gallery-media";
 import {
   categorySharingOccupancy,
@@ -47,7 +49,6 @@ import {
   createHdpSlug,
   getLocalitySlug,
 } from "@/src/lib/sitemap-slug";
-import { homepageFeedMoments } from "@/src/tokens/homepage";
 import {
   getBreadcrumbSchema,
   getFAQPageSchema,
@@ -144,15 +145,29 @@ function mapCategoriesToRoomTypes(categories: CategoryProps[]): HdpRoomType[] {
 function propertyGalleryImages(
   property: Property,
   media: readonly PropertyMediaItem[],
+  moments: readonly PropertyMoment[],
 ): readonly string[] {
-  const fromMedia = mapPropertyMediaToGalleryItems(media).photos.map(
-    (item) => item.imageSrc,
-  );
+  const { photos: mediaPhotos, moments: mediaMoments } =
+    mapPropertyMediaToGalleryItems(media);
+  const excludedKeys = momentMediaUrlKeys([
+    ...mapMomentsToGalleryItems(moments),
+    ...mediaMoments,
+  ]);
+
+  const fromMedia = mediaPhotos
+    .map((item) => item.imageSrc)
+    .filter((src) => {
+      const key = mediaUrlKey(src);
+      return !key || !excludedKeys.has(key);
+    });
   if (fromMedia.length > 0) return fromMedia;
 
   const legacy = legacyPropertyPhotoUrls(property)
     .map((url) => imageUrlFormatter("hdp", url))
-    .filter(Boolean);
+    .filter((src) => {
+      const key = mediaUrlKey(src);
+      return Boolean(src) && (!key || !excludedKeys.has(key));
+    });
   return legacy.length > 0 ? legacy : [srpCardComingSoonImage];
 }
 
@@ -170,14 +185,22 @@ function buildGalleryItems(
     ...mapMomentsToGalleryItems(moments),
     ...mediaMoments,
   ];
-  const photos =
+  const excludedKeys = momentMediaUrlKeys(momentItems);
+
+  const basePhotos =
     mediaPhotos.length > 0
       ? mediaPhotos
       : mapLegacyPropertyPhotosToGalleryItems(legacyPropertyPhotoUrls(property));
 
+  // Keep moments out of the property image gallery (carousel uses momentItems).
+  const photos = basePhotos.filter((photo) => {
+    const key = mediaUrlKey(photo.imageSrc);
+    return !key || !excludedKeys.has(key);
+  });
+
   const items = buildGalleryItemsFromMedia({
     videos,
-    moments: momentItems,
+    moments: [],
     photos,
   });
 
@@ -245,6 +268,11 @@ function buildHdpView(options: {
   const mapUrl = buildPropertyMapUrl(property);
   const embeddedMapUrl = buildPropertyEmbedMapUrl(property);
   const galleryItems = buildGalleryItems(property, media, moments);
+  const { moments: mediaMoments } = mapPropertyMediaToGalleryItems(media);
+  const momentItems = [
+    ...mapMomentsToGalleryItems(moments),
+    ...mediaMoments,
+  ];
   const latitude = Number(property.address?.latitude);
   const longitude = Number(property.address?.longitude);
   const mapImageSrc =
@@ -286,7 +314,7 @@ function buildHdpView(options: {
     ]),
     galleryImages,
     galleryItems,
-    moments: homepageFeedMoments,
+    moments: momentItems,
     propertyUrl: `${getPublicSiteUrl()}/${canonicalPath}`,
     hdpPath: `/${canonicalPath}`,
     bookingPath: `/${canonicalPath}/booking`,
@@ -392,7 +420,7 @@ export async function resolveHdpPage(
 
   const baseUrl = getPublicSiteUrl();
   const fullUrl = `${baseUrl}/${canonicalPath}`;
-  const galleryImageUrls = propertyGalleryImages(property, media);
+  const galleryImageUrls = propertyGalleryImages(property, media, moments);
   const placeImage =
     galleryImageUrls[0] ??
     (property.hdp_image

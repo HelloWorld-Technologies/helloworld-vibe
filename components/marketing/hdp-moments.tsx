@@ -9,17 +9,16 @@ import {
   getMomentsPageStartIndex,
 } from "@/src/lib/moments-carousel";
 import type { GalleryMediaItem } from "@/src/models/gallery";
-import { homepageFeedMoments } from "@/src/tokens/homepage";
 
 const CARD_GAP_PX = 16;
 
 export function HdpMoments({
   displayName,
-  moments = homepageFeedMoments,
+  moments,
   className,
 }: {
   displayName: string;
-  moments?: readonly GalleryMediaItem[];
+  moments: readonly GalleryMediaItem[];
   className?: string;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
