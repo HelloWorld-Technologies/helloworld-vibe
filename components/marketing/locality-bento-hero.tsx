@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { Breadcrumbs, type BreadcrumbItem } from "@/components/navigation/breadcrumbs";
 import {
   localityBentoDesktopLayout,
@@ -106,12 +109,14 @@ function HeroImage({
   className,
   sizes,
   priority = true,
+  onError,
 }: {
   src: string;
   alt: string;
   className?: string;
   sizes: string;
   priority?: boolean;
+  onError?: () => void;
 }) {
   return (
     <Image
@@ -119,6 +124,7 @@ function HeroImage({
       alt={alt}
       fill
       priority={priority}
+      onError={onError}
       className={cn("object-cover", className)}
       sizes={sizes}
     />
@@ -128,7 +134,7 @@ function HeroImage({
 export type LocalityBentoHeroProps = {
   title: string;
   subtitle: string;
-  heroImageSrc: string;
+  heroImageSrc?: string;
   heroImageAlt: string;
   breadcrumbItems?: readonly BreadcrumbItem[];
   bentoTiles?: readonly LocalityBentoTile[];
@@ -142,10 +148,20 @@ export function LocalityBentoHero({
   breadcrumbItems,
   bentoTiles,
 }: LocalityBentoHeroProps) {
+  const [imageFailed, setImageFailed] = useState(false);
   const showRatings = Boolean(bentoTiles && bentoTiles.length > 0);
+  const showHeroImage = Boolean(heroImageSrc?.trim()) && !imageFailed;
+  const showDesktopMedia = showHeroImage || showRatings;
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [heroImageSrc]);
 
   return (
-    <section aria-label="Search results overview">
+    <section
+      aria-label="Search results overview"
+      data-has-media={showDesktopMedia ? "true" : "false"}
+    >
       <div className="hidden space-y-2 lg:block">
         <h1 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
           {title}
@@ -153,38 +169,54 @@ export function LocalityBentoHero({
         <p className="text-base font-medium text-gray-900">{subtitle}</p>
       </div>
 
-      <div
-        className={cn(
-          "mt-6 hidden items-stretch gap-6 lg:flex",
-          showRatings ? "lg:h-[24.875rem]" : "lg:h-[22rem]",
-        )}
-      >
+      {showDesktopMedia ? (
         <div
           className={cn(
-            "relative min-h-0 overflow-hidden rounded-2xl bg-gray-200",
-            showRatings ? "flex-[2.06]" : "flex-1",
+            "mt-6 hidden items-stretch gap-6 lg:flex",
+            showHeroImage && showRatings && "lg:h-[24.875rem]",
+            showHeroImage && !showRatings && "lg:aspect-[21/9] lg:max-h-[22rem]",
+            !showHeroImage && showRatings && "lg:h-[22rem]",
           )}
         >
-          <HeroImage
-            src={heroImageSrc}
-            alt={heroImageAlt}
-            sizes="(max-width: 1280px) 65vw, 846px"
-            className="object-cover"
-          />
+          {showHeroImage ? (
+            <div
+              className={cn(
+                "relative min-h-0 overflow-hidden rounded-2xl bg-gray-200",
+                showRatings ? "flex-[2.06]" : "flex-1",
+              )}
+            >
+              <HeroImage
+                src={heroImageSrc!}
+                alt={heroImageAlt}
+                sizes="(max-width: 1280px) 65vw, 846px"
+                onError={() => setImageFailed(true)}
+              />
+            </div>
+          ) : null}
+          {showRatings && bentoTiles ? (
+            <BentoDesktopGrid tiles={bentoTiles} />
+          ) : null}
         </div>
-        {showRatings && bentoTiles ? <BentoDesktopGrid tiles={bentoTiles} /> : null}
-      </div>
+      ) : null}
 
       <div className="-mx-4 sm:-mx-6 lg:hidden">
-        <div className="relative aspect-[4/3] overflow-hidden bg-gray-200">
-          <HeroImage
-            src={heroImageSrc}
-            alt={heroImageAlt}
-            sizes="100vw"
-          />
-        </div>
+        {showHeroImage ? (
+          <div className="relative aspect-[4/3] overflow-hidden bg-gray-200">
+            <HeroImage
+              src={heroImageSrc!}
+              alt={heroImageAlt}
+              sizes="100vw"
+              onError={() => setImageFailed(true)}
+            />
+          </div>
+        ) : null}
 
-        <div className="relative z-10 -mt-10 rounded-t-[2.5rem] bg-white px-4 pt-8 pb-1 sm:px-6">
+        <div
+          className={cn(
+            "relative z-10 bg-white px-4 pb-1 sm:px-6",
+            showHeroImage ? "-mt-10 rounded-t-[2.5rem] pt-8" : "pt-2",
+          )}
+        >
           {breadcrumbItems && breadcrumbItems.length > 0 ? (
             <Breadcrumbs items={breadcrumbItems} className="mb-4" />
           ) : null}

@@ -18,7 +18,7 @@ export const communityHeroPolaroids = [
   {
     id: "marathon",
     label: "Marathon",
-    image: "/assets/community/hero/hero-1.png",
+    image: "/assets/community/hero/hero-1.webp",
     rotation: -6.34,
     left: 0,
     top: 0,
@@ -28,7 +28,7 @@ export const communityHeroPolaroids = [
   {
     id: "art-workshop",
     label: "Art Workshop",
-    image: "/assets/community/hero/hero-2.png",
+    image: "/assets/community/hero/hero-2.webp",
     rotation: 8.98,
     left: 191,
     top: 255,
@@ -38,7 +38,7 @@ export const communityHeroPolaroids = [
   {
     id: "epic-meetup",
     label: "Epic Meetup",
-    image: "/assets/community/hero/hero-3.png",
+    image: "/assets/community/hero/hero-3.webp",
     rotation: -2.24,
     left: 631,
     top: 289,
@@ -48,7 +48,7 @@ export const communityHeroPolaroids = [
   {
     id: "halloween-night",
     label: "Halloween Night",
-    image: "/assets/community/hero/hero-4.png",
+    image: "/assets/community/hero/hero-4.webp",
     rotation: 2.85,
     left: 888.94,
     top: 28.97,
@@ -58,9 +58,9 @@ export const communityHeroPolaroids = [
 ] as const;
 
 export const communityFeedItems = [
-  "/assets/community/feed/feed-1.png",
-  "/assets/community/feed/feed-2.png",
-  "/assets/community/feed/feed-3.png",
+  "/assets/community/feed/feed-1.webp",
+  "/assets/community/feed/feed-2.webp",
+  "/assets/community/feed/feed-3.webp",
   "/assets/community/feed/feed-4.png",
 ] as const;
 

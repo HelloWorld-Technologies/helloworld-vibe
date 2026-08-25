@@ -26,290 +26,290 @@
       {
         "id": "hero-1",
         "name": "Hero 1",
-        "file": "/assets/community/hero/hero-1.png",
-        "originalName": "Hero 1.png",
+        "file": "/assets/community/hero/hero-1.webp",
+        "originalName": "Hero 1.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "hero-2",
         "name": "Hero 2",
-        "file": "/assets/community/hero/hero-2.png",
-        "originalName": "Hero 2.png",
+        "file": "/assets/community/hero/hero-2.webp",
+        "originalName": "Hero 2.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "hero-3",
         "name": "Hero 3",
-        "file": "/assets/community/hero/hero-3.png",
-        "originalName": "Hero 3.png",
+        "file": "/assets/community/hero/hero-3.webp",
+        "originalName": "Hero 3.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "hero-4",
         "name": "Hero 4",
-        "file": "/assets/community/hero/hero-4.png",
-        "originalName": "Hero 4.png",
+        "file": "/assets/community/hero/hero-4.webp",
+        "originalName": "Hero 4.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2363",
         "name": "Rectangle 2363",
-        "file": "/assets/community/social-events-parties/rectangle-2363.png",
-        "originalName": "Rectangle 2363.png",
+        "file": "/assets/community/social-events-parties/rectangle-2363.webp",
+        "originalName": "Rectangle 2363.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2364",
         "name": "Rectangle 2364",
-        "file": "/assets/community/social-events-parties/rectangle-2364.png",
-        "originalName": "Rectangle 2364.png",
+        "file": "/assets/community/social-events-parties/rectangle-2364.webp",
+        "originalName": "Rectangle 2364.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2365",
         "name": "Rectangle 2365",
-        "file": "/assets/community/social-events-parties/rectangle-2365.png",
-        "originalName": "Rectangle 2365.png",
+        "file": "/assets/community/social-events-parties/rectangle-2365.webp",
+        "originalName": "Rectangle 2365.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-1",
         "name": "Rectangle 2366 1",
-        "file": "/assets/community/social-events-parties/rectangle-2366-1.png",
-        "originalName": "Rectangle 2366-1.png",
+        "file": "/assets/community/social-events-parties/rectangle-2366-1.webp",
+        "originalName": "Rectangle 2366-1.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-2",
         "name": "Rectangle 2366 2",
-        "file": "/assets/community/social-events-parties/rectangle-2366-2.png",
-        "originalName": "Rectangle 2366-2.png",
+        "file": "/assets/community/social-events-parties/rectangle-2366-2.webp",
+        "originalName": "Rectangle 2366-2.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-3",
         "name": "Rectangle 2366 3",
-        "file": "/assets/community/social-events-parties/rectangle-2366-3.png",
-        "originalName": "Rectangle 2366-3.png",
+        "file": "/assets/community/social-events-parties/rectangle-2366-3.webp",
+        "originalName": "Rectangle 2366-3.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-4",
         "name": "Rectangle 2366 4",
-        "file": "/assets/community/social-events-parties/rectangle-2366-4.png",
-        "originalName": "Rectangle 2366-4.png",
+        "file": "/assets/community/social-events-parties/rectangle-2366-4.webp",
+        "originalName": "Rectangle 2366-4.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366",
         "name": "Rectangle 2366",
-        "file": "/assets/community/social-events-parties/rectangle-2366.png",
-        "originalName": "Rectangle 2366.png",
+        "file": "/assets/community/social-events-parties/rectangle-2366.webp",
+        "originalName": "Rectangle 2366.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2363-2",
         "name": "Rectangle 2363 2",
-        "file": "/assets/community/social-mixers/rectangle-2363-2.png",
-        "originalName": "Rectangle 2363.png",
+        "file": "/assets/community/social-mixers/rectangle-2363-2.webp",
+        "originalName": "Rectangle 2363.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2364-2",
         "name": "Rectangle 2364 2",
-        "file": "/assets/community/social-mixers/rectangle-2364-2.png",
-        "originalName": "Rectangle 2364.png",
+        "file": "/assets/community/social-mixers/rectangle-2364-2.webp",
+        "originalName": "Rectangle 2364.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2365-2",
         "name": "Rectangle 2365 2",
-        "file": "/assets/community/social-mixers/rectangle-2365-2.png",
-        "originalName": "Rectangle 2365.png",
+        "file": "/assets/community/social-mixers/rectangle-2365-2.webp",
+        "originalName": "Rectangle 2365.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-1-2",
         "name": "Rectangle 2366 1 2",
-        "file": "/assets/community/social-mixers/rectangle-2366-1-2.png",
-        "originalName": "Rectangle 2366-1.png",
+        "file": "/assets/community/social-mixers/rectangle-2366-1-2.webp",
+        "originalName": "Rectangle 2366-1.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-2-2",
         "name": "Rectangle 2366 2 2",
-        "file": "/assets/community/social-mixers/rectangle-2366-2-2.png",
-        "originalName": "Rectangle 2366-2.png",
+        "file": "/assets/community/social-mixers/rectangle-2366-2-2.webp",
+        "originalName": "Rectangle 2366-2.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-3-2",
         "name": "Rectangle 2366 3 2",
-        "file": "/assets/community/social-mixers/rectangle-2366-3-2.png",
-        "originalName": "Rectangle 2366-3.png",
+        "file": "/assets/community/social-mixers/rectangle-2366-3-2.webp",
+        "originalName": "Rectangle 2366-3.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-4-2",
         "name": "Rectangle 2366 4 2",
-        "file": "/assets/community/social-mixers/rectangle-2366-4-2.png",
-        "originalName": "Rectangle 2366-4.png",
+        "file": "/assets/community/social-mixers/rectangle-2366-4-2.webp",
+        "originalName": "Rectangle 2366-4.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-5",
         "name": "Rectangle 2366 5",
-        "file": "/assets/community/social-mixers/rectangle-2366-5.png",
-        "originalName": "Rectangle 2366.png",
+        "file": "/assets/community/social-mixers/rectangle-2366-5.webp",
+        "originalName": "Rectangle 2366.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2363-3",
         "name": "Rectangle 2363 3",
-        "file": "/assets/community/sports/rectangle-2363-3.png",
-        "originalName": "Rectangle 2363.png",
+        "file": "/assets/community/sports/rectangle-2363-3.webp",
+        "originalName": "Rectangle 2363.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2364-3",
         "name": "Rectangle 2364 3",
-        "file": "/assets/community/sports/rectangle-2364-3.png",
-        "originalName": "Rectangle 2364.png",
+        "file": "/assets/community/sports/rectangle-2364-3.webp",
+        "originalName": "Rectangle 2364.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2365-3",
         "name": "Rectangle 2365 3",
-        "file": "/assets/community/sports/rectangle-2365-3.png",
-        "originalName": "Rectangle 2365.png",
+        "file": "/assets/community/sports/rectangle-2365-3.webp",
+        "originalName": "Rectangle 2365.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-1-3",
         "name": "Rectangle 2366 1 3",
-        "file": "/assets/community/sports/rectangle-2366-1-3.png",
-        "originalName": "Rectangle 2366-1.png",
+        "file": "/assets/community/sports/rectangle-2366-1-3.webp",
+        "originalName": "Rectangle 2366-1.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-2-3",
         "name": "Rectangle 2366 2 3",
-        "file": "/assets/community/sports/rectangle-2366-2-3.png",
-        "originalName": "Rectangle 2366-2.png",
+        "file": "/assets/community/sports/rectangle-2366-2-3.webp",
+        "originalName": "Rectangle 2366-2.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-3-3",
         "name": "Rectangle 2366 3 3",
-        "file": "/assets/community/sports/rectangle-2366-3-3.png",
-        "originalName": "Rectangle 2366-3.png",
+        "file": "/assets/community/sports/rectangle-2366-3-3.webp",
+        "originalName": "Rectangle 2366-3.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-4-3",
         "name": "Rectangle 2366 4 3",
-        "file": "/assets/community/sports/rectangle-2366-4-3.png",
-        "originalName": "Rectangle 2366-4.png",
+        "file": "/assets/community/sports/rectangle-2366-4-3.webp",
+        "originalName": "Rectangle 2366-4.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-6",
         "name": "Rectangle 2366 6",
-        "file": "/assets/community/sports/rectangle-2366-6.png",
-        "originalName": "Rectangle 2366.png",
+        "file": "/assets/community/sports/rectangle-2366-6.webp",
+        "originalName": "Rectangle 2366.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2363-4",
         "name": "Rectangle 2363 4",
-        "file": "/assets/community/workshops/rectangle-2363-4.png",
-        "originalName": "Rectangle 2363.png",
+        "file": "/assets/community/workshops/rectangle-2363-4.webp",
+        "originalName": "Rectangle 2363.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2364-4",
         "name": "Rectangle 2364 4",
-        "file": "/assets/community/workshops/rectangle-2364-4.png",
-        "originalName": "Rectangle 2364.png",
+        "file": "/assets/community/workshops/rectangle-2364-4.webp",
+        "originalName": "Rectangle 2364.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2365-4",
         "name": "Rectangle 2365 4",
-        "file": "/assets/community/workshops/rectangle-2365-4.png",
-        "originalName": "Rectangle 2365.png",
+        "file": "/assets/community/workshops/rectangle-2365-4.webp",
+        "originalName": "Rectangle 2365.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-1-4",
         "name": "Rectangle 2366 1 4",
-        "file": "/assets/community/workshops/rectangle-2366-1-4.png",
-        "originalName": "Rectangle 2366-1.png",
+        "file": "/assets/community/workshops/rectangle-2366-1-4.webp",
+        "originalName": "Rectangle 2366-1.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-2-4",
         "name": "Rectangle 2366 2 4",
-        "file": "/assets/community/workshops/rectangle-2366-2-4.png",
-        "originalName": "Rectangle 2366-2.png",
+        "file": "/assets/community/workshops/rectangle-2366-2-4.webp",
+        "originalName": "Rectangle 2366-2.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-3-4",
         "name": "Rectangle 2366 3 4",
-        "file": "/assets/community/workshops/rectangle-2366-3-4.png",
-        "originalName": "Rectangle 2366-3.png",
+        "file": "/assets/community/workshops/rectangle-2366-3-4.webp",
+        "originalName": "Rectangle 2366-3.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-4-4",
         "name": "Rectangle 2366 4 4",
-        "file": "/assets/community/workshops/rectangle-2366-4-4.png",
-        "originalName": "Rectangle 2366-4.png",
+        "file": "/assets/community/workshops/rectangle-2366-4-4.webp",
+        "originalName": "Rectangle 2366-4.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       },
       {
         "id": "rectangle-2366-7",
         "name": "Rectangle 2366 7",
-        "file": "/assets/community/workshops/rectangle-2366-7.png",
-        "originalName": "Rectangle 2366.png",
+        "file": "/assets/community/workshops/rectangle-2366-7.webp",
+        "originalName": "Rectangle 2366.webp",
         "type": "image",
-        "extension": ".png"
+        "extension": ".webp"
       }
     ],
     "error": [

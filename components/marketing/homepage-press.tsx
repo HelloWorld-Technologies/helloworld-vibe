@@ -5,7 +5,7 @@ import { pageShell } from "@/src/tokens/layout";
 
 export function HomepagePress() {
   return (
-    <section className="border-y border-gray-100 bg-white py-12 sm:py-16">
+    <section className="bg-white py-8 sm:py-10">
       <div className={pageShell.homepage}>
         <HomepageSectionHeading
           prefix="We've been making"
@@ -29,9 +29,9 @@ export function HomepagePress() {
               <Image
                 src={logo.file}
                 alt={logo.name}
-                width={160}
-                height={48}
-                className="h-8 w-auto max-w-[8rem] object-contain opacity-100 transition-opacity hover:opacity-80 sm:h-10 sm:max-w-[10rem]"
+                width={192}
+                height={56}
+                className="h-10 w-auto max-w-[10rem] object-contain opacity-100 transition-opacity hover:opacity-80 sm:h-12 sm:max-w-[12rem]"
               />
             </a>
           ))}

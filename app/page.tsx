@@ -8,20 +8,8 @@ import { HomepagePress } from "@/components/marketing/homepage-press";
 import { HomepageProperties } from "@/components/marketing/homepage-properties";
 import { HomepageTestimonials } from "@/components/marketing/homepage-testimonials";
 import { HomepageWeekends } from "@/components/marketing/homepage-weekends";
-import { fetchFeedMoments } from "@/src/apis/moments";
-import { mapMomentsToGalleryItems } from "@/src/lib/hdp/map-gallery-media";
-import type { PropertyMoment } from "@/src/models/moment";
 
-export default async function Home() {
-  const feedResponse = await fetchFeedMoments({
-    mediaType: "video",
-    page: 1,
-    pageSize: 20,
-  });
-  const feedMoments = mapMomentsToGalleryItems(
-    (feedResponse.data ?? []) as PropertyMoment[],
-  );
-
+export default function Home() {
   return (
     <div className="bg-white">
       <SiteHeader variant="banner" />
@@ -32,7 +20,7 @@ export default async function Home() {
         <HomepageProperties />
         <HomepageTestimonials />
         <HomepagePress />
-        <HomepageFeed moments={feedMoments} />
+        <HomepageFeed />
         <HomepageAppDownload />
       </main>
       <SiteFooter />

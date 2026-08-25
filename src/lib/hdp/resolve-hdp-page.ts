@@ -47,6 +47,7 @@ import {
   createHdpSlug,
   getLocalitySlug,
 } from "@/src/lib/sitemap-slug";
+import { homepageFeedMoments } from "@/src/tokens/homepage";
 import {
   getBreadcrumbSchema,
   getFAQPageSchema,
@@ -244,13 +245,6 @@ function buildHdpView(options: {
   const mapUrl = buildPropertyMapUrl(property);
   const embeddedMapUrl = buildPropertyEmbedMapUrl(property);
   const galleryItems = buildGalleryItems(property, media, moments);
-  const {
-    moments: mediaMoments,
-  } = mapPropertyMediaToGalleryItems(media);
-  const momentItems = [
-    ...mapMomentsToGalleryItems(moments),
-    ...mediaMoments,
-  ];
   const latitude = Number(property.address?.latitude);
   const longitude = Number(property.address?.longitude);
   const mapImageSrc =
@@ -292,7 +286,7 @@ function buildHdpView(options: {
     ]),
     galleryImages,
     galleryItems,
-    moments: momentItems,
+    moments: homepageFeedMoments,
     propertyUrl: `${getPublicSiteUrl()}/${canonicalPath}`,
     hdpPath: `/${canonicalPath}`,
     bookingPath: `/${canonicalPath}/booking`,

@@ -41,7 +41,7 @@ export function HomepageTestimonials() {
   }
 
   return (
-    <section className={cn("py-12 sm:py-16 lg:py-20", pageLayout.container)}>
+    <section className={cn("py-8 sm:py-12 lg:py-14", pageLayout.container)}>
       <div className={pageShell.homepage}>
         <HomepageSectionHeading
           prefix="Hear from our"

@@ -22,10 +22,10 @@ export const galleryCategoryTabs: {
 export const propertyGalleryTotal = 20;
 
 const galleryImages = [
-  "/assets/community/hero/hero-1.png",
-  "/assets/community/hero/hero-2.png",
-  "/assets/community/hero/hero-3.png",
-  "/assets/community/hero/hero-4.png",
+  "/assets/community/hero/hero-1.webp",
+  "/assets/community/hero/hero-2.webp",
+  "/assets/community/hero/hero-3.webp",
+  "/assets/community/hero/hero-4.webp",
   "/assets/locality/dinning-bento-desktop.png",
   "/assets/locality/nightlife-bento-desktop.png",
   "/assets/locality/health-bento-desktop.png",

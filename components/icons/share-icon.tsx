@@ -1,32 +1,17 @@
 export function ShareIcon({ className }: { className?: string }) {
   return (
-    <svg aria-hidden viewBox="0 0 24 24" fill="none" className={className}>
-      <circle
-        cx="18"
-        cy="5"
-        r="2.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <circle
-        cx="6"
-        cy="12"
-        r="2.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <circle
-        cx="18"
-        cy="19"
-        r="2.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
+    <svg
+      aria-hidden
+      width="15"
+      height="16"
+      viewBox="0 0 15 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
       <path
-        d="M8.59 13.51 15.42 17.49M15.41 6.51 8.59 10.49"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
+        d="M12.1875 10.375C11.2612 10.375 10.445 10.8307 9.93228 11.5236L5.49969 9.25387C5.57328 9.00303 5.625 8.74306 5.625 8.46875C5.625 8.09669 5.54872 7.74297 5.41694 7.41762L10.0558 4.62612C10.5721 5.232 11.3309 5.625 12.1875 5.625C13.7384 5.625 15 4.36341 15 2.8125C15 1.26159 13.7384 0 12.1875 0C10.6366 0 9.375 1.26159 9.375 2.8125C9.375 3.16991 9.44859 3.50894 9.57069 3.82369L4.91797 6.62337C4.40216 6.0355 3.65428 5.65625 2.8125 5.65625C1.26159 5.65625 0 6.91784 0 8.46875C0 10.0197 1.26159 11.2812 2.8125 11.2812C3.75406 11.2812 4.58409 10.8122 5.09484 10.0998L9.51284 12.3622C9.43147 12.6248 9.375 12.8984 9.375 13.1875C9.375 14.7384 10.6366 16 12.1875 16C13.7384 16 15 14.7384 15 13.1875C15 11.6366 13.7384 10.375 12.1875 10.375Z"
+        fill="currentColor"
       />
     </svg>
   );

@@ -400,6 +400,13 @@
   }
 }
 
+@utility search-cancel-black {
+  &::-webkit-search-cancel-button {
+    cursor: pointer;
+    filter: brightness(0);
+  }
+}
+
 @keyframes tab-panel-in {
   from {
     opacity: 0;

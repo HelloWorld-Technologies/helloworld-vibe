@@ -4,33 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import { MomentsCarouselControls } from "@/components/marketing/moments-carousel-controls";
 import { MomentCard } from "@/components/marketing/moment-card";
 import { cn } from "@/src/lib/cn";
+import {
+  getMomentsCarouselState,
+  getMomentsPageStartIndex,
+} from "@/src/lib/moments-carousel";
 import type { GalleryMediaItem } from "@/src/models/gallery";
+import { homepageFeedMoments } from "@/src/tokens/homepage";
 
 const CARD_GAP_PX = 16;
 
-function getVisibleCount(container: HTMLElement): number {
-  const first = container.children[0] as HTMLElement | undefined;
-  if (!first) return 1;
-  const cardWidth = first.getBoundingClientRect().width;
-  if (cardWidth <= 0) return 1;
-  return Math.max(
-    1,
-    Math.floor((container.clientWidth + CARD_GAP_PX) / (cardWidth + CARD_GAP_PX)),
-  );
-}
-
-function getPageStartIndex(container: HTMLElement, page: number): number {
-  const visible = getVisibleCount(container);
-  return Math.min(page * visible, Math.max(0, container.children.length - 1));
-}
-
 export function HdpMoments({
   displayName,
-  moments,
+  moments = homepageFeedMoments,
   className,
 }: {
   displayName: string;
-  moments: readonly GalleryMediaItem[];
+  moments?: readonly GalleryMediaItem[];
   className?: string;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -39,30 +28,15 @@ export function HdpMoments({
   const [activePage, setActivePage] = useState(0);
   const [pageCount, setPageCount] = useState(1);
 
-  const hasMoments = moments.length > 0;
-
   function updateScrollState() {
     const node = scrollRef.current;
     if (!node) return;
 
-    setCanScrollPrev(node.scrollLeft > 4);
-    setCanScrollNext(node.scrollLeft + node.clientWidth < node.scrollWidth - 4);
-
-    const cards = Array.from(node.children) as HTMLElement[];
-    if (cards.length === 0) return;
-
-    const visible = getVisibleCount(node);
-    const pages = Math.max(1, Math.ceil(cards.length / visible));
-    setPageCount(pages);
-
-    const scrollLeft = node.scrollLeft;
-    const cardIndex = cards.findIndex((card, index) => {
-      const nextCard = cards[index + 1];
-      if (!nextCard) return true;
-      return scrollLeft < nextCard.offsetLeft - node.offsetLeft - CARD_GAP_PX;
-    });
-    const safeIndex = cardIndex === -1 ? 0 : cardIndex;
-    setActivePage(Math.min(pages - 1, Math.floor(safeIndex / visible)));
+    const state = getMomentsCarouselState(node, CARD_GAP_PX);
+    setCanScrollPrev(state.canScrollPrev);
+    setCanScrollNext(state.canScrollNext);
+    setPageCount(state.pageCount);
+    setActivePage(state.activePage);
   }
 
   useEffect(() => {
@@ -84,7 +58,7 @@ export function HdpMoments({
     const container = scrollRef.current;
     if (!container) return;
     const nextPage = Math.max(0, Math.min(page, pageCount - 1));
-    const cardIndex = getPageStartIndex(container, nextPage);
+    const cardIndex = getMomentsPageStartIndex(container, nextPage, CARD_GAP_PX);
     const card = container.children[cardIndex] as HTMLElement | undefined;
     card?.scrollIntoView({
       behavior: "smooth",
@@ -93,8 +67,6 @@ export function HdpMoments({
     });
     setActivePage(nextPage);
   }
-
-  if (!hasMoments) return null;
 
   return (
     <section

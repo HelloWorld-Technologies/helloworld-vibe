@@ -1,10 +1,14 @@
 const AMENITY_EMOJIS: Record<string, string> = {
   ac: "❄️",
   "air conditioner": "❄️",
+  "ac ready": "❄️",
   cctv: "📹",
   security: "🔒",
   "attached bathroom": "🚿",
+  "attached washroom": "🚿",
+  "shared washroom": "🚿",
   balcony: "🌿",
+  "balcony access": "🌿",
   "bar table": "🍸",
   "basic common kitchen": "🍳",
   "basic kitchen": "🍳",
@@ -18,10 +22,12 @@ const AMENITY_EMOJIS: Record<string, string> = {
   cleaning: "🧹",
   "cloths dry stand": "👕",
   "coffee table": "☕",
+  "compact layout": "📐",
   cots: "🛏️",
   "common dining area": "🍽️",
   "covered parking": "🅿️",
   cupboard: "🗄️",
+  wardrobe: "🗄️",
   "daily house cleaning": "🧹",
   "dart board": "🎯",
   dartboard: "🎯",
@@ -76,6 +82,7 @@ const AMENITY_EMOJIS: Record<string, string> = {
   "soft furnishing": "🛋️",
   "study table": "📚",
   "study table with chair": "📚",
+  "work desk": "📚",
   "table tennis": "🏓",
   tv: "📺",
   "twin 3x6": "🛏️",
@@ -96,10 +103,20 @@ const LEADING_EMOJI_RE =
   /^(\p{Extended_Pictographic}[\p{Extended_Pictographic}\uFE0F\u200D]*)\s*/u;
 
 function humanizeAmenityLabel(value: string): string {
-  return value
+  const trimmed = value
     .replace(/_/g, " ")
     .replace(/\s+/g, " ")
-    .trim()
+    .trim();
+
+  // Preserve intentional casing from key features (e.g. "AC", "Attached bathroom").
+  // Still title-case pure lowercase slugs like "wifi".
+  const shouldTitleCase =
+    value.includes("_") ||
+    (trimmed === trimmed.toLowerCase() && /[a-z]/.test(trimmed));
+
+  if (!shouldTitleCase) return trimmed;
+
+  return trimmed
     .split(/\s+/)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");

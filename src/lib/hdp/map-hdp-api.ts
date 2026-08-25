@@ -296,9 +296,9 @@ export function mapGoogleDataToReviewSummary(
 }
 
 const REVIEW_AVATARS = [
-  "/assets/community/feed/feed-1.png",
-  "/assets/community/feed/feed-2.png",
-  "/assets/community/feed/feed-3.png",
+  "/assets/community/feed/feed-1.webp",
+  "/assets/community/feed/feed-2.webp",
+  "/assets/community/feed/feed-3.webp",
   "/assets/community/feed/feed-4.png",
 ] as const;
 

@@ -19,7 +19,7 @@ function CarouselArrowButton({
       onClick={onClick}
       className="flex size-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-900 shadow-xs transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
     >
-      <svg aria-hidden viewBox="0 0 24 24" fill="none" className="size-5">
+      <svg aria-hidden viewBox="0 0 24 24" fill="none" className="size-6">
         <path
           d={direction === "prev" ? "M15 6l-6 6 6 6" : "M9 6l6 6-6 6"}
           stroke="currentColor"

@@ -122,8 +122,8 @@ export function HomepageAppDownload() {
             <Image
               src={homepageAppScreenshot2.file}
               alt="HelloWorld app screens"
-              width={262}
-              height={497}
+              width={480}
+              height={992}
               className="absolute bottom-0 left-1/2 z-0 h-[125%] w-auto max-w-none -translate-x-1/2 object-contain object-bottom drop-shadow-[0_8px_24px_rgba(16,24,40,0.12)]"
             />
           </div>
@@ -151,8 +151,8 @@ export function HomepageAppDownload() {
             <Image
               src={homepageAppScreenshot2.file}
               alt="HelloWorld app screens"
-              width={262}
-              height={497}
+              width={480}
+              height={992}
               className="absolute left-[47%] top-22 z-0 w-[51%] object-contain drop-shadow-[0_8px_24px_rgba(16,24,40,0.12)]"
             />
           </div>

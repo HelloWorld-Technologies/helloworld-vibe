@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { HomepageCarouselPagination } from "@/components/marketing/homepage-carousel-pagination";
 import { cn } from "@/src/lib/cn";
 
@@ -168,12 +168,14 @@ export function PaginatedCarousel<T>({
             desktopTrackClassName,
           )}
         >
-          {Array.from({ length: skeletonCount }, (_, index) =>
-            renderSkeleton(
-              cn(desktopItemClassName, "min-w-0 flex-1"),
-              index,
-            ),
-          )}
+          {Array.from({ length: skeletonCount }, (_, index) => (
+            <Fragment key={`skeleton-desktop-${index}`}>
+              {renderSkeleton(
+                cn(desktopItemClassName, "min-w-0 flex-1"),
+                index,
+              )}
+            </Fragment>
+          ))}
         </div>
 
         <div
@@ -183,15 +185,17 @@ export function PaginatedCarousel<T>({
             mobileTrackClassName,
           )}
         >
-          {Array.from({ length: skeletonCount }, (_, index) =>
-            renderSkeleton(
-              cn(
-                "shrink-0",
-                mobileItemClassName ?? "w-[min(21.375rem,85vw)]",
-              ),
-              index,
-            ),
-          )}
+          {Array.from({ length: skeletonCount }, (_, index) => (
+            <Fragment key={`skeleton-mobile-${index}`}>
+              {renderSkeleton(
+                cn(
+                  "shrink-0",
+                  mobileItemClassName ?? "w-[min(21.375rem,85vw)]",
+                ),
+                index,
+              )}
+            </Fragment>
+          ))}
         </div>
 
         <HomepageCarouselPagination

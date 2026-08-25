@@ -76,14 +76,14 @@ export function ContactInfoCards({ className }: { className?: string }) {
         </div>
       </article>
 
-      <div className="order-2 flex items-end justify-start self-stretch md:order-3 md:min-h-[10rem] hidden md:block">
+      <div className="order-2 hidden self-stretch md:order-3 md:flex md:min-h-[10rem] md:items-end md:justify-start">
         <Image
           src={contactStackedLogo}
           alt=""
           width={377}
           height={215}
           aria-hidden
-          className="h-auto w-[min(100%,14rem)] select-none object-contain object-left-bottom invert mix-blend-multiply opacity-35 md:w-[min(100%,18rem)]"
+          className="h-full w-full select-none object-contain object-left-bottom invert mix-blend-multiply opacity-35"
         />
       </div>
 

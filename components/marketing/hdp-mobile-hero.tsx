@@ -26,9 +26,7 @@ export function HdpMobileHero({
   const pageTitle = view.pageTitle || hdpProperty.name;
   const propertyId = view.propertyId;
   const saved = wishlist?.isWishlisted(propertyId) ?? false;
-  const locationLabel =
-    [view.addressLine, view.locality].filter(Boolean).join(", ") ||
-    view.locality;
+  const locationLabel = view.locality?.trim() || undefined;
   const startingRent = view.startingRent;
   const securityDepositLabel = view.securityDepositLabel;
 

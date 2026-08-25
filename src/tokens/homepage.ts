@@ -1,5 +1,6 @@
 import { getAssetById } from "@/src/tokens/assets";
 import { buildNestedHdpHref } from "@/src/lib/sitemap-slug";
+import type { GalleryMediaItem } from "@/src/models/gallery";
 import { pressLogos } from "@/src/tokens/press";
 import { srpCardSampleImages, type SrpCardStatusLabel } from "@/src/tokens/srp-card";
 
@@ -134,12 +135,61 @@ export const homepageFeaturedProperties: HomepageFeaturedProperty[] = [
   },
 ];
 
-export const homepageFeedItems = [
-  "/assets/community/hero/hero-1.png",
-  "/assets/community/hero/hero-2.png",
-  "/assets/community/hero/hero-3.png",
-  "/assets/community/hero/hero-4.png",
-] as const;
+/** Homepage “Straight from the Feed!” — static insta-media videos (no API). */
+const INSTA_MEDIA_BASE =
+  "https://images.thehelloworld.com/insta-media/";
+
+function instaMediaUrl(filename: string): string {
+  return `${INSTA_MEDIA_BASE}${encodeURIComponent(filename).replace(/%2F/gi, "/")}`;
+}
+
+export const homepageFeedMoments: readonly GalleryMediaItem[] = [
+  {
+    id: "feed-01-unspoken-rules",
+    category: "moments",
+    label: "Unspoken Rules",
+    caption: "Unspoken Rules",
+    imageSrc: "",
+    kind: "video",
+    videoSrc: instaMediaUrl("01_Unspoken Rules.mp4"),
+  },
+  {
+    id: "feed-02-tpl-kolkata",
+    category: "moments",
+    label: "TPL Kolkata",
+    caption: "TPL Kolkata",
+    imageSrc: "",
+    kind: "video",
+    videoSrc: instaMediaUrl("02_TPL_Kolkata.mp4"),
+  },
+  {
+    id: "feed-03-independence-day",
+    category: "moments",
+    label: "Independence Day",
+    caption: "Independence Day",
+    imageSrc: "",
+    kind: "video",
+    videoSrc: instaMediaUrl("03_Independence Day_HW.mp4"),
+  },
+  {
+    id: "feed-04-we-rated-each-other",
+    category: "moments",
+    label: "We rated each other",
+    caption: "We rated each other",
+    imageSrc: "",
+    kind: "video",
+    videoSrc: instaMediaUrl("04_We rated each other.mp4"),
+  },
+  {
+    id: "feed-05-tenants-open-mic",
+    category: "moments",
+    label: "Tenants Open Mic",
+    caption: "Tenants Open Mic",
+    imageSrc: "",
+    kind: "video",
+    videoSrc: instaMediaUrl("05_Tenants Open Mic.mp4"),
+  },
+];
 
 export {
   footerAboutLinks,

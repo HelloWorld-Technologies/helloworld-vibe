@@ -31,7 +31,7 @@ export const hdpResidentReviews: readonly HdpResidentReview[] = [
     rating: 5,
     quote:
       "Lorem ipsum dolor sit amet consectetur. Turpis vitae in ullamcorper tortor quis non. Porttitor leo eget semper adipiscing nam molestie. Enim et turpis nulla feugiat lorem. Tempor iaculis et nunc elementum neque dis lobortis.",
-    avatarSrc: "/assets/community/feed/feed-1.png",
+    avatarSrc: "/assets/community/feed/feed-1.webp",
   },
   {
     id: "review-2",
@@ -39,7 +39,7 @@ export const hdpResidentReviews: readonly HdpResidentReview[] = [
     rating: 5,
     quote:
       "The community events and common areas made settling in effortless. Staff were responsive, rooms were spotless, and the location worked perfectly for my commute to Electronic City.",
-    avatarSrc: "/assets/community/feed/feed-2.png",
+    avatarSrc: "/assets/community/feed/feed-2.webp",
   },
   {
     id: "review-3",
@@ -47,7 +47,7 @@ export const hdpResidentReviews: readonly HdpResidentReview[] = [
     rating: 5,
     quote:
       "Clean rooms, reliable Wi‑Fi, and a well-managed property. The vibe match felt accurate and I met people with similar routines within the first week.",
-    avatarSrc: "/assets/community/feed/feed-3.png",
+    avatarSrc: "/assets/community/feed/feed-3.webp",
   },
   {
     id: "review-4",

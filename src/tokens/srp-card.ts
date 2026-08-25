@@ -1,9 +1,9 @@
 export const srpCardSampleImages = [
-  "/assets/community/hero/hero-1.png",
-  "/assets/community/hero/hero-2.png",
-  "/assets/community/hero/hero-3.png",
-  "/assets/community/hero/hero-4.png",
-  "/assets/community/sports/rectangle-2363-3.png",
+  "/assets/community/hero/hero-1.webp",
+  "/assets/community/hero/hero-2.webp",
+  "/assets/community/hero/hero-3.webp",
+  "/assets/community/hero/hero-4.webp",
+  "/assets/community/sports/rectangle-2363-3.webp",
 ] as const;
 
 export const SRP_CARD_MAX_IMAGES = 5;

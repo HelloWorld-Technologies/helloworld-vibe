@@ -56,6 +56,7 @@ export function SiteHeaderSearch({
 
   const locationSearchProps = {
     localityPlaceholder: "Search for Localities" as const,
+    variant: "header" as const,
     city,
     defaultLocality,
     srpSlug,

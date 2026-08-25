@@ -6,10 +6,10 @@ import type { Property } from "@/src/models/property";
 import type { LocalityCardData } from "@/src/tokens/locality-card";
 
 const FALLBACK_IMAGES = [
-  "/assets/community/hero/hero-1.png",
-  "/assets/community/hero/hero-2.png",
-  "/assets/community/hero/hero-3.png",
-  "/assets/community/hero/hero-4.png",
+  "/assets/community/hero/hero-1.webp",
+  "/assets/community/hero/hero-2.webp",
+  "/assets/community/hero/hero-3.webp",
+  "/assets/community/hero/hero-4.webp",
   "/assets/locality/transit-bento-desktop.png",
 ] as const;
 

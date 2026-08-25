@@ -3,7 +3,7 @@
  */
 export const pageShell = {
   chrome: "mx-auto max-w-7xl px-4 sm:px-6",
-  footer: "mx-auto max-w-7xl px-6 py-6 lg:px-20 lg:py-16",
+  footer: "mx-auto max-w-7xl px-6 py-6 lg:px-10 xl:px-20 lg:py-16",
   showcase: "mx-auto max-w-7xl px-4 sm:px-6",
   errorContent: "w-full max-w-lg",
   homepage: "mx-auto max-w-7xl px-4 sm:px-6",

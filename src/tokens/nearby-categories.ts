@@ -23,7 +23,7 @@ export const nearbyCategoryFlow = [
     emoji: "💪",
     category: "Workout",
     linkLabel: "View Gyms Nearby",
-    imageSrc: "/assets/community/sports/rectangle-2363-3.png",
+    imageSrc: "/assets/community/sports/rectangle-2363-3.webp",
     modalLabel: "Gyms",
   },
   {
@@ -41,7 +41,7 @@ export const nearbyCategoryFlow = [
     emoji: "🏢",
     category: "Work",
     linkLabel: "View Offices Nearby",
-    imageSrc: "/assets/community/hero/hero-2.png",
+    imageSrc: "/assets/community/hero/hero-2.webp",
     modalLabel: "Work",
   },
   {
@@ -59,7 +59,7 @@ export const nearbyCategoryFlow = [
     emoji: "🛒",
     category: "Shopping",
     linkLabel: "View Markets Nearby",
-    imageSrc: "/assets/community/hero/hero-3.png",
+    imageSrc: "/assets/community/hero/hero-3.webp",
     modalLabel: "Shopping & supplies",
   },
   {
@@ -68,7 +68,7 @@ export const nearbyCategoryFlow = [
     emoji: "🍿",
     category: "Entertainment",
     linkLabel: "View Entertainment Nearby",
-    imageSrc: "/assets/community/hero/hero-4.png",
+    imageSrc: "/assets/community/hero/hero-4.webp",
     modalLabel: "Entertainment",
   },
   {

@@ -50,7 +50,7 @@ function normalizeNearbyKey(key: string): string {
 
 export function mapLocalityBentoTiles(
   ratings?: LocalityInfoRatings | null,
-): LocalityBentoTile[] {
+): LocalityBentoTile[] | undefined {
   const overlay: Record<string, number> = {};
   if (ratings) {
     for (const [key, value] of Object.entries(ratings)) {
@@ -60,6 +60,9 @@ export function mapLocalityBentoTiles(
       overlay[tileId] = clampRating(value);
     }
   }
+
+  // No API ratings → hide the bento ratings block entirely.
+  if (Object.keys(overlay).length === 0) return undefined;
 
   return localityBentoTiles.map((tile) => {
     const rating = overlay[tile.id];

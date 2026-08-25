@@ -28,7 +28,6 @@ function SrpCardSkeleton() {
 }
 
 export function SrpListingsSection({
-  heading,
   properties,
   className,
   isLoadingMore = false,
@@ -39,7 +38,6 @@ export function SrpListingsSection({
   slugGender,
   showFilters = true,
 }: {
-  heading: string;
   properties: readonly LocalityProperty[];
   className?: string;
   isLoadingMore?: boolean;
@@ -65,10 +63,6 @@ export function SrpListingsSection({
   return (
     <section className={cn("space-y-6", className)} aria-label="Coliving listings">
       <div className="space-y-4">
-        <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
-          {heading}
-        </h2>
-
         {showFilters ? (
           <SrpFiltersBar
             query={filterQuery}

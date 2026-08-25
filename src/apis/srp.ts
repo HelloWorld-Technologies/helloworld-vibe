@@ -10,7 +10,7 @@ import {
 } from "@/src/models/locality-info";
 import type { Property } from "@/src/models/property";
 
-export const SRP_LIST_PAGE_SIZE = 32;
+export const SRP_LIST_PAGE_SIZE = 18;
 
 export interface Sorting {
   keyType?: string;

@@ -2,12 +2,20 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { OccupantDetailsForm } from "@/components/booking/occupant-details-form";
 import { ScheduleVisitFlow } from "@/components/booking/schedule-visit-flow";
 import { Button } from "@/components/ui/button";
 import { Modal, ModalDescription, ModalTitle } from "@/components/ui/modal";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { formatAmenityForDisplay } from "@/src/lib/amenity-display";
 import type { HdpPageView } from "@/src/lib/hdp/hdp-page-view";
 import { buildBookingHref } from "@/src/lib/booking/url";
 import {
@@ -53,13 +61,15 @@ function mapCategoryToBookingRoom(
   category: CategoryProps,
   occupancy: HdpOccupancy,
 ): BookingRoom {
+  const baseFeatures = category.key_feature?.length
+    ? category.key_feature
+    : category.amenities ?? [];
+
   return {
     id: String(category.id),
     name: category.display_name || category.name,
     rent: getRentForOccupancy(category, occupancy),
-    features: category.key_feature?.length
-      ? category.key_feature
-      : category.amenities?.slice(0, 3) ?? [],
+    features: baseFeatures,
     chipLabel: getBookingRoomChipLabel(category, occupancy),
     soldOut: category.sold_out,
   };
@@ -82,29 +92,73 @@ function formatRent(amount: number) {
   return `₹${amount.toLocaleString("en-IN")}/mo`;
 }
 
-function RoomFeatureIcon({ className }: { className?: string }) {
+function RoomFeatures({ features }: { features: readonly string[] }) {
+  const [expanded, setExpanded] = useState(false);
+  const [overflows, setOverflows] = useState(false);
+  const contentRef = useRef<HTMLParagraphElement>(null);
+
+  const items = useMemo(
+    () => features.map((feature) => formatAmenityForDisplay(feature)),
+    [features],
+  );
+
+  useLayoutEffect(() => {
+    setExpanded(false);
+    setOverflows(false);
+  }, [items]);
+
+  useLayoutEffect(() => {
+    const el = contentRef.current;
+    if (!el || expanded) return;
+
+    const measure = () => {
+      setOverflows(el.scrollHeight > el.clientHeight + 1);
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [items, expanded]);
+
+  if (items.length === 0) return null;
+
   return (
-    <svg
-      aria-hidden
-      viewBox="0 0 16 16"
-      fill="none"
-      className={className}
-    >
-      <path
-        d="M2.66667 14V6.66667L8 2.66667L13.3333 6.66667V14"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M6 14V9.33333H10V14"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <span className="mt-1.5 block min-w-0">
+      <p
+        ref={contentRef}
+        className={cn(
+          "text-xs leading-4 text-gray-500",
+          !expanded && "line-clamp-2",
+        )}
+      >
+        {items.map((item, index) => (
+          <span key={`${item.label}-${index}`}>
+            {index > 0 ? (
+              <span aria-hidden className="text-gray-400">
+                {" "}
+                •{" "}
+              </span>
+            ) : null}
+            {item.label}
+          </span>
+        ))}
+      </p>
+      {overflows || expanded ? (
+        <button
+          type="button"
+          aria-expanded={expanded}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            setExpanded((value) => !value);
+          }}
+          className="mt-0.5 text-xs font-semibold text-gray-700 underline-offset-2 hover:text-gray-900 hover:underline"
+        >
+          {expanded ? "Show less" : "Show more"}
+        </button>
+      ) : null}
+    </span>
   );
 }
 
@@ -507,22 +561,7 @@ export function HdpBookingCard({
                                 </span>
                               </span>
                               {room.features.length > 0 ? (
-                                <span className="mt-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-gray-500">
-                                  {room.features.map((feature, featureIndex) => (
-                                    <span
-                                      key={feature}
-                                      className="inline-flex items-center gap-1"
-                                    >
-                                      {featureIndex > 0 ? (
-                                        <span aria-hidden className="text-gray-400">
-                                          •
-                                        </span>
-                                      ) : null}
-                                      <RoomFeatureIcon className="size-3.5 shrink-0 text-gray-400" />
-                                      <span>{feature}</span>
-                                    </span>
-                                  ))}
-                                </span>
+                                <RoomFeatures features={room.features} />
                               ) : null}
                             </span>
                           </span>

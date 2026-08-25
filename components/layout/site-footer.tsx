@@ -162,9 +162,9 @@ function SocialIcon({ id }: { id: (typeof socialLinks)[number]["id"] }) {
 
 function FooterSocialLinks({ variant }: { variant: "desktop" | "mobile" }) {
   return (
-    <div>
+    <div className="min-w-0">
       <h3 className="text-base font-bold text-[#0a0e14]/80">Follow us</h3>
-      <div className="mt-4 flex items-center gap-4 lg:mt-4">
+      <div className="mt-3 flex flex-wrap items-center gap-3 sm:gap-4 lg:mt-4">
         {socialLinks.map((link) => (
           <a
             key={link.id}
@@ -173,7 +173,7 @@ function FooterSocialLinks({ variant }: { variant: "desktop" | "mobile" }) {
             rel="noopener noreferrer"
             aria-label={link.label}
             className={cn(
-              "inline-flex size-[22px] items-center justify-center text-[#252B37] transition-opacity hover:opacity-80",
+              "inline-flex size-[22px] shrink-0 items-center justify-center text-[#252B37] transition-opacity hover:opacity-80",
               variant === "mobile" ? "opacity-90" : undefined,
             )}
           >
@@ -189,8 +189,8 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-[#e6e6e6] bg-gray-100 text-[#0a0e14]">
       <div className={pageShell.footer}>
-        <div className="lg:flex lg:items-start lg:justify-between">
-          <div className="shrink-0 lg:w-[18.5rem]">
+        <div className="lg:flex lg:items-start lg:justify-between lg:gap-6 xl:gap-8">
+          <div className="shrink-0 lg:w-52 xl:w-[18.5rem]">
             <Link href="/" className="inline-block">
               <Logo width={84} height={32} className="h-7 w-auto lg:h-8" />
             </Link>
@@ -208,18 +208,18 @@ export function SiteFooter() {
 
           <div
             aria-hidden
-            className="mx-4 hidden w-px self-stretch bg-[#e6e6e6] lg:block"
+            className="mx-2 hidden w-px shrink-0 self-stretch bg-[#e6e6e6] lg:block xl:mx-4"
           />
 
-          <div className="mt-6 lg:mt-0 lg:ml-16 lg:flex lg:flex-1 lg:items-start lg:justify-between lg:gap-12 xl:gap-16">
+          <div className="mt-6 min-w-0 lg:mt-0 lg:flex lg:flex-1 lg:flex-wrap lg:items-start lg:justify-between lg:gap-x-6 lg:gap-y-10 xl:gap-x-10 2xl:gap-x-16">
             <FooterDivider className="mb-6 lg:hidden" />
 
-            <div className="lg:shrink-0">
+            <div className="min-w-0 lg:max-w-[13.5rem] xl:max-w-[16rem] 2xl:max-w-none">
               <h3 className="text-base font-bold text-[#0a0e14]/80">
                 <span className="lg:hidden">Our cozy homes in</span>
                 <span className="hidden lg:inline">Our Coliving PGs in</span>
               </h3>
-              <div className="mt-4 grid grid-cols-2 gap-x-4 lg:mt-4 lg:gap-x-16">
+              <div className="mt-4 grid grid-cols-2 gap-x-4 lg:mt-4 lg:gap-x-6 xl:gap-x-10 2xl:gap-x-16">
                 {footerCityColumns.map((column, columnIndex) => (
                   <FooterLinkList
                     key={columnIndex}
@@ -233,7 +233,7 @@ export function SiteFooter() {
             <FooterDivider className="my-6 lg:hidden" />
 
             <div className="grid grid-cols-2 gap-8 lg:contents">
-              <div className="lg:shrink-0">
+              <div className="min-w-0 lg:shrink">
                 <h3 className="text-base font-bold text-[#0a0e14]/80">Product</h3>
                 <FooterLinkList
                   links={footerProductLinks}
@@ -241,7 +241,7 @@ export function SiteFooter() {
                 />
               </div>
 
-              <div className="lg:shrink-0">
+              <div className="min-w-0 lg:shrink">
                 <h3 className="text-base font-bold text-[#0a0e14]/80">About</h3>
                 <FooterLinkList
                   links={footerAboutLinksMobile}
@@ -254,7 +254,7 @@ export function SiteFooter() {
               </div>
             </div>
 
-            <div className="hidden shrink-0 lg:block">
+            <div className="hidden min-w-0 shrink-0 lg:block">
               <FooterSocialLinks variant="desktop" />
             </div>
           </div>

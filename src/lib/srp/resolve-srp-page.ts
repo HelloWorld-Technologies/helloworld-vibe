@@ -189,9 +189,7 @@ function localityPageFields(
   return {
     heroSubtitle: formatStartingSubtitle(startingRent, fallbacks.total),
     heroImageSrc: localityHeroImageSrc(localityInfo),
-    bentoTiles: localityInfo?.ratings
-      ? mapLocalityBentoTiles(localityInfo.ratings)
-      : undefined,
+    bentoTiles: mapLocalityBentoTiles(localityInfo?.ratings),
     dayFromHereItems: localityInfo ? dayFromHereItems : undefined,
     aboutText: localityAboutText(localityInfo, fallbacks.aboutText),
   };

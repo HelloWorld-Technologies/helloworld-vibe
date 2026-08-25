@@ -36,7 +36,7 @@ function WeekendsHeading() {
 
 export function HomepageWeekends() {
   return (
-    <section className="bg-white py-10 sm:py-16 lg:py-20">
+    <section className="bg-white py-8 sm:py-12 lg:py-14">
       <div className={pageShell.homepage}>
         <div className="grid items-center gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-16">
           <div className="overflow-hidden rounded-tl-[1.5rem] bg-gray-900 shadow-[8px_7px_0_0_#0baaec] sm:rounded-tl-[2rem] sm:shadow-[11px_9px_0_0_#0baaec]">

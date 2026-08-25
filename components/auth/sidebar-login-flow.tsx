@@ -224,14 +224,14 @@ export function SidebarLoginFlow({
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="space-y-2">
         <h2 className="text-2xl font-bold text-gray-900">Let&apos;s Get You In</h2>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm font-medium text-gray-900">
           Coliving that matches your vibe- let&apos;s find yours.
         </p>
       </div>
 
-      <form className="mt-8 space-y-6" onSubmit={handlePhoneSubmit}>
-        <div className="space-y-4">
-          <label htmlFor={inputId} className="block text-xs font-medium text-gray-500">
+      <form className="mt-5 space-y-6" onSubmit={handlePhoneSubmit}>
+        <div className="space-y-3">
+          <label htmlFor={inputId} className="block text-xs font-medium text-gray-900">
             Please enter your phone number
           </label>
           <div className="relative">

@@ -447,7 +447,7 @@ export function SrpFiltersBar({
 
   return (
     <div className="space-y-3">
-      <div className="hidden flex-wrap items-center gap-2 sm:gap-3 md:flex">
+      <div className="hidden flex-wrap items-center justify-start gap-2 sm:gap-3 md:flex">
         <FilterDropdown
           label="Budget"
           selectedLabel={selectedBudget?.value ? selectedBudget.label : "Budget"}
@@ -476,7 +476,7 @@ export function SrpFiltersBar({
         </button>
 
         <SortDropdown
-          className="ml-auto shrink-0"
+          className="shrink-0"
           sortValue={query.sort}
           onSelect={(value) =>
             setQuery({ sort: value === "popularity" ? undefined : value })
