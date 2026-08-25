@@ -57,13 +57,6 @@ export const communityHeroPolaroids = [
   },
 ] as const;
 
-export const communityFeedItems = [
-  "/assets/community/feed/feed-1.webp",
-  "/assets/community/feed/feed-2.webp",
-  "/assets/community/feed/feed-3.webp",
-  "/assets/community/feed/feed-4.png",
-] as const;
-
 export const communityInstagramUrl =
   "https://www.instagram.com/helloworld_living/?hl=en";
 

@@ -67,6 +67,7 @@ import {
   mapLocalityNearbyToDayFromHere,
 } from "@/src/lib/srp/map-locality-info";
 import type { LocalityInfo } from "@/src/models/locality-info";
+import { getCityRatings } from "@/src/tokens/city-ratings";
 
 export type SrpPageKind = "city" | "locality" | "landmark";
 
@@ -180,16 +181,22 @@ async function loadLocalityLinks(
 function localityPageFields(
   localityInfo: LocalityInfo | undefined,
   fallbacks: { startingRent: number; total: number; aboutText: string },
+  options?: { city?: string; useHardcodedCityRatings?: boolean },
 ) {
   const startingRent = localityStartingRent(
     localityInfo,
     fallbacks.startingRent,
   );
   const dayFromHereItems = mapLocalityNearbyToDayFromHere(localityInfo?.nearby);
+  // Hardcoded ratings only on city SRPs; locality/landmark use API ratings.
+  const ratings =
+    options?.useHardcodedCityRatings && options.city
+      ? getCityRatings(options.city)
+      : localityInfo?.ratings;
   return {
     heroSubtitle: formatStartingSubtitle(startingRent, fallbacks.total),
     heroImageSrc: localityHeroImageSrc(localityInfo),
-    bentoTiles: mapLocalityBentoTiles(localityInfo?.ratings),
+    bentoTiles: mapLocalityBentoTiles(ratings),
     dayFromHereItems: localityInfo ? dayFromHereItems : undefined,
     aboutText: localityAboutText(localityInfo, fallbacks.aboutText),
   };
@@ -668,11 +675,15 @@ export async function resolveSrpPage(
     pageMetaDescription,
     total,
   );
-  const localityFields = localityPageFields(localityInfo, {
-    startingRent: minRentFromProperties(data) ?? data[0]?.min_rent ?? 0,
-    total,
-    aboutText: pageDescription,
-  });
+  const localityFields = localityPageFields(
+    localityInfo,
+    {
+      startingRent: minRentFromProperties(data) ?? data[0]?.min_rent ?? 0,
+      total,
+      aboutText: pageDescription,
+    },
+    { city, useHardcodedCityRatings: true },
+  );
 
   return {
     kind: "city",

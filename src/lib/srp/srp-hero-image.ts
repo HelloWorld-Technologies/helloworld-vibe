@@ -1,5 +1,6 @@
 import { imageUrlFormatter } from "@/src/lib/images";
 import type { SrpPageConfig } from "@/src/lib/srp/resolve-srp-page";
+import { srpCardComingSoonImage } from "@/src/tokens/srp-card";
 
 function normalizeImageSource(value: unknown): string {
   const trimmed = String(value ?? "").trim();
@@ -25,9 +26,10 @@ function formatHeroImageUrl(url: string): string {
 }
 
 /**
- * Hero image only from the locality/city API cover (or an explicit override).
- * Does not fall back to listing property photos — hide the media when the API
- * does not send a cover image.
+ * Hero image from the locality/city API cover (or an explicit override).
+ * Does not fall back to listing property photos.
+ * City pages without a cover use the coming-soon placeholder so the media
+ * row can still show beside ratings; locality/landmark pages hide the image.
  */
 export function resolveSrpHeroImageSrc(
   config: SrpPageConfig,
@@ -38,7 +40,10 @@ export function resolveSrpHeroImageSrc(
     normalizeImageSource(config.heroImageSrc) ||
     "";
 
-  if (!raw) return "";
+  if (raw) return formatHeroImageUrl(raw);
 
-  return formatHeroImageUrl(raw);
+  // City-only: fill the hero slot when the API omits cover_image.
+  if (config.kind === "city") return srpCardComingSoonImage;
+
+  return "";
 }
