@@ -102,7 +102,7 @@ export function mapPropertyMediaToGalleryItems(
     if (isVideoMedia(mediaType, url)) {
       const normalizedTag = tag?.toLowerCase();
       const videoLabel =
-        normalizedTag === "property" ? "Property Video" : label;
+        normalizedTag === "property" ? "Community Vibe" : label;
 
       videos.push({
         id,

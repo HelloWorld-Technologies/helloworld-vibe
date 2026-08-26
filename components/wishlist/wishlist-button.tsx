@@ -15,16 +15,17 @@ function HeartIcon({ filled, className }: { filled?: boolean; className?: string
   return (
     <svg
       aria-hidden
-      width="19"
-      height="17"
-      viewBox="0 0 19 17"
+      viewBox="0 0 19 19"
       fill="none"
-      className={className}
+      className={cn("block shrink-0", className)}
     >
-      <path
-        d={filled ? HEART_SOLID_PATH : HEART_OUTLINE_PATH}
-        fill="currentColor"
-      />
+      {/* Path is drawn in a 19×17 box — offset Y so it sits optically centered in a square. */}
+      <g transform="translate(0 1)">
+        <path
+          d={filled ? HEART_SOLID_PATH : HEART_OUTLINE_PATH}
+          fill="currentColor"
+        />
+      </g>
     </svg>
   );
 }
@@ -76,7 +77,7 @@ export function WishlistButton({
             ? "border-error-200 bg-error-50 text-error-500 hover:border-error-300"
             : "border-gray-900 text-gray-900 hover:border-gray-700 hover:text-gray-700"),
         variant === "ghost" &&
-          "text-hello-lime-900 transition-colors hover:text-hello-lime-800 active:scale-95",
+          "inline-flex items-center justify-center text-hello-lime-900 transition-colors hover:text-hello-lime-800 active:scale-95",
         className,
       )}
     >

@@ -10,7 +10,7 @@ export function HomepageBenefits() {
           {homepageBenefits.map((benefit) => (
             <div
               key={benefit.id}
-              className="flex flex-col items-center text-center lg:max-w-[9.75rem]"
+              className="flex flex-col items-center text-center lg:max-w-[12rem]"
             >
               <HomepageAsset
                 asset={benefit.icon}
@@ -18,7 +18,7 @@ export function HomepageBenefits() {
                 height={40}
                 className="size-10"
               />
-              <h3 className="mt-3 text-base font-bold leading-6 text-gray-900">
+              <h3 className="mt-3 whitespace-nowrap text-base font-bold leading-6 text-gray-900">
                 {benefit.title}
               </h3>
               <p className="mt-1 text-xs leading-[18px] text-gray-600">

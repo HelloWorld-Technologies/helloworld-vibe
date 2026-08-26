@@ -163,7 +163,7 @@ export function LocalityBentoHero({
       data-has-media={showDesktopMedia ? "true" : "false"}
     >
       <div className="hidden space-y-2 lg:block">
-        <h1 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
+        <h1 className="text-xl font-medium tracking-tight text-gray-900 md:text-2xl md:leading-8">
           {title}
         </h1>
         <p className="text-base font-medium text-gray-900">{subtitle}</p>
@@ -220,7 +220,7 @@ export function LocalityBentoHero({
           {breadcrumbItems && breadcrumbItems.length > 0 ? (
             <Breadcrumbs items={breadcrumbItems} className="mb-4" />
           ) : null}
-          <h1 className="text-2xl font-medium tracking-tight text-gray-900">
+          <h1 className="text-lg font-medium tracking-tight text-gray-900">
             {title}
           </h1>
           <p className="mt-2 text-base font-medium text-gray-900">{subtitle}</p>

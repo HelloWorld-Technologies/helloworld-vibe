@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import type { BreadcrumbItem } from "@/components/navigation/breadcrumbs";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { HdpRatingCard } from "@/components/marketing/hdp-rating-card";
@@ -21,7 +20,6 @@ export function HdpMobileHero({
   breadcrumbItems: readonly BreadcrumbItem[];
   className?: string;
 }) {
-  const router = useRouter();
   const wishlist = useOptionalWishlist();
   const pageTitle = view.pageTitle || hdpProperty.name;
   const propertyId = view.propertyId;
@@ -49,8 +47,18 @@ export function HdpMobileHero({
       <PropertyGalleryMobile
         items={view.galleryItems}
         variant="hero"
-        onBack={() => router.back()}
         onShare={() => void handleShare()}
+        wishlistControl={
+          <WishlistButton
+            saved={saved}
+            aria-label={saved ? "Remove from saved" : "Save property"}
+            iconClassName="size-5"
+            className="flex size-10 items-center justify-center rounded-full bg-white text-hello-lime-900 shadow-sm hover:text-hello-lime-800"
+            onClick={() => {
+              void wishlist?.toggleWishlist(propertyId, pageTitle);
+            }}
+          />
+        }
       />
 
       <div className="relative z-10 -mt-8 rounded-t-[2.5rem] bg-white px-4 pb-2 pt-6 sm:px-6">
@@ -58,20 +66,9 @@ export function HdpMobileHero({
           <Breadcrumbs items={breadcrumbItems} className="mb-4" />
         ) : null}
 
-        <div className="flex items-start justify-between gap-3">
-          <h1 className="min-w-0 flex-1 font-satoshi text-2xl font-bold leading-tight text-gray-900">
-            {pageTitle}
-          </h1>
-          <WishlistButton
-            saved={saved}
-            aria-label={saved ? "Remove from saved" : "Save property"}
-            iconClassName="size-6"
-            className="mt-0.5 shrink-0 text-hello-lime-900 hover:text-hello-lime-800"
-            onClick={() => {
-              void wishlist?.toggleWishlist(propertyId, pageTitle);
-            }}
-          />
-        </div>
+        <h1 className="font-satoshi text-lg font-bold leading-tight text-gray-900">
+          {pageTitle}
+        </h1>
 
         {view.badge ? (
           <span className="mt-2 inline-flex rounded-2xl bg-error-200 px-2 py-0.5 text-xs font-medium text-gray-800">

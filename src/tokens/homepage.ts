@@ -41,7 +41,7 @@ export const homepageBenefits = [
   },
   {
     id: "lock-in",
-    title: "Minimum Lock-in Period",
+    title: "Minimum lock-in period",
     description: "Don't worry about uncertainties anymore",
     icon: asset("no-lockin-period"),
   },

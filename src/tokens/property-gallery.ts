@@ -14,7 +14,7 @@ export const galleryCategoryTabs: {
   value: GalleryCategory;
   label: string;
 }[] = [
-  { value: "property-video", label: "Property Video" },
+  { value: "property-video", label: "Community Vibe" },
   { value: "moments", label: "Moments" },
   { value: "photos", label: "Photos" },
 ];
@@ -36,7 +36,7 @@ export const propertyGalleryItems: GalleryMediaItem[] = [
   {
     id: "video-1",
     category: "property-video",
-    label: "Property Video",
+    label: "Community Vibe",
     imageSrc: galleryImages[0],
     kind: "video",
   },

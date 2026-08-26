@@ -6,6 +6,8 @@ import {
   useMemo,
   useRef,
   useState,
+  type PointerEvent,
+  type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
 import { ShareIcon } from "@/components/icons/share-icon";
@@ -646,8 +648,11 @@ function GalleryPhotosModal({
 export function PropertyGalleryDesktop({
   images,
   items,
+  moments: momentItems,
   className,
-}: PropertyGalleryProps) {
+}: PropertyGalleryProps & {
+  moments?: readonly GalleryMediaItem[];
+}) {
   const [photosOpen, setPhotosOpen] = useState(false);
   const [featuredIndex, setFeaturedIndex] = useState(0);
   const [swipeDirection, setSwipeDirection] = useState<"next" | "prev">(
@@ -660,10 +665,15 @@ export function PropertyGalleryDesktop({
     items,
   });
   const { moments, livingRoom, washroom, featuredSequence } = desktop;
+  // Prefer HDP moments feed (kept separate from photo gallery); else layout fallback.
   const momentsTile =
+    momentItems?.find((item) => Boolean(item.videoSrc)) ??
+    momentItems?.[0] ??
     galleryItems.find(
       (item) => item.category === "moments" && Boolean(item.videoSrc),
-    ) ?? moments;
+    ) ??
+    galleryItems.find((item) => item.category === "moments") ??
+    moments;
   const totalCount =
     galleryItems.length ||
     photoItems.length ||
@@ -673,7 +683,7 @@ export function PropertyGalleryDesktop({
   useEffect(() => {
     setFeaturedIndex(0);
     setMomentsSidePlaying(false);
-  }, [items, images]);
+  }, [items, images, momentItems]);
 
   const sequence =
     featuredSequence.length > 0 ? featuredSequence : galleryItems;
@@ -827,12 +837,12 @@ export function PropertyGalleryMobile({
   items,
   className,
   variant = "inset",
-  onBack,
   onShare,
+  wishlistControl,
 }: PropertyGalleryProps & {
   variant?: "inset" | "hero";
-  onBack?: () => void;
   onShare?: () => void;
+  wishlistControl?: ReactNode;
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [photosOpen, setPhotosOpen] = useState(false);
@@ -840,6 +850,7 @@ export function PropertyGalleryMobile({
     "next",
   );
   const [slideKey, setSlideKey] = useState(0);
+  const swipeStart = useRef<{ x: number; y: number } | null>(null);
   const { galleryItems, photoItems } = useGallerySource({ images, items });
   const isPlaceholderGallery = isComingSoonOnlyGallery(galleryItems);
   const totalCount = galleryItems.length || propertyGalleryTotal;
@@ -885,6 +896,28 @@ export function PropertyGalleryMobile({
     );
   }
 
+  function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
+    if (!canCycle) return;
+    const target = event.target as HTMLElement | null;
+    if (target?.closest("button, a")) return;
+    swipeStart.current = { x: event.clientX, y: event.clientY };
+  }
+
+  function handlePointerUp(event: PointerEvent<HTMLDivElement>) {
+    const start = swipeStart.current;
+    swipeStart.current = null;
+    if (!start || !canCycle) return;
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+    if (Math.abs(dx) < 48 || Math.abs(dx) <= Math.abs(dy)) return;
+    if (dx < 0) goNext();
+    else goPrev();
+  }
+
+  function handlePointerCancel() {
+    swipeStart.current = null;
+  }
+
   const modalPhotos =
     photoItems.length > 0
       ? photoItems
@@ -895,10 +928,13 @@ export function PropertyGalleryMobile({
       <div className={cn(!isHero && "mx-auto w-full max-w-[320px]", className)}>
         <div
           className={cn(
-            "relative overflow-hidden",
+            "relative touch-pan-y overflow-hidden",
             isPlaceholderGallery ? "bg-[#fcfcf5]" : "bg-black",
             isHero ? "aspect-[4/5] w-full" : "aspect-4/5 rounded-3xl",
           )}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerCancel}
         >
           {activeItem.kind === "video" && activeItem.videoSrc ? (
             <video
@@ -945,32 +981,17 @@ export function PropertyGalleryMobile({
           )}
 
           {isHero ? (
-            <>
-              <button
-                type="button"
-                aria-label="Go back"
-                onClick={onBack}
-                className="absolute left-4 top-4 z-20 flex size-10 items-center justify-center rounded-full bg-white text-gray-900 shadow-sm"
-              >
-                <svg aria-hidden viewBox="0 0 20 20" fill="none" className="size-5">
-                  <path
-                    d="M12.5 4.5 7 10l5.5 5.5"
-                    stroke="currentColor"
-                    strokeWidth="1.67"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
+            <div className="absolute right-4 top-4 z-20 flex items-center gap-2">
+              {wishlistControl}
               <button
                 type="button"
                 aria-label="Share property"
                 onClick={onShare}
-                className="absolute right-4 top-4 z-20 flex size-10 items-center justify-center rounded-full bg-white text-hello-lime-900 shadow-sm"
+                className="flex size-10 items-center justify-center rounded-full bg-white text-hello-lime-900 shadow-sm"
               >
                 <ShareIcon className="size-5" />
               </button>
-            </>
+            </div>
           ) : null}
 
           {canCycle ? (

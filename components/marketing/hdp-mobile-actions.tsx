@@ -44,7 +44,7 @@ export function HdpMobileActions({
             className="w-1/2"
             onClick={() => openModal("tour")}
           >
-            Book free visit
+            Take a tour
           </Button>
           <Button
             size="sm"
