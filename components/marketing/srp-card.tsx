@@ -416,7 +416,7 @@ export function SrpCard({
       </div>
 
       {showVibeMatch ? (
-        <div className="bg-gradient-property-card-vibe-match px-4 py-2.5 text-center text-sm text-gray-900">
+        <div className="bg-gradient-property-card-vibe-match px-4 py-1 text-center text-xs leading-4 text-gray-900">
           <span aria-hidden>✨ </span>
           <span className="font-bold">{Math.round(vibeMatchScore)}%</span> Vibe
           Match

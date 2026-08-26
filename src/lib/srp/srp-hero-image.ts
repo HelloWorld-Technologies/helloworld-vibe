@@ -1,5 +1,6 @@
 import { imageUrlFormatter } from "@/src/lib/images";
 import type { SrpPageConfig } from "@/src/lib/srp/resolve-srp-page";
+import { getCityHeroImage } from "@/src/tokens/city-hero-images";
 import { srpCardComingSoonImage } from "@/src/tokens/srp-card";
 
 function normalizeImageSource(value: unknown): string {
@@ -26,24 +27,25 @@ function formatHeroImageUrl(url: string): string {
 }
 
 /**
- * Hero image from the locality/city API cover (or an explicit override).
- * Does not fall back to listing property photos.
- * City pages without a cover use the coming-soon placeholder so the media
- * row can still show beside ratings; locality/landmark pages hide the image.
+ * Hero image for SRP pages.
+ * - City pages always use the hardcoded city landmark image (fallback: coming-soon).
+ * - Locality/landmark pages use API cover (or override) only — no city image swap.
  */
 export function resolveSrpHeroImageSrc(
   config: SrpPageConfig,
   override?: string,
 ): string {
+  if (config.kind === "city") {
+    return (
+      getCityHeroImage(config.city) ||
+      srpCardComingSoonImage
+    );
+  }
+
   const raw =
     normalizeImageSource(override) ||
     normalizeImageSource(config.heroImageSrc) ||
     "";
 
-  if (raw) return formatHeroImageUrl(raw);
-
-  // City-only: fill the hero slot when the API omits cover_image.
-  if (config.kind === "city") return srpCardComingSoonImage;
-
-  return "";
+  return raw ? formatHeroImageUrl(raw) : "";
 }

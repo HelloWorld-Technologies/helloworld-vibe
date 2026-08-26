@@ -90,26 +90,12 @@ export const homepageReviews: HomepageReview[] = [
   }),
   withCardStyle(7, {
     quote:
-      "PGs felt way too cramped for me, and the food situation was a struggle. Thought about getting a flat, but the deposits kind of freaked me out. Staying in a coliving space (HelloWorld) right now, having a cooking space itself solved half of my issues, and it's way less hassle overall. Coliving spaces are also a good option to consider.",
-    name: "FragrantBit7843",
-    city: "Gurgaon",
-    redditUrl: "https://reddit.com/r/GurugramRentals/s/lr6emTFz5e",
-  }),
-  withCardStyle(8, {
-    quote:
       "The deposit thing is real. Took me 3 months to find a place that didn't ask for a massive upfront amount. What actually worked for me was moving into a managed PG (HelloWorld). Low deposit, no broker, no society aunty judging you. Wish I knew about it earlier.",
     name: "jdxm710",
     city: "Mumbai",
     redditUrl: "https://reddit.com/r/mumbai/s/UMoQj711OB",
   }),
-  withCardStyle(9, {
-    quote:
-      "Shifted from Pune to Mumbai and the rent situation genuinely made me want to go back. Deposit alone was giving me anxiety. Got lucky though, my PG from Pune (HelloWorld) had options in Mumbai too. Didn't have to figure out everything from scratch, didn't break my bank either. Thank god for that honestly.",
-    name: "jdxm710",
-    city: "Mumbai",
-    redditUrl: "https://reddit.com/r/mumbai/s/HDRV5QsLzP",
-  }),
-  withCardStyle(10, {
+  withCardStyle(8, {
     quote:
       "Honestly I got bored of pubs after a point. Every weekend started feeling the same. Met a few people through HelloWorld (where I'm staying rn) and now weekends are mostly football, badminton, TT, random outings and chill scenes. Nothing too fancy but it doesn't feel copy-paste anymore.",
     name: "Frost_lannister",
@@ -117,7 +103,7 @@ export const homepageReviews: HomepageReview[] = [
     // Truncated comment slug — parent thread URL
     redditUrl: "https://reddit.com/r/GurugramRentals/comments/1uzq1es/",
   }),
-  withCardStyle(11, {
+  withCardStyle(9, {
     quote:
       "Used to feel the same tbh. Meet a few people in HelloWorld (where I stay currently) and slowly became friends. Now whenever someone is free there's always something to do — board games, football, random walks, food runs or just sitting and talking nonsense. Def helped me get out of that work and scroll loop.",
     name: "LonelyPriority4408",
@@ -125,12 +111,26 @@ export const homepageReviews: HomepageReview[] = [
     // Truncated comment slug — parent thread URL
     redditUrl: "https://reddit.com/r/Hyderabad_city/comments/1vhu63n/",
   }),
-  withCardStyle(12, {
+  withCardStyle(10, {
     quote:
       "PG life honestly felt really congested for me, and adjusting there was quite difficult. I also looked for flats, but the deposits were way too high for decent locations. Right now, I'm staying in a coliving space (HelloWorld), and it's been pretty comfortable so far. Less responsibility, no unnecessary restrictions, and overall much more convenient. You can probably explore coliving options as well.",
     name: "rawr",
     city: "Hyderabad",
     // Truncated post slug — parent thread URL
     redditUrl: "https://reddit.com/r/Hyderabad_city/comments/1vhu63n/",
+  }),
+  withCardStyle(11, {
+    quote:
+      "PGs felt way too cramped for me, and the food situation was a struggle. Thought about getting a flat, but the deposits kind of freaked me out. Staying in a coliving space (HelloWorld) right now, having a cooking space itself solved half of my issues, and it's way less hassle overall. Coliving spaces are also a good option to consider.",
+    name: "FragrantBit7843",
+    city: "Gurgaon",
+    redditUrl: "https://reddit.com/r/GurugramRentals/s/lr6emTFz5e",
+  }),
+  withCardStyle(12, {
+    quote:
+      "Shifted from Pune to Mumbai and the rent situation genuinely made me want to go back. Deposit alone was giving me anxiety. Got lucky though, my PG from Pune (HelloWorld) had options in Mumbai too. Didn't have to figure out everything from scratch, didn't break my bank either. Thank god for that honestly.",
+    name: "jdxm710",
+    city: "Mumbai",
+    redditUrl: "https://reddit.com/r/mumbai/s/HDRV5QsLzP",
   }),
 ];
