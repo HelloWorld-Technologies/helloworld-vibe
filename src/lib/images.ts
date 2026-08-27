@@ -16,10 +16,16 @@ export function imageUrlFormatter(page: "srp" | "hdp", url: string): string {
 
   if (url.includes("http")) {
     imgSrc = url;
-  } else if (process.env.NEXT_PUBLIC_ENV === "staging" || process.env.NEXT_PUBLIC_ENV === "dev") {
+  } else if (
+    (process.env.NEXT_PUBLIC_ENV === "staging" ||
+      process.env.NEXT_PUBLIC_ENV === "dev") &&
+    !url.startsWith("property/")
+  ) {
+    // Staging-only media keys. Property photos are served from the prod CDN.
     imgSrc = "https://hw-staging-media.s3.ap-south-1.amazonaws.com/" + url;
   } else if (page === "srp") {
-    imgSrc = `${S3_IMAGE_BUCKET_BASE_URL}${url.replace("original", "srp/desktop")}`;
+    // SRP / similar-property cards use the mobile CDN variant.
+    imgSrc = `${S3_IMAGE_BUCKET_BASE_URL}${url.replace("original", "srp/mobile")}`;
   } else if (page === "hdp") {
     imgSrc = `${S3_IMAGE_BUCKET_BASE_URL}${url.replace("original", "hdp/desktop")}`;
   }

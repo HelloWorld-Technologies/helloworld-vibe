@@ -2,6 +2,7 @@ import {
   fetchAllProperty,
   fetchCityLocalities,
   fetchNearbyPlaces,
+  fetchPopularLocalities,
   fetchPropertiesBySlug,
   SRP_LIST_PAGE_SIZE,
   type LocalityListItem,
@@ -101,6 +102,8 @@ export type SrpPageConfig = {
   aboutText: string;
   breadcrumbItems: SrpBreadcrumbItem[];
   localityLinks: LocalityListItem[];
+  /** Popular localities from `hello/localities` (same source as the mobile app). */
+  popularLocalities: LocalityListItem[];
   relatedLandmarkLinks: SrpRelatedLandmarkLink[];
   faqs: { question: string; answer: string }[];
   schema: SrpPageSchema;
@@ -176,6 +179,10 @@ async function loadLocalityLinks(
     localityLinks = mergeKotaHostelSrpLocalities(localityLinks);
   }
   return localityLinks;
+}
+
+async function loadPopularLocalities(city: string): Promise<LocalityListItem[]> {
+  return fetchPopularLocalities(city, 12);
 }
 
 function localityPageFields(
@@ -334,6 +341,7 @@ export async function resolveSrpPage(
       aboutTitle: "About this place",
       breadcrumbItems,
       localityLinks: [],
+      popularLocalities: [],
       relatedLandmarkLinks,
       faqs: [],
       hideFaqSection: true,
@@ -380,7 +388,10 @@ export async function resolveSrpPage(
     if (!success || !Array.isArray(data) || data.length === 0) return emptyResult();
 
     const total = pageInfo?.total ?? data.length;
-    const localityLinks = await loadLocalityLinks(branch.city, branch.livingType);
+    const [localityLinks, popularLocalities] = await Promise.all([
+      loadLocalityLinks(branch.city, branch.livingType),
+      loadPopularLocalities(branch.city),
+    ]);
     const faqs = getFaqsForSchema(branch.city, branch.faqArea, branch.faqGender);
     const itemList = buildPropertyItemList(
       baseUrl,
@@ -422,6 +433,7 @@ export async function resolveSrpPage(
       aboutTitle: `About ${localityName}`,
       breadcrumbItems: branch.breadcrumbItems,
       localityLinks,
+      popularLocalities,
       relatedLandmarkLinks: [],
       faqs,
       hideFaqSection: false,
@@ -626,7 +638,10 @@ export async function resolveSrpPage(
   if (!success || !Array.isArray(data) || data.length === 0) return emptyResult();
 
   const total = pageInfo?.total ?? data.length;
-  const localityLinks = await loadLocalityLinks(city, livingType);
+  const [localityLinks, popularLocalities] = await Promise.all([
+    loadLocalityLinks(city, livingType),
+    loadPopularLocalities(city),
+  ]);
   const isColivingSrpFamily = slug.startsWith("coliving-in-");
   const cityColivingSeo = getColivingCityMarketingSeoOverride(slug);
   const kotaCityHostelsSeo = getKotaCityHostelsSeoOverride(slug);
@@ -707,6 +722,7 @@ export async function resolveSrpPage(
     aboutTitle: `About ${cityLabel}`,
     breadcrumbItems,
     localityLinks,
+    popularLocalities,
     relatedLandmarkLinks: [],
     faqs,
     hideFaqSection: false,

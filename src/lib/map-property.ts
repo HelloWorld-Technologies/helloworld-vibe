@@ -63,6 +63,8 @@ export function colivingPgSubtitle(
 function propertyImages(property: Property): readonly string[] {
   const candidates = [
     property.image,
+    property.hdp_image,
+    ...(typeof property.srp_image === "string" ? [property.srp_image] : []),
     ...(Array.isArray(property.property_image) ? property.property_image : []),
   ];
 

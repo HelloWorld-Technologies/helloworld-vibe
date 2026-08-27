@@ -48,18 +48,52 @@ function nearbyEmoji(key: string): string {
   return "📍";
 }
 
+function isLocalAssetPath(src: string): boolean {
+  return src.startsWith("/assets/") || src.startsWith("assets/");
+}
+
+/** Place photos from the API only — never local files or Google map icons. */
 function resolveNearbyPlaceImage(place: NearbyData): string {
-  const raw = [place.image, place.photo, place.image_url, place.icon]
+  const record = place as NearbyData & Record<string, unknown>;
+  const raw = [
+    place.image,
+    place.photo,
+    place.image_url,
+    record.imageUrl,
+    record.photo_url,
+    record.photoUrl,
+    record.thumbnail,
+  ]
     .map((value) => String(value ?? "").trim())
     .find(Boolean);
 
-  if (raw) {
-    if (raw.startsWith("/") || raw.startsWith("data:")) return raw;
-    const formatted = formatSrpCardImageSrc(raw);
-    if (formatted) return formatted;
+  if (!raw || raw.includes("coming-soon") || isLocalAssetPath(raw)) {
+    return nearbyComingSoonImage;
   }
 
-  return nearbyComingSoonImage;
+  if (raw.startsWith("data:")) return raw;
+
+  // Absolute URL (Google place photo, CDN, etc.)
+  if (raw.includes("http://") || raw.includes("https://")) {
+    return formatSrpCardImageSrc(raw) || nearbyComingSoonImage;
+  }
+
+  // Root-relative app path (only allow coming-soon; never category artwork)
+  if (raw.startsWith("/")) {
+    return isLocalAssetPath(raw) ? nearbyComingSoonImage : raw;
+  }
+
+  // Relative S3 / media keys from the API
+  const formatted = formatSrpCardImageSrc(raw);
+  if (
+    !formatted ||
+    formatted.includes("coming-soon") ||
+    isLocalAssetPath(formatted)
+  ) {
+    return nearbyComingSoonImage;
+  }
+
+  return formatted;
 }
 
 function parseDistanceKm(distance?: string | number): number | null {

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeaderSearch } from "@/components/layout/site-header-search";
@@ -308,6 +308,39 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
     listingsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  // Keep the floating desktop toggle label in sync with which section is in view
+  // (same IntersectionObserver band as HdpSectionNav).
+  useEffect(() => {
+    if (!showSectionToggle) return;
+
+    const sections: {
+      el: HTMLElement;
+      id: "properties" | "details";
+    }[] = [];
+    if (listingsRef.current) {
+      sections.push({ el: listingsRef.current, id: "properties" });
+    }
+    if (detailsRef.current) {
+      sections.push({ el: detailsRef.current, id: "details" });
+    }
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        const match = sections.find((section) => section.el === visible.target);
+        if (match) setDesktopSection(match.id);
+      },
+      { rootMargin: "-30% 0px -55% 0px", threshold: [0, 0.25, 0.5, 1] },
+    );
+
+    sections.forEach(({ el }) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [showSectionToggle]);
+
   return (
     <PropertyActionsProvider
       defaultCity={config.city}
@@ -402,12 +435,12 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
             <LocalityContactCard {...contactCardProps} />
           </div>
 
-          {config.localityLinks.length > 0 ? (
+          {config.popularLocalities.length > 0 ? (
             <SrpPopularLocalities
               className="mt-12 md:mt-16"
               city={config.city}
               canonicalPath={config.canonicalPath}
-              localityLinks={config.localityLinks}
+              localityLinks={config.popularLocalities}
               properties={properties}
             />
           ) : null}

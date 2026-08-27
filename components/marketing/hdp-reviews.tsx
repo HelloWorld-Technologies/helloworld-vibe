@@ -196,36 +196,32 @@ export function HdpReviews({
             */}
           </div>
 
-          {/* Desktop */}
-          <div className="hidden flex-col gap-6 lg:flex lg:flex-row lg:items-stretch lg:justify-between">
-            <div className="space-y-4 lg:max-w-[18.3125rem]">
-              <div className="space-y-0.5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-[1.875rem] font-medium leading-[2.375rem] text-gray-800">
-                    {summary.rating}
-                    <span className="text-amber-400">★</span>
-                  </p>
-                  <p className="text-base font-bold text-gray-900">
-                    {summary.label}
-                  </p>
-                </div>
-                <p className="text-xs font-medium text-gray-500">
-                  Based on {summary.reviewCount} verified reviews
+          {/* Desktop — rating stack left, recommend % right */}
+          <div className="hidden items-center gap-8 lg:flex">
+            <div className="space-y-0.5">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-[1.875rem] font-medium leading-[2.375rem] text-gray-800">
+                  {summary.rating}
+                  <span className="text-amber-400">★</span>
                 </p>
+                <p className="text-base font-bold text-gray-900">{summary.label}</p>
               </div>
+              <p className="text-sm font-medium text-gray-500">
+                Based on {summary.reviewCount} verified reviews
+              </p>
+            </div>
 
-              <div className="h-px bg-gray-300" />
+            <div className="h-10 w-px shrink-0 bg-gray-300" aria-hidden />
 
-              <div className="flex items-center gap-4">
-                <RecommendRing percent={summary.recommendPercent} />
-                <p className="max-w-[9.375rem] text-sm font-medium leading-5 text-gray-800">
-                  Residents would recommend to a friend
-                </p>
-              </div>
+            <div className="flex items-center gap-4">
+              <RecommendRing percent={summary.recommendPercent} />
+              <p className="max-w-[9.375rem] text-sm font-medium leading-5 text-gray-800">
+                Residents would recommend to a friend
+              </p>
             </div>
 
             {/* Category bars — re-enable when scores are integrated
-            <div className="hidden w-px shrink-0 bg-gray-300 lg:block" />
+            <div className="w-px shrink-0 self-stretch bg-gray-300" />
 
             <div className="flex min-w-0 flex-1 flex-col justify-center gap-4 lg:max-w-[18.875rem]">
               {summary.categories.map((category) => (

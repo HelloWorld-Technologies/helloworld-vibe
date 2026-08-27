@@ -70,7 +70,7 @@ export function LoginModal({
               type="tel"
               inputMode="numeric"
               autoComplete="tel-national"
-              placeholder="9777964438"
+              placeholder="10-digit mobile number"
               value={phone}
               disabled={loading}
               onChange={(event) => setPhone(formatPhoneInput(event.target.value))}

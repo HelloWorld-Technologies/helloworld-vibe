@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   LocalityCard,
   LocalityCarouselButton,
@@ -12,7 +12,28 @@ import { getCityLabel } from "@/src/tokens/cities";
 import type { Property } from "@/src/models/property";
 import { cn } from "@/src/lib/cn";
 
-const VISIBLE_DESKTOP_COUNT = 2;
+/** LocalityCard desktop size (`max-w-[280px]`). Do not stretch with %/calc. */
+const DESKTOP_CARD_PX = 280;
+/** Matches `gap-6` on the desktop track. */
+const DESKTOP_GAP_PX = 24;
+/** ~20% card peek so the list still reads as scrollable. */
+const DESKTOP_PEEK_PX = 56;
+/** Extra card rendered so the next locality can peek into view. */
+const DESKTOP_PEEK_COUNT = 1;
+/**
+ * Keep LocalityCard’s fixed desktop size (`max-w-[280px]` / aspect 5/4).
+ * Do not stretch with %/calc or `max-w-none`.
+ */
+const DESKTOP_CARD_WIDTH = "shrink-0";
+
+/** How many full 280px cards fit while reserving a small peek of the next. */
+function visibleDesktopCountForWidth(width: number): number {
+  if (width <= 0) return 4;
+  const count = Math.floor(
+    (width - DESKTOP_PEEK_PX + DESKTOP_GAP_PX) / (DESKTOP_CARD_PX + DESKTOP_GAP_PX),
+  );
+  return Math.max(1, count);
+}
 
 export function SrpPopularLocalities({
   city,
@@ -28,18 +49,45 @@ export function SrpPopularLocalities({
   className?: string;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
+  const [visibleDesktopCount, setVisibleDesktopCount] = useState(4);
 
   const cards = useMemo(
     () => buildPopularLocalityCards(localityLinks, properties, { city, canonicalPath }),
     [localityLinks, properties, city, canonicalPath],
   );
 
+  useEffect(() => {
+    if (cards.length === 0) return;
+    const el = trackRef.current;
+    if (!el) return;
+
+    const update = () => {
+      setVisibleDesktopCount(visibleDesktopCountForWidth(el.clientWidth));
+    };
+
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [cards.length]);
+
+  useEffect(() => {
+    setIndex((current) => {
+      const max = Math.max(0, cards.length - visibleDesktopCount);
+      return Math.min(current, max);
+    });
+  }, [cards.length, visibleDesktopCount]);
+
   if (cards.length === 0) return null;
 
   const cityLabel = getCityLabel(city);
-  const maxIndex = Math.max(0, cards.length - VISIBLE_DESKTOP_COUNT);
-  const visibleCards = cards.slice(index, index + VISIBLE_DESKTOP_COUNT);
+  const maxIndex = Math.max(0, cards.length - visibleDesktopCount);
+  const visibleCards = cards.slice(
+    index,
+    index + visibleDesktopCount + DESKTOP_PEEK_COUNT,
+  );
 
   function scroll(direction: "prev" | "next") {
     setIndex((current) =>
@@ -66,18 +114,23 @@ export function SrpPopularLocalities({
         Popular {cityLabel} Localities
       </h2>
 
-      <div className="mt-6 hidden gap-6 lg:flex">
-        {visibleCards.map((locality) => (
-          <LocalityCard
-            key={locality.id}
-            href={locality.href}
-            name={locality.name}
-            startingRent={locality.startingRent}
-            propertyCount={locality.propertyCount}
-            imageSrc={locality.imageSrc}
-            className="w-[min(100%,16rem)] shrink-0"
-          />
-        ))}
+      <div
+        ref={trackRef}
+        className="mt-6 hidden w-full overflow-hidden lg:block"
+      >
+        <div className="flex gap-6">
+          {visibleCards.map((locality) => (
+            <LocalityCard
+              key={locality.id}
+              href={locality.href}
+              name={locality.name}
+              startingRent={locality.startingRent}
+              propertyCount={locality.propertyCount}
+              imageSrc={locality.imageSrc}
+              className={DESKTOP_CARD_WIDTH}
+            />
+          ))}
+        </div>
       </div>
 
       <div className="mt-6 lg:hidden">

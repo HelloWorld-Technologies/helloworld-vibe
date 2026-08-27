@@ -4,12 +4,16 @@ import type {
   LocalityInfoPlace,
   LocalityInfoRatings,
 } from "@/src/models/locality-info";
+import { formatSrpCardImageSrc } from "@/src/lib/images";
 import {
   localityBentoTiles,
   type LocalityBentoTile,
 } from "@/src/tokens/locality";
 import type { NeighborhoodCardData } from "@/src/tokens/neighborhood-card";
-import { nearbyCategoryFlow } from "@/src/tokens/nearby-categories";
+import {
+  nearbyCategoryFlow,
+  nearbyComingSoonImage,
+} from "@/src/tokens/nearby-categories";
 
 const RATING_KEY_TO_TILE_ID: Record<string, string> = {
   transit: "transit",
@@ -46,6 +50,42 @@ function sortPlaces(places: readonly LocalityInfoPlace[]): LocalityInfoPlace[] {
 
 function normalizeNearbyKey(key: string): string {
   return key.trim().toLowerCase().replace(/[\s-]+/g, "_");
+}
+
+function isLocalAssetPath(src: string): boolean {
+  return src.startsWith("/assets/") || src.startsWith("assets/");
+}
+
+/** Place photos from the API only — never local category asset files. */
+function resolveLocalityPlaceImage(place: LocalityInfoPlace): string {
+  const raw = [place.image, place.photo, place.image_url]
+    .map((value) => String(value ?? "").trim())
+    .find(Boolean);
+
+  if (!raw || raw.includes("coming-soon") || isLocalAssetPath(raw)) {
+    return nearbyComingSoonImage;
+  }
+
+  if (raw.startsWith("data:")) return raw;
+
+  if (raw.includes("http://") || raw.includes("https://")) {
+    return formatSrpCardImageSrc(raw) || nearbyComingSoonImage;
+  }
+
+  if (raw.startsWith("/")) {
+    return isLocalAssetPath(raw) ? nearbyComingSoonImage : raw;
+  }
+
+  const formatted = formatSrpCardImageSrc(raw);
+  if (
+    !formatted ||
+    formatted.includes("coming-soon") ||
+    isLocalAssetPath(formatted)
+  ) {
+    return nearbyComingSoonImage;
+  }
+
+  return formatted;
 }
 
 export function mapLocalityBentoTiles(
@@ -101,7 +141,7 @@ export function mapLocalityNearbyToDayFromHere(
       id: `${def.id}-${place.id || index}`,
       placeName: place.name,
       walkTime: formatMetersAway(place.distance_meters),
-      imageSrc: def.imageSrc,
+      imageSrc: resolveLocalityPlaceImage(place),
       imageAlt: place.name,
       ...(place.latitude != null ? { latitude: place.latitude } : {}),
       ...(place.longitude != null ? { longitude: place.longitude } : {}),

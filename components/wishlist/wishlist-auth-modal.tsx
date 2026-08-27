@@ -131,7 +131,7 @@ export function WishlistAuthModal({
             <div className="space-y-3">
               <label
                 htmlFor={phoneInputId}
-                className="text-xs font-medium text-gray-900"
+                className="mb-1.5 text-xs font-medium text-gray-900"
               >
                 Please enter your phone number
               </label>
@@ -145,7 +145,7 @@ export function WishlistAuthModal({
                   type="tel"
                   inputMode="numeric"
                   autoComplete="tel-national"
-                  placeholder="9777964438"
+                  placeholder="10-digit mobile number"
                   value={phone}
                   disabled={loading}
                   onChange={(event) =>

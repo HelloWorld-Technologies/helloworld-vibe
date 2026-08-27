@@ -168,7 +168,7 @@ export function HomeownersLead() {
                               event.target.value.replace(/\D/g, "").slice(0, 10),
                             )
                           }
-                          placeholder="9777964438"
+                          placeholder="10-digit mobile number"
                           autoComplete="tel-national"
                           className={cn(
                             fieldInputClassName,
