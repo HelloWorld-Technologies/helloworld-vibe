@@ -3,38 +3,38 @@
 
   <sitemap>
     <loc>https://thehelloworld.com/sitemap-static.xml</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-08-31</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://thehelloworld.com/sitemap-cities.xml</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-08-31</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://thehelloworld.com/sitemap-locality.xml</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-08-31</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://thehelloworld.com/sitemap-gender-cities.xml</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-08-31</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://thehelloworld.com/sitemap-gender-locality.xml</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-08-31</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://thehelloworld.com/sitemap-properties.xml</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-08-31</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://thehelloworld.com/sitemap-events.xml</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-08-31</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://thehelloworld.com/sitemap-landmarks.xml</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-08-31</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://thehelloworld.com/sitemap-blog.xml</loc>
-    <lastmod>2026-06-16</lastmod>
+    <lastmod>2026-08-31</lastmod>
   </sitemap>
 </sitemapindex>

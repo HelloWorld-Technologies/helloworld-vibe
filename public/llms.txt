@@ -17,6 +17,8 @@
 ## Key Information
 
 - [About Us](https://thehelloworld.com/about-us): Company and mission
+- [Investors](https://thehelloworld.com/investors): Financial statements and investor disclosures
+- [HelloWorld Living](https://thehelloworld.com/hello-world-living): Subsidiary managing residential living ecosystems
 - [Blog](https://thehelloworld.com/blogs): Guides and updates
 - [For property owners](https://thehelloworld.com/owner): List your property with HelloWorld
 - [Safety](https://thehelloworld.com/safety): How we keep spaces secure
@@ -59,6 +61,7 @@ HelloWorld does not provide legal, financial, or tax advice. We are a coliving a
 - [about-us](https://thehelloworld.com/about-us)
 - [owner](https://thehelloworld.com/owner)
 - [contact](https://thehelloworld.com/contact)
+- [investors](https://thehelloworld.com/investors)
 - [policy](https://thehelloworld.com/policy)
 - [tenant-policy](https://thehelloworld.com/tenant-policy)
 - [sitemap](https://thehelloworld.com/sitemap)
