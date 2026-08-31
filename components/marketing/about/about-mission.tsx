@@ -5,11 +5,11 @@ import { pageLayout } from "@/src/tokens/layout";
 export function AboutMission() {
   return (
     <section
-      className="mt-10 bg-[linear-gradient(62deg,#3b4760_3%,#252b37_75%)] md:mt-14"
+      className="mt-6 bg-[linear-gradient(62deg,#3b4760_3%,#252b37_75%)] md:mt-14"
       aria-labelledby="about-mission-heading"
     >
       <div
-        className={`${pageLayout.container} flex flex-col gap-8 py-10 md:flex-row md:items-center md:justify-between md:gap-12 md:py-8`}
+        className={`${pageLayout.container} flex flex-col gap-5 py-6 md:flex-row md:items-center md:justify-between md:gap-12 md:py-8`}
       >
         <div className="w-full max-w-xl md:max-w-[32.5rem]">
           <h2

@@ -25,14 +25,14 @@ export function CommunityVideo() {
           </div>
 
           <div className="flex flex-col items-center text-center lg:w-[47.3%] lg:max-w-[37.8125rem]">
-            <div className="relative pb-10">
+            <div className="relative inline-flex flex-col items-end lg:pb-10">
               <CommunityBoringWeekendsHeading size="desktop" />
               <span
                 aria-hidden
                 className={cn(
-                  "absolute -bottom-1 right-0 rotate-[-3.88deg] bg-blue-light-300 px-3 py-1",
-                  "font-caveat text-base text-gray-900",
-                  "lg:right-8",
+                  "relative mt-2 block w-fit rotate-[-3.88deg] bg-blue-light-300 px-2 py-0.5",
+                  "font-caveat text-xs leading-none text-gray-900 lg:px-3 lg:py-1 lg:text-base",
+                  "lg:absolute bottom-4 lg:bottom-6 lg:right-0 lg:mt-0",
                 )}
               >
                 ✦ ps. monday is also a vibe

@@ -82,7 +82,7 @@ export function TabNav<T extends string>({
                 "motion-reduce:transition-none",
                 "md:min-w-0 md:px-2",
                 isActive
-                  ? "bg-hello-lime-100 text-gray-900 md:bg-transparent"
+                  ? "bg-hello-lime-200 text-gray-900 md:bg-transparent"
                   : "text-gray-900 hover:text-gray-700",
               )}
             >

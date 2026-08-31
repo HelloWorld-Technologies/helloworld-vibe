@@ -25,9 +25,11 @@ function PolicyNumberedParagraphs({
 
 function SectionHeading({
   id,
+  number,
   title,
 }: {
   id: string;
+  number: number;
   title: string;
 }) {
   return (
@@ -37,7 +39,7 @@ function SectionHeading({
         "scroll-mt-36 font-satoshi text-[1.875rem] font-medium leading-9 text-gray-900 lg:scroll-mt-28",
       )}
     >
-      {title}
+      {number}. {title}
     </h2>
   );
 }
@@ -45,7 +47,7 @@ function SectionHeading({
 export function PrivacyPolicySections() {
   return (
     <div className="flex flex-col gap-12 md:gap-16">
-      {privacyPolicySections.map((section) => (
+      {privacyPolicySections.map((section, index) => (
         <section
           key={section.id}
           aria-labelledby={`privacy-policy-${section.id}`}
@@ -53,6 +55,7 @@ export function PrivacyPolicySections() {
         >
           <SectionHeading
             id={`privacy-policy-${section.id}`}
+            number={index + 1}
             title={section.title}
           />
           <PolicyCard>

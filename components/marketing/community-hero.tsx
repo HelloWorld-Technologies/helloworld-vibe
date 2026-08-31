@@ -60,6 +60,34 @@ function PolaroidCard({
 }
 
 /** Figma Ellipse 1592 — Hello Lime/100 @ 12%, layer blur 322.26 */
+function MobilePolaroidCard({
+  polaroid,
+}: {
+  polaroid: (typeof communityHeroPolaroids)[number];
+}) {
+  return (
+    <div
+      className="w-36 shrink-0"
+      style={{ transform: `rotate(${polaroid.rotation}deg)` }}
+    >
+      <div className="flex flex-col items-center bg-white px-1.5 py-1 shadow-[0_12px_16px_rgba(26,35,50,0.35)]">
+        <div className="relative aspect-[244/306] w-full overflow-hidden">
+          <Image
+            src={polaroid.image}
+            alt={polaroid.label}
+            fill
+            className="object-cover"
+            sizes="144px"
+          />
+        </div>
+        <p className="py-0.5 font-caveat text-xs text-[rgba(26,35,50,0.7)]">
+          {polaroid.label}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function BannerGlow({ className }: { className?: string }) {
   return (
     <div
@@ -102,30 +130,22 @@ export function CommunityHero() {
       <div className="relative z-10 px-4 py-8 sm:px-6 lg:hidden">
         <div className={pageShell.communityMobileHero}>
           <CommunityWeekendsHeading size="mobile" className="w-full" />
-          <div className="-mx-4 mt-10 overflow-x-auto px-4 pb-2 scrollbar-none">
-            <div className="flex w-max gap-4">
-              {communityHeroPolaroids.map((polaroid) => (
-                <div
-                  key={polaroid.id}
-                  className="w-36 shrink-0"
-                  style={{ transform: `rotate(${polaroid.rotation}deg)` }}
-                >
-                  <div className="flex flex-col items-center bg-white px-1.5 py-1 shadow-[0_12px_16px_rgba(26,35,50,0.35)]">
-                    <div className="relative aspect-[244/306] w-full overflow-hidden">
-                      <Image
-                        src={polaroid.image}
-                        alt={polaroid.label}
-                        fill
-                        className="object-cover"
-                        sizes="144px"
-                      />
-                    </div>
-                    <p className="py-0.5 font-caveat text-xs text-[rgba(26,35,50,0.7)]">
-                      {polaroid.label}
-                    </p>
-                  </div>
-                </div>
-              ))}
+          <div className="group -mx-4 mt-10 overflow-hidden px-4 py-6 motion-reduce:overflow-x-auto motion-reduce:scrollbar-none">
+            <div
+              className={cn(
+                "flex w-max gap-4",
+                "animate-community-polaroid-marquee motion-reduce:animate-none",
+                "group-hover:[animation-play-state:paused]",
+              )}
+            >
+              {[...communityHeroPolaroids, ...communityHeroPolaroids].map(
+                (polaroid, index) => (
+                  <MobilePolaroidCard
+                    key={`${polaroid.id}-${index}`}
+                    polaroid={polaroid}
+                  />
+                ),
+              )}
             </div>
           </div>
         </div>

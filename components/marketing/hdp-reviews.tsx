@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { PaginatedCarousel } from "@/components/ui/paginated-carousel";
 import type { HdpReviewSummaryView } from "@/src/lib/hdp/map-hdp-api";
 import { hdpSectionHeadingClassName } from "@/components/marketing/hdp-section-heading";
+import { TenantReviewCard } from "@/components/marketing/tenant-review-card";
 import type { HdpResidentReview } from "@/src/tokens/hdp-reviews";
 import { cn } from "@/src/lib/cn";
 
@@ -69,46 +69,6 @@ function CategoryBar({
         {score.toFixed(1)}
       </span>
     </div>
-  );
-}
-
-function ReviewCard({
-  review,
-  className,
-}: {
-  review: HdpResidentReview;
-  className?: string;
-}) {
-  return (
-    <article
-      className={cn(
-        "flex h-[16.375rem] w-full shrink-0 flex-col gap-4 rounded-[10px] border border-[#eee] bg-white p-4 shadow-[0_1px_5.5px_rgba(0,0,0,0.04)]",
-        className,
-      )}
-    >
-      <div className="flex items-center gap-3">
-        <div className="relative size-9 shrink-0 overflow-hidden rounded-full bg-gray-100">
-          <Image
-            src={review.avatarSrc}
-            alt=""
-            fill
-            className="object-cover"
-            sizes="36px"
-          />
-        </div>
-        <div className="flex min-w-0 flex-1 items-start justify-between gap-2">
-          <p className="truncate text-base font-bold text-gray-900">
-            {review.name}
-          </p>
-          <span className="shrink-0 rounded-2xl bg-blue-light-50 px-2 py-0.5 text-xs font-medium text-blue-light-600">
-            {review.rating}★
-          </span>
-        </div>
-      </div>
-      <p className="line-clamp-6 text-sm leading-5 text-[#343434]">
-        {review.quote}
-      </p>
-    </article>
   );
 }
 
@@ -247,7 +207,11 @@ export function HdpReviews({
           paginationClassName="mt-4"
           mobilePaginationClassName="mt-4"
           renderItem={(review, cardClassName) => (
-            <ReviewCard review={review} className={cardClassName} />
+            <TenantReviewCard
+              name={review.name}
+              quote={review.quote}
+              className={cardClassName}
+            />
           )}
         />
         ) : null}

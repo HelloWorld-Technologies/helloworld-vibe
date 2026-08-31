@@ -21,7 +21,7 @@ export function CommunityWeekendsHeading({
           "font-playfair font-semibold tracking-[-0.047em] text-gray-800",
           isDesktop
             ? "text-[2.75rem] leading-[0.97] sm:text-[4rem] lg:text-[5.25rem]"
-            : "text-[1.75rem] leading-[1.05]",
+            : "text-[40px] leading-[1.15]",
         )}
       >
         <span className="block">Weekends hit</span>
@@ -29,7 +29,7 @@ export function CommunityWeekendsHeading({
           <span
             className={cn(
               communityAccentClassName,
-              isDesktop ? "text-[5.25rem] leading-[0.97]" : "text-[2rem]",
+              isDesktop && "text-[5.25rem] leading-[0.97]",
             )}
           >
             Different
@@ -79,21 +79,14 @@ export function CommunityBoringWeekendsHeading({
       className={cn(
         "font-playfair font-semibold tracking-[-0.047em] text-gray-800",
         isDesktop
-          ? "text-[2.75rem] leading-[0.97] sm:text-[4rem] lg:text-[5.25rem] lg:leading-[5rem]"
-          : "text-[1.75rem] leading-[1.05]",
+          ? "text-[40px] leading-[1.15] sm:text-[4rem] sm:leading-[0.97] lg:text-[4rem] lg:leading-[0.97]"
+          : "text-[40px] leading-[1.15]",
         className,
       )}
     >
       <span className="block">No More</span>
-      <span className="block">
-        <span
-          className={cn(
-            communityAccentClassName,
-            isDesktop ? "text-[5.25rem] leading-[5rem]" : "text-[2rem]",
-          )}
-        >
-          Boring{" "}
-        </span>
+      <span className="block whitespace-nowrap">
+        <span className={communityAccentClassName}>Boring </span>
         Weekends.
       </span>
     </h2>

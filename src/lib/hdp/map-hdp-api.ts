@@ -329,13 +329,6 @@ export function mapGoogleDataToReviewSummary(
   };
 }
 
-const REVIEW_AVATARS = [
-  "/assets/community/feed/feed-1.webp",
-  "/assets/community/feed/feed-2.webp",
-  "/assets/community/feed/feed-3.webp",
-  "/assets/community/feed/feed-4.png",
-] as const;
-
 export function mapGoogleReviewsToResidentReviews(
   googleData: GoogleData | null | undefined,
 ): HdpResidentReview[] {
@@ -345,9 +338,7 @@ export function mapGoogleReviewsToResidentReviews(
     .map((review, index) => ({
       id: `google-review-${index}`,
       name: review.name,
-      rating: Number(review.star) || 5,
       quote: review.review,
-      avatarSrc: REVIEW_AVATARS[index % REVIEW_AVATARS.length],
     }));
 }
 

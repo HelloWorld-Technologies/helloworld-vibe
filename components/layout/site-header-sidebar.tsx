@@ -483,16 +483,18 @@ export function SiteHeaderSidebar({
           open ? "translate-x-0" : "translate-x-full",
         )}
       >
-        <button
-          type="button"
-          aria-label="Close menu"
-          onClick={onClose}
-          className="absolute right-5 top-7 z-20 flex size-10 items-center justify-center rounded-full text-hello-lime-600 transition-colors hover:bg-gray-50 hover:text-hello-lime-700"
-        >
-          <CloseIcon className="size-[17px]" />
-        </button>
+        <div className="relative z-20 flex shrink-0 justify-end px-10 pb-4 pt-7">
+          <button
+            type="button"
+            aria-label="Close menu"
+            onClick={onClose}
+            className="flex size-10 items-center justify-center rounded-full text-hello-lime-600 transition-colors hover:bg-gray-50 hover:text-hello-lime-700"
+          >
+            <CloseIcon className="size-[17px]" />
+          </button>
+        </div>
 
-        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden px-10 pb-10 pt-[5.25rem]">
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-10 pb-10">
           {userPhone ? (
             <div className="mb-4 flex items-center gap-3">
               <UserProfileAvatarIcon className="size-12 shrink-0" />

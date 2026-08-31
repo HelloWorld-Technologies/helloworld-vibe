@@ -15,7 +15,7 @@ function StatDivider() {
 function WeekendsHeading() {
   return (
     <div className="relative inline-block text-center lg:text-left">
-      <h2 className="font-playfair text-display-md font-bold leading-[1.08] tracking-tight text-gray-900 sm:text-display-lg lg:text-display-2xl lg:leading-[1.05]">
+      <h2 className="font-playfair text-display-lg font-bold leading-[1.08] tracking-tight text-gray-900 sm:text-display-lg lg:text-display-2xl lg:leading-[1.05]">
         <span className="block">Weekends hit</span>
         <span className="mt-1 block leading-none sm:mt-2">
           <span className="italic text-gradient-different">Different</span>{" "}
@@ -23,7 +23,7 @@ function WeekendsHeading() {
             <span className="relative z-0">here</span>
             <span
               aria-hidden
-              className="absolute -bottom-4 left-1/2 z-10 w-max -translate-x-1/3 rotate-[-4deg] bg-blue-light-300 px-2 py-0.5 font-caveat text-sm font-normal leading-none text-gray-900 sm:left-0 sm:translate-x-0 sm:px-5 sm:text-lg lg:left-0 lg:text-xl"
+              className="absolute -bottom-4 left-1/2 z-10 w-max -translate-x-1/3 rotate-[-4deg] bg-blue-light-300 px-2 py-0.5 font-caveat text-base font-normal leading-none text-gray-900 sm:left-0 sm:translate-x-0 sm:px-5 sm:text-lg lg:left-0 lg:text-xl"
             >
               ✦ ps. Good vibes only!
             </span>
