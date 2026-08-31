@@ -13,6 +13,10 @@ import { HomepageCarouselNav } from "@/components/marketing/homepage-carousel-na
 import { Modal, ModalDescription, ModalTitle } from "@/components/ui/modal";
 import { cn } from "@/src/lib/cn";
 import {
+  getMomentsCarouselState,
+  getMomentsPageStartIndex,
+} from "@/src/lib/moments-carousel";
+import {
   homeownersPageCopy,
   homeownersPartnerLogo,
   homeownersPartners,
@@ -105,18 +109,33 @@ function PartnerCard({
   );
 }
 
+function measureCarouselGap(container: HTMLElement): number {
+  const styles = getComputedStyle(container);
+  return (
+    Number.parseFloat(styles.columnGap) ||
+    Number.parseFloat(styles.gap) ||
+    16
+  );
+}
+
 export function HomeownersPartners() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
+  const [activePage, setActivePage] = useState(0);
+  const [pageCount, setPageCount] = useState(1);
 
   const updateScrollState = useCallback(() => {
     const container = scrollRef.current;
     if (!container) return;
-    setCanScrollPrev(container.scrollLeft > 8);
-    setCanScrollNext(
-      container.scrollLeft + container.clientWidth < container.scrollWidth - 8,
+    const state = getMomentsCarouselState(
+      container,
+      measureCarouselGap(container),
     );
+    setCanScrollPrev(state.canScrollPrev);
+    setCanScrollNext(state.canScrollNext);
+    setPageCount(state.pageCount);
+    setActivePage(state.activePage);
   }, []);
 
   useEffect(() => {
@@ -125,15 +144,19 @@ export function HomeownersPartners() {
     return () => window.removeEventListener("resize", updateScrollState);
   }, [updateScrollState]);
 
-  function scrollByCard(direction: "prev" | "next") {
+  function goToPage(page: number) {
     const container = scrollRef.current;
     if (!container) return;
-    const card = container.querySelector("article");
-    const offset = (card?.clientWidth ?? 288) + 16;
-    container.scrollBy({
-      left: direction === "next" ? offset : -offset,
+    const nextPage = Math.max(0, Math.min(page, pageCount - 1));
+    const gap = measureCarouselGap(container);
+    const cardIndex = getMomentsPageStartIndex(container, nextPage, gap);
+    const card = container.children[cardIndex] as HTMLElement | undefined;
+    card?.scrollIntoView({
       behavior: "smooth",
+      inline: "start",
+      block: "nearest",
     });
+    setActivePage(nextPage);
   }
 
   return (
@@ -155,10 +178,13 @@ export function HomeownersPartners() {
 
         <HomepageCarouselNav
           className="mt-8"
+          pageCount={pageCount}
+          activeIndex={activePage}
           prevDisabled={!canScrollPrev}
           nextDisabled={!canScrollNext}
-          onPrev={() => scrollByCard("prev")}
-          onNext={() => scrollByCard("next")}
+          onPrev={() => goToPage(activePage - 1)}
+          onNext={() => goToPage(activePage + 1)}
+          onSelectPage={goToPage}
         />
       </div>
     </section>

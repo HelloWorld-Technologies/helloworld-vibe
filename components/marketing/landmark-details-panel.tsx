@@ -179,12 +179,31 @@ export function LandmarkDetailsPanel({ className }: { className?: string }) {
         </div>
         <HomepageCarouselNav
           className="mt-6 hidden lg:flex"
+          pageCount={Math.max(
+            1,
+            landmarkSimilarProperties.length - visibleSimilarCount + 1,
+          )}
+          activeIndex={similarIndex}
           prevDisabled={similarIndex === 0}
           nextDisabled={
             similarIndex >= landmarkSimilarProperties.length - visibleSimilarCount
           }
           onPrev={() => scrollSimilar("prev")}
           onNext={() => scrollSimilar("next")}
+          onSelectPage={(index) =>
+            setSimilarIndex(
+              Math.max(
+                0,
+                Math.min(
+                  index,
+                  Math.max(
+                    0,
+                    landmarkSimilarProperties.length - visibleSimilarCount,
+                  ),
+                ),
+              ),
+            )
+          }
         />
       </section>
 

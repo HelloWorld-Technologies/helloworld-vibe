@@ -73,7 +73,7 @@ export function SrpListingsSection({
 
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-900">
               Pick upto 5 interests for better matches
             </p>
             <div className="hidden shrink-0 items-center gap-4 sm:flex">
@@ -123,7 +123,7 @@ export function SrpListingsSection({
             <button
               type="button"
               onClick={clearSelectedVibes}
-              className="ml-auto block w-fit text-sm font-semibold text-blue-light-600 hover:text-blue-light-700"
+              className="ml-auto block w-fit text-sm font-semibold text-blue-light-600 opacity-80 transition-opacity hover:text-blue-light-700 hover:opacity-100"
             >
               Clear All
             </button>

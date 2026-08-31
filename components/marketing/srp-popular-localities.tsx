@@ -104,10 +104,15 @@ export function SrpPopularLocalities({
     >
       <HomepageCarouselNav
         className="mb-6 hidden lg:flex"
+        pageCount={maxIndex + 1}
+        activeIndex={index}
         prevDisabled={index === 0}
         nextDisabled={index >= maxIndex}
         onPrev={() => scroll("prev")}
         onNext={() => scroll("next")}
+        onSelectPage={(next) =>
+          setIndex(Math.max(0, Math.min(next, maxIndex)))
+        }
       />
 
       <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">

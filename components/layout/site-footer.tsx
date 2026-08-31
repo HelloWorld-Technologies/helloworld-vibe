@@ -97,17 +97,17 @@ function FooterLinkList({
 
 function FooterContactDetails() {
   return (
-    <div className="space-y-2.5 lg:space-y-3">
+    <div className="min-w-0 space-y-2.5 lg:space-y-3">
       <a
         href={footerContact.phoneHref}
-        className="flex items-center gap-2 text-sm font-bold text-[#0a0e14] lg:text-base"
+        className="flex items-center gap-2 text-sm font-normal text-[#0a0e14] lg:text-base"
       >
         <PhoneIcon className="size-[18px] lg:size-[22px]" />
         {footerContact.phone}
       </a>
       <a
         href={footerContact.emailHref}
-        className="flex items-center gap-2 text-sm font-bold text-[#0a0e14] lg:text-base"
+        className="flex items-center gap-2 text-sm font-normal text-[#0a0e14] lg:text-base"
       >
         <MailIcon className="size-[18px] lg:size-[22px]" />
         {footerContact.email}
@@ -198,9 +198,9 @@ export function SiteFooter() {
               {footerContact.address}
             </p>
 
-            <div className="mt-6 space-y-6 lg:mt-16 lg:space-y-0">
+            <div className="mt-6 flex items-start justify-between gap-4 lg:mt-16 lg:block">
               <FooterContactDetails />
-              <div className="lg:hidden">
+              <div className="shrink-0 lg:hidden">
                 <FooterSocialLinks variant="mobile" />
               </div>
             </div>

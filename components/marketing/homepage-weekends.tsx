@@ -7,7 +7,7 @@ function StatDivider() {
   return (
     <div
       aria-hidden
-      className="h-10 w-px shrink-0 self-center bg-gray-200 sm:h-12 lg:mx-1"
+      className="w-px shrink-0 self-stretch bg-gray-200 sm:h-12 sm:self-center lg:mx-1"
     />
   );
 }
@@ -23,7 +23,7 @@ function WeekendsHeading() {
             <span className="relative z-0">here</span>
             <span
               aria-hidden
-              className="absolute -bottom-4 left-1/2 z-10 w-max -translate-x-1/3 rotate-[-4deg] bg-blue-light-300 px-3 py-0.5 font-caveat text-base leading-none text-gray-900 sm:left-0 sm:translate-x-0 sm:px-5 sm:text-lg lg:left-0 lg:text-xl"
+              className="absolute -bottom-4 left-1/2 z-10 w-max -translate-x-1/3 rotate-[-4deg] bg-blue-light-300 px-2 py-0.5 font-caveat text-sm font-normal leading-none text-gray-900 sm:left-0 sm:translate-x-0 sm:px-5 sm:text-lg lg:left-0 lg:text-xl"
             >
               ✦ ps. Good vibes only!
             </span>
@@ -61,18 +61,18 @@ export function HomepageWeekends() {
                 {homepageStats.map((stat, index) => (
                   <div key={stat.id} className="contents">
                     {index > 0 ? <StatDivider /> : null}
-                    <div className="flex min-w-0 flex-1 items-center gap-1.5 px-1 sm:min-w-[5rem] sm:flex-none sm:gap-2 sm:px-3 lg:px-4">
+                    <div className="flex min-w-0 flex-1 flex-col items-center gap-1 px-1 text-center sm:min-w-[5rem] sm:flex-none sm:flex-row sm:items-center sm:gap-2 sm:px-3 lg:px-4">
                       <HomepageAsset
                         asset={stat.icon}
                         width={40}
                         height={40}
                         className="size-8 shrink-0 sm:size-10 opacity-80"
                       />
-                      <div className="min-w-0 text-center">
+                      <div className="min-w-0 w-full text-center sm:w-auto">
                         <p className="text-lg font-bold leading-6 text-gray-900 sm:text-xl sm:leading-7 lg:text-2xl lg:leading-8">
                           {stat.value}
                         </p>
-                        <p className="text-xs leading-[1.125rem] text-gray-600 sm:text-sm sm:leading-5">
+                        <p className="text-[10px] leading-tight text-gray-600 sm:text-sm sm:leading-5">
                           {stat.label}
                         </p>
                       </div>

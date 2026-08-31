@@ -45,7 +45,7 @@ export function MomentsCarouselControls({
             className={cn(
               "h-2 rounded-full transition-all",
               index === activeIndex
-                ? "w-8 bg-gray-700 sm:bg-hello-lime-400"
+                ? "w-8 bg-gray-700"
                 : "w-2 bg-gray-300",
             )}
           />

@@ -83,13 +83,12 @@ export function HomepageFeed({
   return (
     <section className="py-12 sm:py-16 lg:py-20">
       <div className={pageShell.homepage}>
-        <div className="flex justify-center">
-          <HomepageSectionHeading
-            prefix="Straight from the"
-            highlight="Feed!"
-            gradient="home"
-          />
-        </div>
+        <HomepageSectionHeading
+          prefix="Straight from the"
+          highlight="Feed!"
+          gradient="home"
+          className="text-center"
+        />
         <div
           ref={scrollRef}
           className="mt-8 flex touch-pan-x gap-4 overflow-x-auto overscroll-x-contain scroll-smooth pb-2 snap-x snap-mandatory scrollbar-none"

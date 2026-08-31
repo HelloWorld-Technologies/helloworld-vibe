@@ -302,10 +302,13 @@ function SrpCardCarousel({
                     setActiveIndex(index);
                   }}
                   className={cn(
-                    "relative z-10 h-1.5 rounded-full transition-[width,opacity,background-color] duration-300 ease-out motion-reduce:transition-none",
+                    "relative z-10 rounded-full transition-[width,opacity,background-color] duration-300 ease-out motion-reduce:transition-none",
                     isActive
-                      ? cn("w-5", pill ? "bg-transparent" : "bg-white")
-                      : "w-1.5 bg-white/70 hover:bg-white/90",
+                      ? cn(
+                          "h-1.5 w-5",
+                          pill ? "bg-transparent" : "bg-white",
+                        )
+                      : "h-1.5 w-1.5 bg-white/70 hover:bg-white/90",
                   )}
                 />
               );

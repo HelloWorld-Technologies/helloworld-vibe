@@ -552,10 +552,25 @@ export function LocationSearch({
             onClick={() =>
               setActivePanel((panel) => (panel === "city" ? null : "city"))
             }
-            className="flex w-auto min-w-0 items-center gap-2 rounded-full px-1.5 py-1 transition-colors hover:bg-gray-50 sm:gap-3 sm:px-2 sm:py-1.5"
+            className={cn(
+              "flex w-auto min-w-0 items-center gap-2 rounded-full py-1 transition-colors hover:bg-gray-50",
+              isHeader
+                ? "px-1.5 sm:gap-3 sm:px-2 sm:py-1.5"
+                : "px-1.5 sm:px-2",
+            )}
           >
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gray-100 sm:size-10">
-              <LocationIcon className="size-4 text-black sm:size-5" />
+            <span
+              className={cn(
+                "flex shrink-0 items-center justify-center rounded-full bg-gray-100",
+                isHeader ? "size-8 sm:size-9" : "size-9",
+              )}
+            >
+              <LocationIcon
+                className={cn(
+                  "text-black",
+                  isHeader ? "size-4 sm:size-5" : "size-5",
+                )}
+              />
             </span>
             <span className="min-w-0 text-left">
               <span className="block opacity-50 font-satoshi text-xs font-bold leading-[18px] text-[#0A0F14]">
@@ -610,7 +625,7 @@ export function LocationSearch({
         {!isHeader ? (
           <span
             aria-hidden
-            className="mx-1 h-8 w-px shrink-0 bg-gray-200 sm:mx-2 sm:h-10"
+            className="mx-1 h-9 w-px shrink-0 bg-gray-200 sm:mx-2"
           />
         ) : null}
 
@@ -765,13 +780,13 @@ export function LocationSearch({
               "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-hello-lime-100",
               isHeader
                 ? "h-8 w-8 sm:h-9 sm:w-9 sm:hover:w-[6.25rem] sm:hover:justify-start sm:hover:gap-2 sm:hover:px-3"
-                : "h-9 w-9 sm:h-11 sm:w-11 sm:hover:w-[6.75rem] sm:hover:justify-start sm:hover:gap-2 sm:hover:px-3.5",
+                : "mr-1.5 h-9 w-9 sm:mr-2 sm:hover:w-[6.75rem] sm:hover:justify-start sm:hover:gap-2 sm:hover:px-3.5",
             )}
           >
             <SearchIcon
               className={cn(
                 "shrink-0",
-                isHeader ? "size-3.5 sm:size-4" : "size-4 sm:size-5",
+                isHeader ? "size-3.5 sm:size-4" : "size-4",
               )}
             />
             <span

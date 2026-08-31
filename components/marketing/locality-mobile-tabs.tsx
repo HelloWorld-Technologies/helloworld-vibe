@@ -24,7 +24,7 @@ export function LocalityMobileTabs({
   return (
     <div
       className={cn(
-        "mx-auto flex w-fit rounded-full bg-gray-100 p-1 md:hidden",
+        "flex w-full rounded-full bg-gray-100 p-1 md:hidden",
         className,
       )}
       role="tablist"
@@ -40,7 +40,7 @@ export function LocalityMobileTabs({
             aria-selected={selected}
             onClick={() => onChange(tab.id)}
             className={cn(
-              "rounded-full px-5 py-2 text-sm font-semibold transition-colors",
+              "flex-1 rounded-full px-5 py-2 text-center text-sm font-semibold transition-colors",
               selected
                 ? "bg-white text-gray-900 shadow-xs"
                 : "text-gray-600 hover:text-gray-900",

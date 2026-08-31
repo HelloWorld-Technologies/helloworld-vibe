@@ -107,12 +107,19 @@ export function CommunityFeed() {
 
         <HomepageCarouselNav
           className="mt-8 hidden lg:flex"
+          pageCount={Math.max(1, count - visibleCount + 1)}
+          activeIndex={desktopIndex}
           prevDisabled={desktopIndex === 0}
           nextDisabled={desktopIndex >= count - visibleCount}
           onPrev={() => setDesktopIndex((index) => Math.max(0, index - 1))}
           onNext={() =>
             setDesktopIndex((index) =>
               Math.min(count - visibleCount, index + 1),
+            )
+          }
+          onSelectPage={(index) =>
+            setDesktopIndex(
+              Math.max(0, Math.min(index, Math.max(0, count - visibleCount))),
             )
           }
         />

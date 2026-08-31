@@ -31,7 +31,7 @@ function HomepageHeroHeading({
         "font-bold tracking-tight text-gray-900",
         size === "desktop"
           ? "max-w-xl text-display-md sm:text-display-lg lg:text-[3.75rem] lg:leading-[4.5rem]"
-          : "max-w-[17.5rem] text-center text-[1.625rem] leading-[2rem]",
+          : "text-center text-[1.25rem] leading-[1.5rem]",
         className,
       )}
     >
@@ -68,7 +68,7 @@ function VibeFilters({
 }) {
   return (
     <div className="mt-0 lg:mt-5">
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-gray-900">
         <span aria-hidden className="mr-1">
           ✨
         </span>

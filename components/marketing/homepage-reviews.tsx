@@ -130,7 +130,7 @@ function ReviewCard({
               <div className="flex min-h-0 flex-1 flex-col">
                 <p
                   ref={quoteRef}
-                  className="line-clamp-[9] text-sm font-normal leading-5 text-[#1e2939]"
+                  className="line-clamp-[9] font-satoshi text-sm font-medium leading-5 tracking-normal text-[#1e2939]"
                 >
                   {review.quote}
                 </p>

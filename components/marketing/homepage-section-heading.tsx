@@ -28,23 +28,19 @@ export function HomepageSectionHeading({
   as?: "h1" | "h2" | "h3";
 }) {
   const gradientClass = getTextGradientClassName(gradient);
-  const isProperties = size === "properties";
+  const sizeClass =
+    size === "properties"
+      ? "text-[1.875rem] font-medium leading-[2.375rem] text-gray-900"
+      : "text-display-sm font-medium tracking-tight text-gray-900 md:text-display-md";
 
   return (
-    <Tag
-      className={cn(
-        isProperties
-          ? "text-[1.875rem] font-medium leading-[2.375rem] text-gray-900"
-          : "text-display-xs font-medium tracking-tight text-gray-900 sm:text-display-sm md:text-display-md",
-        className,
-      )}
-    >
+    <Tag className={cn(sizeClass, className)}>
       {prefix}{" "}
       <span
         className={cn(
           highlightFontClass[gradient],
           gradientClass,
-          isProperties && "text-[2.25rem] leading-[2.375rem]",
+          size === "properties" && "text-[2.25rem] leading-[2.375rem]",
         )}
       >
         {highlight}

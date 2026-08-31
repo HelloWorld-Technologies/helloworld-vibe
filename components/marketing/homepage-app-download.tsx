@@ -46,7 +46,7 @@ function AppDownloadHeading({ className }: { className?: string }) {
   return (
     <h2
       className={cn(
-        "font-bold tracking-tight text-gray-900",
+        "font-medium tracking-tight text-gray-900",
         className,
       )}
     >
@@ -118,19 +118,19 @@ export function HomepageAppDownload() {
 
       <div className={cn("relative", pageShell.homepage)}>
         <div className="flex items-start gap-3 py-8 lg:hidden">
-          <div className="relative h-[13.75rem] w-[6.5rem] shrink-0 overflow-hidden">
+          <div className="relative w-36 shrink-0 sm:w-40">
             <Image
               src={homepageAppScreenshot2.file}
               alt="HelloWorld app screens"
               width={480}
               height={992}
-              className="absolute bottom-0 left-1/2 z-0 h-[125%] w-auto max-w-none -translate-x-1/2 object-contain object-bottom drop-shadow-[0_8px_24px_rgba(16,24,40,0.12)]"
+              className="relative z-0 h-auto w-full object-contain drop-shadow-[0_8px_24px_rgba(16,24,40,0.12)]"
             />
           </div>
 
           <div className="relative z-10 flex min-w-0 flex-1 flex-col items-start gap-2 pt-0 text-left">
             <AppDownloadHeading className="text-[1.125rem] leading-6" />
-            <p className="text-xs leading-4 text-gray-600">
+            <p className="text-sm font-bold leading-5 text-gray-600">
               Find homes, manage stays, and stay connected.
             </p>
             <div className="mt-1 w-full">
@@ -159,7 +159,7 @@ export function HomepageAppDownload() {
 
           <div className="relative z-10 flex min-w-0 flex-col items-start gap-3 text-left">
             <AppDownloadHeading className="text-[2.25rem] leading-11 tracking-[-0.02em] whitespace-nowrap" />
-            <p className="text-lg leading-7 text-gray-600">
+            <p className="text-lg font-bold leading-7 text-gray-600">
               Find homes, manage stays, and stay connected.
             </p>
             <div className="mt-2">
