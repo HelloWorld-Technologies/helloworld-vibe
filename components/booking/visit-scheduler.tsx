@@ -264,7 +264,11 @@ export function VisitScheduler({
       >
         <div className={embedded ? "mt-1.5 md:mt-4" : "mt-6 sm:mt-8"}>
           {embedded ? (
-            <div ref={timeScrollRef} className="scrollbar-none">
+            <div
+              ref={timeScrollRef}
+              className="scrollbar-none overflow-y-auto max-md:max-h-none"
+              style={{ maxHeight: visitTimeSlotListMaxHeight }}
+            >
               <div
                 key={selectedDateId}
                 ref={timeListRef}
