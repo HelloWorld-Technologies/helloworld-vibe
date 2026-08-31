@@ -1,7 +1,6 @@
 import { AboutAurum } from "@/components/marketing/about/about-aurum";
 import { AboutHeadlines } from "@/components/marketing/about/about-headlines";
 import { AboutHero } from "@/components/marketing/about/about-hero";
-import { AboutMilestones } from "@/components/marketing/about/about-milestones";
 import { AboutMission } from "@/components/marketing/about/about-mission";
 import { AboutPrinciples } from "@/components/marketing/about/about-principles";
 import {
@@ -18,7 +17,6 @@ export function AboutPageContent() {
       <AboutLeadership />
       <AboutCoreTeam />
       <AboutHeadlines />
-      <AboutMilestones />
       <AboutPrinciples />
     </>
   );

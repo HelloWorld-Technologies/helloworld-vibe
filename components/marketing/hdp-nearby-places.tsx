@@ -13,6 +13,7 @@ import {
   ShowOnMapsButtonLabel,
   showOnMapsLinkClassName,
 } from "@/components/icons/show-on-maps-icon";
+import { hdpSectionHeadingClassName } from "@/components/marketing/hdp-section-heading";
 import type { NeighborhoodCardData } from "@/src/tokens/neighborhood-card";
 import { cn } from "@/src/lib/cn";
 
@@ -151,9 +152,7 @@ export function HdpNearbyPlaces({
       aria-label="Nearby places section"
     >
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1">
-        <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
-          {title}
-        </h2>
+        <h2 className={hdpSectionHeadingClassName}>{title}</h2>
         <div className="justify-self-end">{mapsControl}</div>
 
         <p className="text-base text-gray-600">

@@ -1030,7 +1030,7 @@ export function PropertyGalleryMobile({
           <div
             className={cn(
               "absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 pt-16",
-              isHero ? "pb-10" : "pb-5",
+              isHero ? "pb-14" : "pb-5",
             )}
           >
             {showCategoryTabs ? (

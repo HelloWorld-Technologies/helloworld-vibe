@@ -37,7 +37,7 @@ export function ContactInfoCards({ className }: { className?: string }) {
         className,
       )}
     >
-      <article className="order-1 h-full rounded-3xl bg-gradient-mint/80 p-5 sm:p-6">
+      <article className="order-1 h-full rounded-3xl bg-gradient-mint/80 p-5 text-center sm:p-6 md:text-left">
         <h2 className="text-base font-bold text-gray-900 sm:text-lg">
           {contactMailing.title}
         </h2>
@@ -49,11 +49,11 @@ export function ContactInfoCards({ className }: { className?: string }) {
         </p>
       </article>
 
-      <article className="order-3 h-full rounded-3xl bg-gradient-lavender/80 p-5 sm:p-6 md:order-2">
+      <article className="order-3 h-full rounded-3xl bg-gradient-lavender/80 p-5 text-center sm:p-6 md:order-2 md:text-left">
         <h2 className="text-base font-bold text-gray-900 underline decoration-blue-light-500 decoration-2 underline-offset-4 sm:text-lg">
           {contactQueries.title}
         </h2>
-        <div className="mt-4 flex items-start gap-3">
+        <div className="mt-4 flex items-center justify-center gap-3 md:items-start md:justify-start">
           <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center text-gray-800">
             <HeadsetIcon className="size-6" />
           </span>
@@ -87,7 +87,7 @@ export function ContactInfoCards({ className }: { className?: string }) {
         />
       </div>
 
-      <article className="order-4 h-full rounded-3xl bg-gradient-sky/90 p-5 sm:p-6">
+      <article className="order-4 h-full rounded-3xl bg-gradient-sky/90 p-5 text-center sm:p-6 md:text-left">
         <h2 className="text-base font-bold text-gray-900 sm:text-lg">
           {contactEmails.title}
         </h2>
@@ -114,7 +114,7 @@ export function ContactInfoCards({ className }: { className?: string }) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="HelloWorld on LinkedIn"
-            className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-blue-light-600 hover:underline"
+            className="mx-auto mt-3 flex w-fit items-center gap-2 text-sm font-semibold text-blue-light-600 hover:underline md:mx-0"
           >
             <Image
               src={aboutLinkedInIcon}

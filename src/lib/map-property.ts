@@ -33,6 +33,14 @@ function vibeMatchScore(property: Property): number | undefined {
   return Math.round(score);
 }
 
+function propertyRating(property: Property): number | undefined {
+  const raw = property.rating ?? property.google_rating;
+  if (raw == null) return undefined;
+  const rating = typeof raw === "number" ? raw : Number(raw);
+  if (!Number.isFinite(rating) || rating <= 0) return undefined;
+  return rating;
+}
+
 /** Prefer property locality; list APIs often leave `locality` null and put it in address.line2. */
 export function resolvePropertyLocality(property: Property): string | undefined {
   const candidates = [
@@ -95,7 +103,7 @@ export function mapPropertyToSrpCard(
     name: property.display_name || property.name,
     subtitle,
     images: propertyImages(property),
-    rating: Number(property.address?.latitude ? 4.5 : 4.5),
+    rating: propertyRating(property),
     roomTypes: ["Private", "Double", "Triple"],
     rent: property.min_rent ?? 0,
     statusLabel: statusLabel(property),

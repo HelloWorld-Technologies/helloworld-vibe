@@ -223,7 +223,7 @@ export function LocalityBentoHero({
           <h1 className="text-lg font-medium tracking-tight text-gray-900">
             {title}
           </h1>
-          <p className="mt-2 text-sm font-medium leading-5 text-gray-900">{subtitle}</p>
+          <p className="mt-2 text-xs font-medium leading-4 text-gray-900">{subtitle}</p>
           {showRatings && bentoTiles ? (
             <BentoMobileRatings tiles={bentoTiles} />
           ) : null}

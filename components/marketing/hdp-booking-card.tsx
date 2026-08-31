@@ -177,7 +177,13 @@ function InfoIcon({ className }: { className?: string }) {
   );
 }
 
-function HdpBookingTourFooter({ minStayMonths }: { minStayMonths: number }) {
+function HdpBookingTourFooter({
+  minStayMonths,
+  variant = "card",
+}: {
+  minStayMonths: number;
+  variant?: "card" | "modal";
+}) {
   const months = Math.max(1, minStayMonths || 1);
   const lockInLabel =
     months === 1 ? "1-month Lock-in" : `${months}-month Lock-in`;
@@ -190,7 +196,12 @@ function HdpBookingTourFooter({ minStayMonths }: { minStayMonths: number }) {
 
   return (
     <>
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-base font-medium text-black">
+      <div
+        className={cn(
+          "flex flex-wrap items-center justify-center gap-2 text-base font-medium text-black",
+          variant === "modal" ? "mt-1.5 md:mt-4" : "mt-4",
+        )}
+      >
         <span className="inline-flex items-center gap-2">
           <Image
             src="/assets/homepage-website/no-brokerage.svg"
@@ -242,9 +253,19 @@ function HdpBookingBookFooter({ minStayMonths }: { minStayMonths: number }) {
   );
 }
 
-function HdpBookingTourPanel({ view }: { view: HdpPageView }) {
+function HdpBookingTourPanel({
+  view,
+  variant = "card",
+}: {
+  view: HdpPageView;
+  variant?: "card" | "modal";
+}) {
   return (
-    <div className="mt-6 space-y-6">
+    <div
+      className={cn(
+        variant === "modal" ? "mt-2 space-y-2 md:mt-4 md:space-y-4" : "mt-6 space-y-6",
+      )}
+    >
       <div className="grid grid-cols-2 gap-3">
         <div className="min-w-0">
           <p className="text-[13px] font-medium text-[#0a0e14]/50">
@@ -483,8 +504,11 @@ export function HdpBookingCard({
       >
         {mode === "tour" ? (
           <>
-            <HdpBookingTourPanel view={resolvedView} />
-            <HdpBookingTourFooter minStayMonths={resolvedView.minStayMonths} />
+            <HdpBookingTourPanel view={resolvedView} variant={variant} />
+            <HdpBookingTourFooter
+              minStayMonths={resolvedView.minStayMonths}
+              variant={variant}
+            />
           </>
         ) : bookStep === "occupant" ? (
           <>

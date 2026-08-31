@@ -52,6 +52,9 @@ export interface Property {
   lightning_deal: boolean;
   /** Present on list responses when vibes filter is applied. */
   vibe_match_score?: number | null;
+  /** Google rating when included on list responses. */
+  rating?: number | null;
+  google_rating?: number | null;
 }
 
 export interface Address {

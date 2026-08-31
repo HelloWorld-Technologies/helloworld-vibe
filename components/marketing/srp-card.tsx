@@ -4,11 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
-  useRef,
   useState,
   type MouseEvent,
 } from "react";
@@ -29,7 +26,7 @@ export interface SrpCardProps {
   name: string;
   subtitle: string;
   images: readonly string[];
-  rating: number;
+  rating?: number;
   roomTypes: readonly string[];
   rent: number;
   originalRent?: number;
@@ -42,6 +39,8 @@ export interface SrpCardProps {
   className?: string;
   href?: string;
   propertyUrl?: string;
+  /** Eager-load the first carousel photo (above-the-fold SRP cards). */
+  imagePriority?: boolean;
   onRequestCallback?: () => void;
   onTakeTour?: () => void;
   onSaveToggle?: () => void;
@@ -170,9 +169,11 @@ function LeftImageBadge({
 function SrpCardCarousel({
   images,
   alt,
+  imagePriority = false,
 }: {
   images: readonly string[];
   alt: string;
+  imagePriority?: boolean;
 }) {
   const slides = useMemo(
     () =>
@@ -184,39 +185,11 @@ function SrpCardCarousel({
   const slidesKey = slides.join("|");
   const [activeIndex, setActiveIndex] = useState(0);
   const slideCount = slides.length;
-  const imageSrc = slides[activeIndex] ?? srpCardDefaultImage;
-  const isComingSoon = isSrpComingSoonImage(imageSrc);
-  const paginationRef = useRef<HTMLDivElement>(null);
-  const dotRefs = useRef(new Map<number, HTMLButtonElement>());
-  const [pill, setPill] = useState<{ left: number; width: number } | null>(
-    null,
-  );
+  const isComingSoon = slides.every((slide) => isSrpComingSoonImage(slide));
 
   useEffect(() => {
     setActiveIndex(0);
   }, [slidesKey]);
-
-  const updatePill = useCallback(() => {
-    const container = paginationRef.current;
-    const activeDot = dotRefs.current.get(activeIndex);
-    if (!container || !activeDot) return;
-    setPill({
-      left: activeDot.offsetLeft,
-      width: activeDot.offsetWidth,
-    });
-  }, [activeIndex]);
-
-  useLayoutEffect(() => {
-    updatePill();
-  }, [updatePill, slideCount]);
-
-  useLayoutEffect(() => {
-    const container = paginationRef.current;
-    if (!container) return;
-    const observer = new ResizeObserver(() => updatePill());
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, [updatePill]);
 
   function goTo(direction: -1 | 1) {
     setActiveIndex((current) => (current + direction + slideCount) % slideCount);
@@ -230,17 +203,31 @@ function SrpCardCarousel({
       )}
     >
       <div className="relative h-full w-full">
-        <Image
-          src={imageSrc}
-          alt={
-            isComingSoon
-              ? `${alt} coming soon`
-              : `${alt} — photo ${activeIndex + 1} of ${slideCount}`
-          }
-          fill
-          className="object-cover"
-          sizes="411px"
-        />
+        {slides.map((slide, index) => {
+          const slideIsComingSoon = isSrpComingSoonImage(slide);
+          const isActive = index === activeIndex;
+
+          return (
+            <Image
+              key={`${slide}-${index}`}
+              src={slide}
+              alt={
+                slideIsComingSoon
+                  ? `${alt} coming soon`
+                  : `${alt} — photo ${index + 1} of ${slideCount}`
+              }
+              fill
+              priority={imagePriority && index === 0}
+              loading={imagePriority && index === 0 ? "eager" : "lazy"}
+              aria-hidden={!isActive}
+              className={cn(
+                "object-cover",
+                isActive ? "opacity-100" : "pointer-events-none opacity-0",
+              )}
+              sizes="411px"
+            />
+          );
+        })}
       </div>
 
       {slideCount > 1 && !isComingSoon ? (
@@ -270,29 +257,12 @@ function SrpCardCarousel({
             <ChevronIcon direction="right" />
           </button>
 
-          <div
-            ref={paginationRef}
-            className="absolute inset-x-0 bottom-4 z-10 flex items-center justify-center gap-1.5"
-          >
-            {pill ? (
-              <span
-                aria-hidden
-                className="pointer-events-none absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-white transition-[left,width] duration-300 ease-out motion-reduce:transition-none"
-                style={{ left: pill.left, width: pill.width }}
-              />
-            ) : null}
+          <div className="absolute inset-x-0 bottom-4 z-10 flex items-center justify-center gap-1.5">
             {slides.map((slide, index) => {
               const isActive = index === activeIndex;
               return (
                 <button
                   key={`${slide}-${index}`}
-                  ref={(node) => {
-                    if (node) {
-                      dotRefs.current.set(index, node);
-                    } else {
-                      dotRefs.current.delete(index);
-                    }
-                  }}
                   type="button"
                   aria-label={`Go to photo ${index + 1}`}
                   aria-current={isActive}
@@ -302,13 +272,10 @@ function SrpCardCarousel({
                     setActiveIndex(index);
                   }}
                   className={cn(
-                    "relative z-10 rounded-full transition-[width,opacity,background-color] duration-300 ease-out motion-reduce:transition-none",
+                    "h-1.5 rounded-full transition-[width,background-color] duration-300 ease-out motion-reduce:transition-none",
                     isActive
-                      ? cn(
-                          "h-1.5 w-5",
-                          pill ? "bg-transparent" : "bg-white",
-                        )
-                      : "h-1.5 w-1.5 bg-white/70 hover:bg-white/90",
+                      ? "w-5 bg-white"
+                      : "w-1.5 bg-white/70 hover:bg-white/90",
                   )}
                 />
               );
@@ -337,6 +304,7 @@ export function SrpCard({
   className,
   href,
   propertyUrl,
+  imagePriority = false,
   onRequestCallback,
   onTakeTour,
   onSaveToggle,
@@ -405,7 +373,11 @@ export function SrpCard({
       }
     >
       <div className="relative">
-        <SrpCardCarousel images={images} alt={name} />
+        <SrpCardCarousel
+          images={images}
+          alt={name}
+          imagePriority={imagePriority}
+        />
 
         <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-4">
           {leftBadge ?? <span aria-hidden />}
@@ -441,9 +413,11 @@ export function SrpCard({
               <span className="block truncate">{name}</span>
             )}
           </h3>
-          <span className="inline-flex shrink-0 items-center rounded-2xl bg-[#f0f9ff] px-2 py-0.5 text-xs font-medium text-[#0086c9]">
-            {rating.toFixed(1)}★
-          </span>
+          {rating != null && Number.isFinite(rating) && rating > 0 ? (
+            <span className="inline-flex shrink-0 items-center rounded-2xl bg-[#f0f9ff] px-2 py-0.5 text-xs font-medium text-[#0086c9]">
+              {rating.toFixed(1)}★
+            </span>
+          ) : null}
         </div>
 
         <div className="flex items-center justify-between gap-3">

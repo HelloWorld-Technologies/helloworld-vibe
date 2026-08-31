@@ -264,9 +264,10 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
   });
 
   const contactLocation = config.localityName ?? config.city;
+  const dayFromHereLocation =
+    config.localityName ?? getCityLabel(config.city);
   const dayFromHereItems = config.dayFromHereItems ?? [];
-  const dayFromHereSubtitle =
-    "See nearby utilities, facilities, transport, hospitals and more.";
+  const dayFromHereSubtitle = `What living at ${dayFromHereLocation} actually looks like.`;
   const nearbyMap = useMemo(
     () => resolveSrpNearbyMap(config),
     [config],
@@ -457,7 +458,11 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
 
       <SiteFooter />
       {hasDetails && !isCityPage ? (
-        <LocalityMobileActions onShowDetails={showDetails} />
+        <LocalityMobileActions
+          activeTab={mobileTab}
+          onShowDetails={showDetails}
+          onShowProperties={showProperties}
+        />
       ) : null}
       {showSectionToggle ? (
         <SrpSectionToggle

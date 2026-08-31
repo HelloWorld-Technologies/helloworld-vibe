@@ -40,15 +40,15 @@ export function HdpMobileActions({
         <div className="mx-auto flex max-w-lg gap-2">
           <Button
             hierarchy="secondary-gray"
-            size="sm"
-            className="w-1/2"
+            size="md"
+            className="w-1/2 font-bold"
             onClick={() => openModal("tour")}
           >
             Take a tour
           </Button>
           <Button
-            size="sm"
-            className="w-1/2 bg-hello-lime-400 text-gray-900 hover:bg-hello-lime-500"
+            size="md"
+            className="w-1/2 bg-hello-lime-400 font-bold text-gray-900 hover:bg-hello-lime-500"
             disabled={view.soldOut}
             onClick={() => openModal("book")}
           >

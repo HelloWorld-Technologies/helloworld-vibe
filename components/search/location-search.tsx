@@ -59,6 +59,8 @@ export interface LocationSearchProps {
   onCityChange?: (city: CitySlug) => void;
   onLocalityChange?: (locality: string) => void;
   onSearch?: (value: LocationSearchValue) => void;
+  /** Fires when city or locality dropdown opens/closes (e.g. to relax ancestor overflow). */
+  onActivePanelChange?: (panel: Panel) => void;
 }
 
 type Panel = "city" | "locality" | null;
@@ -218,6 +220,7 @@ export function LocationSearch({
   onCityChange,
   onLocalityChange,
   onSearch,
+  onActivePanelChange,
 }: LocationSearchProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -506,6 +509,10 @@ export function LocationSearch({
       .get(highlightedLocalityIndex)
       ?.scrollIntoView({ block: "nearest" });
   }, [highlightedLocalityIndex, suggestions]);
+
+  useEffect(() => {
+    onActivePanelChange?.(activePanel);
+  }, [activePanel, onActivePanelChange]);
 
   useEffect(() => {
     function handlePointerDown(event: MouseEvent) {

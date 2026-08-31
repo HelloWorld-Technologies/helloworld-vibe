@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PaginatedCarousel } from "@/components/ui/paginated-carousel";
 import type { HdpReviewSummaryView } from "@/src/lib/hdp/map-hdp-api";
+import { hdpSectionHeadingClassName } from "@/components/marketing/hdp-section-heading";
 import type { HdpResidentReview } from "@/src/tokens/hdp-reviews";
 import { cn } from "@/src/lib/cn";
 
@@ -134,9 +135,7 @@ export function HdpReviews({
       aria-label="What residents say"
     >
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <h2 className="text-2xl font-medium text-black md:text-[1.875rem] md:leading-[2.375rem]">
-          What Residents Say
-        </h2>
+        <h2 className={hdpSectionHeadingClassName}>What Residents Say</h2>
         {allReviewsLink ? (
           <Link
             href={allReviewsLink}

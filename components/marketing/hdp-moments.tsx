@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { hdpSectionHeadingClassName } from "@/components/marketing/hdp-section-heading";
 import { MomentsCarouselControls } from "@/components/marketing/moments-carousel-controls";
 import { MomentCard } from "@/components/marketing/moment-card";
 import { cn } from "@/src/lib/cn";
@@ -73,10 +74,7 @@ export function HdpMoments({
       className={cn("scroll-mt-32", className)}
       aria-labelledby="hdp-moments-heading"
     >
-      <h2
-        id="hdp-moments-heading"
-        className="text-2xl font-medium tracking-tight text-gray-900 sm:text-[1.75rem] sm:leading-9"
-      >
+      <h2 id="hdp-moments-heading" className={hdpSectionHeadingClassName}>
         <span className="font-satoshi font-bold italic text-gradient-vibe">
           Moments
         </span>{" "}

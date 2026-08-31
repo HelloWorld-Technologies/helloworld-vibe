@@ -137,7 +137,7 @@ export function SrpListingsSection({
           isRefreshing && "pointer-events-none opacity-60",
         )}
       >
-        {properties.map((property) => (
+        {properties.map((property, index) => (
           <WishlistSrpCard
             key={property.id}
             propertyId={property.propertyId}
@@ -145,6 +145,7 @@ export function SrpListingsSection({
             name={property.name}
             subtitle={property.subtitle}
             images={property.images}
+            imagePriority={index < 6}
             rating={property.rating}
             roomTypes={property.roomTypes}
             rent={property.rent}

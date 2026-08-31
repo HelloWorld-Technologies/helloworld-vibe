@@ -530,53 +530,58 @@ export function SrpFiltersBar({
         onClose={() => setFiltersOpen(false)}
         maxWidthClassName="max-w-lg"
         labelledBy="srp-filters-title"
+        className="flex flex-col overflow-hidden !p-0 !pb-0"
       >
-        <ModalTitle id="srp-filters-title">Filters</ModalTitle>
+        <div className="shrink-0 px-5 pt-5 sm:px-6 sm:pt-6 md:px-10 md:pt-10">
+          <ModalTitle id="srp-filters-title">Filters</ModalTitle>
+        </div>
 
-        <div className="mt-6 space-y-6">
-          <FilterModalSection title="Price range">
-            <PriceRangeSlider
-              min={srpPriceRangeMin}
-              max={srpPriceRangeMax}
-              step={srpPriceRangeStep}
-              value={draftPriceRange}
-              onChange={setDraftPriceRange}
-            />
-          </FilterModalSection>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 sm:px-6 md:px-10">
+          <div className="mt-6 space-y-6 pb-6">
+            <FilterModalSection title="Price range">
+              <PriceRangeSlider
+                min={srpPriceRangeMin}
+                max={srpPriceRangeMax}
+                step={srpPriceRangeStep}
+                value={draftPriceRange}
+                onChange={setDraftPriceRange}
+              />
+            </FilterModalSection>
 
-          <FilterModalSection title="Food">
-            <FoodToggle checked={draftFood} onChange={setDraftFood} />
-          </FilterModalSection>
+            <FilterModalSection title="Food">
+              <FoodToggle checked={draftFood} onChange={setDraftFood} />
+            </FilterModalSection>
 
-          <FilterModalSection title="Gender">
-            <GenderFilterChips value={draftGender} onChange={setDraftGender} />
-          </FilterModalSection>
+            <FilterModalSection title="Gender">
+              <GenderFilterChips value={draftGender} onChange={setDraftGender} />
+            </FilterModalSection>
 
-          <FilterModalSection title="Amenities">
-            <div className="grid max-h-56 gap-x-6 gap-y-4 overflow-y-auto sm:grid-cols-2">
-              {srpAmenitiesList.map((amenity) => (
-                <FilterCheckbox
-                  key={amenity}
-                  label={amenity}
-                  checked={draftAmenities.includes(amenity)}
-                  onChange={() => toggleDraftAmenity(amenity)}
-                />
-              ))}
-            </div>
-          </FilterModalSection>
-
-          <div className="flex items-center justify-between border-t border-gray-100 pt-4">
-            <button
-              type="button"
-              onClick={clearDraftFilters}
-              className="text-sm font-medium text-gray-600 underline underline-offset-4 hover:text-gray-900"
-            >
-              Clear all
-            </button>
-            <Button type="button" onClick={applyFilters}>
-              Apply
-            </Button>
+            <FilterModalSection title="Amenities">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-4 sm:gap-x-6">
+                {srpAmenitiesList.map((amenity) => (
+                  <FilterCheckbox
+                    key={amenity}
+                    label={amenity}
+                    checked={draftAmenities.includes(amenity)}
+                    onChange={() => toggleDraftAmenity(amenity)}
+                  />
+                ))}
+              </div>
+            </FilterModalSection>
           </div>
+        </div>
+
+        <div className="flex shrink-0 items-center justify-between border-t border-gray-100 bg-white px-5 pt-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-6 md:px-10 md:pb-10">
+          <button
+            type="button"
+            onClick={clearDraftFilters}
+            className="text-sm font-medium text-gray-600 underline underline-offset-4 hover:text-gray-900"
+          >
+            Clear all
+          </button>
+          <Button type="button" onClick={applyFilters}>
+            Apply
+          </Button>
         </div>
       </Modal>
     </div>

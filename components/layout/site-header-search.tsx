@@ -12,8 +12,8 @@ import type { CitySlug } from "@/src/tokens/cities";
 /** Always show mobile search row when within this distance from page top. */
 const MOBILE_SEARCH_TOP_THRESHOLD_PX = 8;
 
-/** Minimum scroll delta before toggling visibility (avoids jitter). */
-const MOBILE_SEARCH_SCROLL_DELTA_PX = 5;
+/** Accumulated scroll distance before toggling visibility (avoids jitter). */
+const MOBILE_SEARCH_SCROLL_DELTA_PX = 24;
 
 function MenuIcon({ className }: { className?: string }) {
   return (
@@ -46,38 +46,86 @@ export function SiteHeaderSearch({
   const [menuOpen, setMenuOpen] = useState(false);
   const [userPhone, setUserPhone] = useState<string | null>(userPhoneProp);
   const [mobileSearchRevealed, setMobileSearchRevealed] = useState(true);
+  const [mobileSearchPanelOpen, setMobileSearchPanelOpen] = useState(false);
   const lastScrollYRef = useRef(0);
+  const scrollAccumulatorRef = useRef(0);
+  const mobileSearchRevealedRef = useRef(true);
+  const mobileSearchPanelOpenRef = useRef(false);
+  const scrollRafRef = useRef<number | null>(null);
 
   useEffect(() => {
     setUserPhone(userPhoneProp ?? getStoredMobile());
   }, [userPhoneProp]);
 
   useEffect(() => {
+    mobileSearchRevealedRef.current = mobileSearchRevealed;
+  }, [mobileSearchRevealed]);
+
+  useEffect(() => {
+    mobileSearchPanelOpenRef.current = mobileSearchPanelOpen;
+  }, [mobileSearchPanelOpen]);
+
+  useEffect(() => {
     lastScrollYRef.current = window.scrollY;
+
+    function applyMobileSearchReveal(next: boolean) {
+      if (mobileSearchRevealedRef.current === next) return;
+      mobileSearchRevealedRef.current = next;
+      setMobileSearchRevealed(next);
+    }
 
     function updateMobileSearchVisibility() {
       const currentScrollY = window.scrollY;
 
       if (currentScrollY <= MOBILE_SEARCH_TOP_THRESHOLD_PX) {
-        setMobileSearchRevealed(true);
+        applyMobileSearchReveal(true);
+        scrollAccumulatorRef.current = 0;
+      } else if (mobileSearchPanelOpenRef.current) {
+        applyMobileSearchReveal(true);
       } else {
         const delta = currentScrollY - lastScrollYRef.current;
-        if (delta >= MOBILE_SEARCH_SCROLL_DELTA_PX) {
-          setMobileSearchRevealed(false);
-        } else if (delta <= -MOBILE_SEARCH_SCROLL_DELTA_PX) {
-          setMobileSearchRevealed(true);
+
+        if (Math.abs(delta) >= 1) {
+          if (
+            (delta > 0 && scrollAccumulatorRef.current < 0) ||
+            (delta < 0 && scrollAccumulatorRef.current > 0)
+          ) {
+            scrollAccumulatorRef.current = 0;
+          }
+
+          scrollAccumulatorRef.current += delta;
+
+          if (scrollAccumulatorRef.current >= MOBILE_SEARCH_SCROLL_DELTA_PX) {
+            applyMobileSearchReveal(false);
+            scrollAccumulatorRef.current = 0;
+          } else if (
+            scrollAccumulatorRef.current <= -MOBILE_SEARCH_SCROLL_DELTA_PX
+          ) {
+            applyMobileSearchReveal(true);
+            scrollAccumulatorRef.current = 0;
+          }
         }
       }
 
       lastScrollYRef.current = currentScrollY;
     }
 
+    function onScroll() {
+      if (scrollRafRef.current !== null) return;
+      scrollRafRef.current = requestAnimationFrame(() => {
+        scrollRafRef.current = null;
+        updateMobileSearchVisibility();
+      });
+    }
+
     updateMobileSearchVisibility();
-    window.addEventListener("scroll", updateMobileSearchVisibility, {
-      passive: true,
-    });
-    return () =>
-      window.removeEventListener("scroll", updateMobileSearchVisibility);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (scrollRafRef.current !== null) {
+        cancelAnimationFrame(scrollRafRef.current);
+      }
+    };
   }, []);
 
   function handleLoginSuccess(phone: string) {
@@ -101,8 +149,8 @@ export function SiteHeaderSearch({
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-[#E4E4E4] bg-white/95 backdrop-blur-sm">
-        <div className="mx-auto flex h-[5.5rem] max-w-7xl items-center gap-4 px-4 sm:px-6 lg:gap-6">
+      <header className="sticky top-0 z-50 isolate w-full border-b border-[#E4E4E4] bg-white/95 backdrop-blur-sm">
+        <div className="relative z-10 mx-auto flex h-[5.5rem] max-w-7xl shrink-0 items-center gap-4 bg-white px-4 sm:px-6 lg:gap-6">
           <Link href="/" className="shrink-0">
             <Logo width={84} height={32} priority className="h-8 w-auto" />
           </Link>
@@ -133,20 +181,27 @@ export function SiteHeaderSearch({
 
         <div
           className={cn(
-            "grid transition-[grid-template-rows] duration-300 ease-out lg:hidden",
-            mobileSearchRevealed ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+            "overflow-hidden transition-[max-height,opacity] duration-300 ease-out motion-reduce:transition-none lg:hidden",
+            mobileSearchRevealed ? "max-h-24 opacity-100" : "max-h-0 opacity-0",
           )}
         >
           <div
             className={cn(
-              "overflow-hidden transition-opacity duration-300",
+              mobileSearchRevealed && mobileSearchPanelOpen
+                ? "overflow-visible"
+                : "overflow-hidden",
               mobileSearchRevealed
-                ? "border-t border-gray-100 px-4 pb-3 pt-2 opacity-100"
-                : "pointer-events-none border-t-0 px-4 pb-0 pt-0 opacity-0",
+                ? "border-t border-gray-100 px-4 pb-3 pt-2"
+                : "pointer-events-none invisible border-t-0 px-4 pb-0 pt-0",
             )}
             aria-hidden={!mobileSearchRevealed}
           >
-            <LocationSearch {...locationSearchProps} />
+            <LocationSearch
+              {...locationSearchProps}
+              onActivePanelChange={(panel) =>
+                setMobileSearchPanelOpen(panel !== null)
+              }
+            />
           </div>
         </div>
       </header>

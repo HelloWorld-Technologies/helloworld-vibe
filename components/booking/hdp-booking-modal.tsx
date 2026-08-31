@@ -38,7 +38,7 @@ export function HdpBookingModal({
       labelledBy={titleId}
       closeLabel="Close booking dialog"
       maxWidthClassName="max-w-lg"
-      className="p-5 sm:p-6"
+      className="!p-0 px-5 pt-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-6 sm:pt-4 sm:pb-[max(0.5rem,env(safe-area-inset-bottom))] md:!p-6 md:!pb-10"
     >
       <h2 id={titleId} className="sr-only">
         {mode === "tour" ? "Take a Tour" : "Book Now"}

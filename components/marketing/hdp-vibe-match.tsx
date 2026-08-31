@@ -5,6 +5,7 @@ import { useState } from "react";
 //   hdpResidentColleges,
 //   hdpResidentWorkplaces,
 // } from "@/src/tokens/hdp";
+import { hdpSectionHeadingCompactClassName } from "@/components/marketing/hdp-section-heading";
 import type {
   HdpResidentInterest,
   HdpSelectedVibeMatch,
@@ -150,7 +151,7 @@ export function HdpVibeMatch({
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <h2 className="text-lg font-medium leading-6 tracking-tight text-gray-900 md:text-xl md:leading-7">
+          <h2 className={hdpSectionHeadingCompactClassName}>
             How well this home matches your vibe
           </h2>
           <p className="mt-5 text-sm leading-5 text-gray-500">

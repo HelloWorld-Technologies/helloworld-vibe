@@ -27,11 +27,13 @@ function ChevronIcon({ className }: { className?: string }) {
 export function FaqAccordion({
   items,
   className,
+  questionClassName,
   defaultOpenAll = true,
   defaultOpenId,
 }: {
   items: readonly FaqAccordionItem[];
   className?: string;
+  questionClassName?: string;
   /** When true, every item starts expanded. */
   defaultOpenAll?: boolean;
   /** Opens a single item when `defaultOpenAll` is false. */
@@ -77,7 +79,12 @@ export function FaqAccordion({
               }
               className="flex w-full items-start justify-between gap-6 text-left"
             >
-              <span className="text-lg font-medium leading-7 text-black">
+              <span
+                className={cn(
+                  "text-lg font-medium leading-7 text-black",
+                  questionClassName,
+                )}
+              >
                 {item.question}
               </span>
               <ChevronIcon

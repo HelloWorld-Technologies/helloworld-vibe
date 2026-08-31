@@ -374,7 +374,10 @@ export function ScheduleVisitFlow({
     );
   } else {
     content = (
-      <form className="space-y-6" onSubmit={handleScheduleContinue}>
+      <form
+        className={cn(embedded ? "space-y-2 md:space-y-6" : "space-y-6")}
+        onSubmit={handleScheduleContinue}
+      >
         {loadingSlots ? (
           <p className="text-sm text-gray-500">Loading available slots...</p>
         ) : noSlots ? (

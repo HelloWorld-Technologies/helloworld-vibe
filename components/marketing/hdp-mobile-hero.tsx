@@ -9,7 +9,20 @@ import { WishlistButton } from "@/components/wishlist/wishlist-button";
 import { useOptionalWishlist } from "@/components/wishlist/wishlist-provider";
 import type { HdpPageView } from "@/src/lib/hdp/hdp-page-view";
 import { cn } from "@/src/lib/cn";
+import { localitySlugToName } from "@/src/lib/string-utils";
 import { hdpProperty } from "@/src/tokens/hdp";
+
+const locationLinkClassName =
+  "mt-3 inline-flex items-center gap-1.5 text-sm font-bold leading-none text-hello-lime-700 hover:text-hello-lime-800";
+
+const locationLinkTextClassName =
+  "min-w-0 leading-none underline decoration-dashed decoration-current underline-offset-[6px]";
+
+function formatLocationLabel(locality: string | undefined): string | undefined {
+  const trimmed = locality?.trim();
+  if (!trimmed) return undefined;
+  return trimmed === trimmed.toLowerCase() ? localitySlugToName(trimmed) : trimmed;
+}
 
 export function HdpMobileHero({
   view,
@@ -24,7 +37,7 @@ export function HdpMobileHero({
   const pageTitle = view.pageTitle || hdpProperty.name;
   const propertyId = view.propertyId;
   const saved = wishlist?.isWishlisted(propertyId) ?? false;
-  const locationLabel = view.locality?.trim() || undefined;
+  const locationLabel = formatLocationLabel(view.locality);
   const startingRent = view.startingRent;
   const securityDepositLabel = view.securityDepositLabel;
 
@@ -88,15 +101,15 @@ export function HdpMobileHero({
                 href={mapsHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold leading-none text-hello-lime-700 hover:text-hello-lime-800"
+                className={locationLinkClassName}
               >
                 <ShowOnMapsIcon className="h-[19px] w-[17px] shrink-0" />
-                <span className="min-w-0 leading-none">{locationLabel}</span>
+                <span className={locationLinkTextClassName}>{locationLabel}</span>
               </a>
             ) : (
-              <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold leading-none text-hello-lime-700">
+              <p className={locationLinkClassName}>
                 <ShowOnMapsIcon className="h-[19px] w-[17px] shrink-0" />
-                <span className="min-w-0 leading-none">{locationLabel}</span>
+                <span className={locationLinkTextClassName}>{locationLabel}</span>
               </p>
             );
           })()
@@ -112,7 +125,7 @@ export function HdpMobileHero({
           <div className="w-px shrink-0 bg-gray-200" aria-hidden />
           <div className="min-w-0 flex-1">
             <p className="text-xs font-medium text-gray-500">Security Deposit</p>
-            <p className="mt-1 text-base font-bold text-gray-900">
+            <p className="mt-1 text-xl font-bold text-gray-900">
               {securityDepositLabel}
             </p>
           </div>

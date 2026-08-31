@@ -31,7 +31,7 @@ export type LocalityProperty = {
   name: string;
   subtitle: string;
   images: readonly string[];
-  rating: number;
+  rating?: number;
   roomTypes: readonly string[];
   rent: number;
   originalRent?: number;
@@ -124,8 +124,7 @@ export const localityBentoDesktopLayout = {
 } as const;
 
 export const localityDayFromHereTitle = "A Day from here";
-export const localityDayFromHereSubtitle =
-  "See nearby utilities, facilities, transport, hospitals and more.";
+export const localityDayFromHereSubtitle = `What living at ${localityPage.name} actually looks like.`;
 
 export const localityDayFromHereItems: readonly NeighborhoodCardData[] = [
   {

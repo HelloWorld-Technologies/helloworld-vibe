@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { HdpSectionHeading } from "@/components/marketing/hdp-section-heading";
 import { formatAmenityForDisplay } from "@/src/lib/amenity-display";
 import { cn } from "@/src/lib/cn";
 
@@ -35,9 +36,7 @@ export function HdpAmenities({
       className={cn("scroll-mt-32 space-y-6", className)}
       aria-label="Amenities included"
     >
-      <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
-        Amenities Included
-      </h2>
+      <HdpSectionHeading>Amenities Included</HdpSectionHeading>
       <div className="flex flex-wrap gap-2">
         {visible.map((item) => (
           <span
