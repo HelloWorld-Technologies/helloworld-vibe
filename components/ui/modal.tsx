@@ -23,6 +23,8 @@ export interface ModalProps {
   closeLabel?: string;
   /** Overlay stacking class. Use higher than `z-50` for nested modals (e.g. date picker). */
   overlayClassName?: string;
+  /** Panel padding. Use `"none"` when child content provides its own spacing. */
+  padding?: "default" | "none";
 }
 
 export function Modal({
@@ -35,6 +37,7 @@ export function Modal({
   describedBy,
   closeLabel = "Close dialog",
   overlayClassName = "z-50",
+  padding = "default",
 }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(open);
@@ -143,8 +146,10 @@ export function Modal({
             "relative overflow-y-auto bg-white shadow-xl outline-none",
             // Bottom sheet on mobile; rounded dialog on desktop.
             "max-md:h-auto max-md:min-h-0",
-            "max-h-[min(92dvh,calc(100dvh-3.5rem))] rounded-t-3xl rounded-b-none p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:p-6",
-            "md:max-h-[calc(100dvh-2rem)] md:rounded-3xl md:p-10 md:pb-10",
+            "max-h-[min(92dvh,calc(100dvh-3.5rem))] rounded-t-3xl rounded-b-none",
+            "md:max-h-[calc(100dvh-2rem)] md:rounded-3xl",
+            padding !== "none" &&
+              "p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:p-6 md:p-10 md:pb-10",
             className,
           )}
         >

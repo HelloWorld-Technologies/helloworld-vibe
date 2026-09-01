@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CommunityReviews } from "@/components/marketing/community-reviews";
 import { HomepageCarouselNav } from "@/components/marketing/homepage-carousel-nav";
 import { HomepageReviews } from "@/components/marketing/homepage-reviews";
 import { HomepageSectionHeading } from "@/components/marketing/homepage-section-heading";
@@ -20,7 +21,13 @@ function measureCarouselGap(container: HTMLElement): number {
   );
 }
 
-export function HomepageTestimonials() {
+export function HomepageTestimonials({
+  headingSize = "default",
+  variant = "homepage",
+}: {
+  headingSize?: "default" | "properties";
+  variant?: "homepage" | "community";
+}) {
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
   const [activePage, setActivePage] = useState(0);
@@ -63,6 +70,26 @@ export function HomepageTestimonials() {
     setActivePage(nextPage);
   }
 
+  if (variant === "community") {
+    return (
+      <section className={cn("py-8 sm:py-12 lg:py-14", pageLayout.container)}>
+        <HomepageSectionHeading
+          prefix="Hear from our"
+          highlight="Tribe!"
+          gradient="home"
+          size={headingSize}
+          className={headingSize === "default" ? "text-center" : undefined}
+        />
+        <CommunityReviews
+          embedded
+          title={false}
+          className="mt-8"
+          desktopVisibleCount={2.333}
+        />
+      </section>
+    );
+  }
+
   return (
     <section className={cn("py-8 sm:py-12 lg:py-14", pageLayout.container)}>
       <div className={pageShell.homepage}>
@@ -70,7 +97,8 @@ export function HomepageTestimonials() {
           prefix="Hear from our"
           highlight="Tribe!"
           gradient="home"
-          className="text-center"
+          size={headingSize}
+          className={headingSize === "default" ? "text-center" : undefined}
         />
       </div>
       <div className="mt-8">

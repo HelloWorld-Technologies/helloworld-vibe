@@ -206,7 +206,6 @@ export function PaginatedCarousel<T>({
           nextDisabled
           placeholder
           showArrows={false}
-          activeTone="gray"
           onPrev={() => {}}
           onNext={() => {}}
         />
@@ -320,7 +319,6 @@ export function PaginatedCarousel<T>({
             prevDisabled={mobileIndex === 0}
             nextDisabled={mobileIndex >= count - 1}
             showArrows={false}
-            activeTone="gray"
             onPrev={() => goToMobileIndex(mobileIndex - 1)}
             onNext={() => goToMobileIndex(mobileIndex + 1)}
             onSelectPage={goToMobileIndex}

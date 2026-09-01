@@ -249,8 +249,10 @@ export function LocalityPaginationDots({
           aria-current={index === activeIndex}
           onClick={() => onSelect(index)}
           className={cn(
-            "h-2 rounded-full bg-gray-800 transition-all",
-            index === activeIndex ? "w-8" : "w-2 opacity-40",
+            "h-2 rounded-full transition-all",
+            index === activeIndex
+              ? "w-8 bg-hello-lime-400"
+              : "w-2 bg-gray-300 hover:bg-gray-400",
           )}
         />
       ))}

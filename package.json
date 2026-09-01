@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "sync:assets": "node scripts/sync-hw-vibe-assets.mjs",
+    "compress:campaign-images": "node scripts/compress-campaign-images.mjs",
     "generate-sitemaps": "tsx scripts/generate-sitemaps.ts"
   },
   "dependencies": {
@@ -38,6 +39,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "openfig-core": "^0.3.7",
+    "sharp": "^0.35.4",
     "tailwindcss": "^4",
     "tsx": "^4.7.0",
     "typescript": "^5"

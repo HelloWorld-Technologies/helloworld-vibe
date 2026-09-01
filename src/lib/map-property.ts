@@ -1,4 +1,7 @@
-import { getGenderDisplayLabel } from "@/src/lib/gender-label";
+import {
+  getGenderDisplayLabel,
+  getGenderSubtitlePrefix,
+} from "@/src/lib/gender-label";
 import { formatCityDisplayName } from "@/src/tokens/cities";
 import { imageUrlFormatter } from "@/src/lib/images";
 import { getPropertyHref } from "@/src/lib/sitemap-slug";
@@ -66,6 +69,26 @@ export function colivingPgSubtitle(
     String(fallbackLocality ?? "").trim() ||
     formatCityDisplayName(property.city || property.address?.city || "");
   return `Coliving PG in ${locality || "your city"}`;
+}
+
+/** Campaign carousel card subtitle — kota uses "hostel"; other cities use "Coliving PG". */
+export function campaignPropertySubtitle(
+  property: Property,
+  citySlug: string,
+  fallbackLocality?: string,
+): string {
+  const locality =
+    resolvePropertyLocality(property) ||
+    String(fallbackLocality ?? "").trim() ||
+    formatCityDisplayName(property.city || property.address?.city || "");
+  const place = locality || "your city";
+  const genderPrefix = getGenderSubtitlePrefix(property.gender);
+  const isKota = citySlug.toLowerCase() === "kota";
+
+  if (isKota) {
+    return `${genderPrefix}hostel in ${place}`;
+  }
+  return `${genderPrefix}Coliving PG in ${place}`;
 }
 
 function propertyImages(property: Property): readonly string[] {

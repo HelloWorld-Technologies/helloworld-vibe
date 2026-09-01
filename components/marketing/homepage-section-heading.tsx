@@ -30,7 +30,7 @@ export function HomepageSectionHeading({
   const gradientClass = getTextGradientClassName(gradient);
   const sizeClass =
     size === "properties"
-      ? "text-[1.875rem] font-medium leading-[2.375rem] text-gray-900"
+      ? "text-center font-satoshi text-lg font-medium leading-7 text-gray-900 md:text-left md:text-[1.875rem] md:leading-[2.375rem]"
       : "text-display-sm font-medium tracking-tight text-gray-900 md:text-display-md";
 
   return (
@@ -40,7 +40,8 @@ export function HomepageSectionHeading({
         className={cn(
           highlightFontClass[gradient],
           gradientClass,
-          size === "properties" && "text-[2.25rem] leading-[2.375rem]",
+          size === "properties" &&
+            "text-lg leading-7 md:text-[2.25rem] md:leading-[2.375rem]",
         )}
       >
         {highlight}

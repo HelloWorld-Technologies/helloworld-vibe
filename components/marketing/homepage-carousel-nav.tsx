@@ -54,7 +54,7 @@ export function HomepageCarouselNav({
                 className={cn(
                   "h-2 rounded-full transition-all",
                   isActive
-                    ? "w-8 bg-gray-700 sm:bg-hello-lime-400"
+                    ? "w-8 bg-hello-lime-400"
                     : "w-2 bg-gray-300 hover:bg-gray-400",
                 )}
               />

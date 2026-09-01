@@ -15,6 +15,9 @@ const MOBILE_SEARCH_TOP_THRESHOLD_PX = 8;
 /** Accumulated scroll distance before toggling visibility (avoids jitter). */
 const MOBILE_SEARCH_SCROLL_DELTA_PX = 24;
 
+/** Ignore scroll deltas briefly after a reveal toggle (matches CSS transition). */
+const MOBILE_SEARCH_TOGGLE_COOLDOWN_MS = 320;
+
 function MenuIcon({ className }: { className?: string }) {
   return (
     <svg aria-hidden viewBox="0 0 24 24" fill="none" className={className}>
@@ -52,6 +55,7 @@ export function SiteHeaderSearch({
   const mobileSearchRevealedRef = useRef(true);
   const mobileSearchPanelOpenRef = useRef(false);
   const scrollRafRef = useRef<number | null>(null);
+  const scrollToggleLockUntilRef = useRef(0);
 
   useEffect(() => {
     setUserPhone(userPhoneProp ?? getStoredMobile());
@@ -72,10 +76,19 @@ export function SiteHeaderSearch({
       if (mobileSearchRevealedRef.current === next) return;
       mobileSearchRevealedRef.current = next;
       setMobileSearchRevealed(next);
+      scrollToggleLockUntilRef.current =
+        performance.now() + MOBILE_SEARCH_TOGGLE_COOLDOWN_MS;
+      lastScrollYRef.current = window.scrollY;
+      scrollAccumulatorRef.current = 0;
     }
 
     function updateMobileSearchVisibility() {
       const currentScrollY = window.scrollY;
+
+      if (performance.now() < scrollToggleLockUntilRef.current) {
+        lastScrollYRef.current = currentScrollY;
+        return;
+      }
 
       if (currentScrollY <= MOBILE_SEARCH_TOP_THRESHOLD_PX) {
         applyMobileSearchReveal(true);
@@ -149,8 +162,9 @@ export function SiteHeaderSearch({
 
   return (
     <>
-      <header className="sticky top-0 z-50 isolate w-full border-b border-[#E4E4E4] bg-white/95 backdrop-blur-sm">
-        <div className="relative z-10 mx-auto flex h-[5.5rem] max-w-7xl shrink-0 items-center gap-4 bg-white px-4 sm:px-6 lg:gap-6">
+      <header className="sticky top-0 z-50 isolate w-full bg-white/95 backdrop-blur-sm">
+        <div className="relative border-b border-[#E4E4E4]">
+          <div className="relative z-10 mx-auto flex h-[5.5rem] max-w-7xl shrink-0 items-center gap-4 bg-white px-4 sm:px-6 lg:gap-6">
           <Link href="/" className="shrink-0">
             <Logo width={84} height={32} priority className="h-8 w-auto" />
           </Link>
@@ -177,31 +191,34 @@ export function SiteHeaderSearch({
               <MenuIcon className="size-6" />
             </button>
           </div>
-        </div>
+          </div>
 
-        <div
-          className={cn(
-            "overflow-hidden transition-[max-height,opacity] duration-300 ease-out motion-reduce:transition-none lg:hidden",
-            mobileSearchRevealed ? "max-h-24 opacity-100" : "max-h-0 opacity-0",
-          )}
-        >
           <div
             className={cn(
-              mobileSearchRevealed && mobileSearchPanelOpen
-                ? "overflow-visible"
-                : "overflow-hidden",
+              "absolute inset-x-0 top-full z-[9] overflow-hidden border-b border-[#E4E4E4] bg-white transition-[max-height,opacity] duration-300 ease-out motion-reduce:transition-none lg:hidden",
               mobileSearchRevealed
-                ? "border-t border-gray-100 px-4 pb-3 pt-2"
-                : "pointer-events-none invisible border-t-0 px-4 pb-0 pt-0",
+                ? "max-h-24 opacity-100"
+                : "max-h-0 opacity-0 border-b-transparent",
             )}
-            aria-hidden={!mobileSearchRevealed}
           >
-            <LocationSearch
-              {...locationSearchProps}
-              onActivePanelChange={(panel) =>
-                setMobileSearchPanelOpen(panel !== null)
-              }
-            />
+            <div
+              className={cn(
+                mobileSearchRevealed && mobileSearchPanelOpen
+                  ? "overflow-visible"
+                  : "overflow-hidden",
+                mobileSearchRevealed
+                  ? "border-t border-gray-100 px-4 pb-3 pt-2"
+                  : "pointer-events-none invisible border-t-0 px-4 pb-0 pt-0",
+              )}
+              aria-hidden={!mobileSearchRevealed}
+            >
+              <LocationSearch
+                {...locationSearchProps}
+                onActivePanelChange={(panel) =>
+                  setMobileSearchPanelOpen(panel !== null)
+                }
+              />
+            </div>
           </div>
         </div>
       </header>

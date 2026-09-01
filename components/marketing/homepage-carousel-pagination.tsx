@@ -44,8 +44,6 @@ export function HomepageCarouselPagination({
   placeholder = false,
   /** Desktop keeps arrows; mobile uses dots-only. */
   showArrows = true,
-  /** Active pill color. Mobile design uses dark gray. */
-  activeTone = "lime",
 }: {
   pageCount: number;
   activeIndex: number;
@@ -58,11 +56,8 @@ export function HomepageCarouselPagination({
   /** Renders non-interactive dots for loading states. */
   placeholder?: boolean;
   showArrows?: boolean;
-  activeTone?: "lime" | "gray";
 }) {
   const dotCount = placeholder ? 6 : pageCount;
-  const activeClass =
-    activeTone === "gray" ? "bg-gray-700" : "bg-hello-lime-400";
 
   return (
     <div
@@ -93,8 +88,8 @@ export function HomepageCarouselPagination({
                 className={cn(
                   "rounded-full bg-gray-300",
                   isActive
-                    ? cn("h-2 w-8", activeClass)
-                    : "size-2 opacity-60",
+                    ? "h-2 w-8 bg-hello-lime-400"
+                    : "size-2 bg-gray-300 opacity-60",
                 )}
               />
             );
@@ -111,7 +106,7 @@ export function HomepageCarouselPagination({
               className={cn(
                 "rounded-full transition-all",
                 isActive
-                  ? cn("h-2 w-8", activeClass)
+                  ? "h-2 w-8 bg-hello-lime-400"
                   : "size-2 bg-gray-300 hover:bg-gray-400",
               )}
             />
