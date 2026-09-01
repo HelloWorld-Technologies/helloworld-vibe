@@ -626,6 +626,14 @@
         "extension": ".mp4"
       },
       {
+        "id": "homepage-video-webm",
+        "name": "Homepage Video (WebM)",
+        "file": "/assets/homepage-website/homepage-video.webm",
+        "originalName": "Homepage Video.webm",
+        "type": "video",
+        "extension": ".webm"
+      },
+      {
         "id": "inc-42",
         "name": "Inc 42",
         "file": "/assets/homepage-website/inc-42.png",

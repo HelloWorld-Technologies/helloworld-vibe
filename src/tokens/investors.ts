@@ -1,17 +1,21 @@
 export const investorsPageCopy = {
   title: "Investors | HelloWorld",
   description:
-    "Access HelloWorld's financial statements, annual returns, and investor disclosures.",
+    "Access HelloWorld's financial statements, audit reports, MGT-7 filings, and investor disclosures.",
   heroTitle: "Investors",
   heroSubtitle:
-    "Access HelloWorld's financial statements, annual returns, and investor disclosures.",
+    "Access HelloWorld's financial statements, audit reports, MGT-7 filings, and investor disclosures.",
 } as const;
 
-export type InvestorsTabId = "financial-statements" | "annual-return";
+export type InvestorsTabId =
+  | "financial-statements"
+  | "audit-report"
+  | "mgt-7";
 
 export const investorsTabs = [
   { id: "financial-statements" as const, label: "Financial Statements" },
-  { id: "annual-return" as const, label: "Annual Return" },
+  { id: "audit-report" as const, label: "Audit Report" },
+  { id: "mgt-7" as const, label: "MGT-7" },
 ] as const;
 
 export interface InvestorDocument {
@@ -27,36 +31,26 @@ export const investorDocumentsByTab: Record<
 > = {
   "financial-statements": [
     {
-      id: "balance-sheet-fy-2024-25",
-      title: "Balance Sheet FY 2024-25",
+      id: "financial-statements-fy-2024-25",
+      title: "Financial Statements FY 2024-25",
       financialYear: "FY 2024-25",
-      href: "/assets/investors/balance-sheet-fy-2024-25.pdf",
-    },
-    {
-      id: "profit-loss-fy-2024-25",
-      title: "Profit & Loss Statement FY 2024-25",
-      financialYear: "FY 2024-25",
-      href: "/assets/investors/profit-loss-fy-2024-25.pdf",
-    },
-    {
-      id: "cash-flow-fy-2024-25",
-      title: "Cash Flow Statement FY 2024-25",
-      financialYear: "FY 2024-25",
-      href: "/assets/investors/cash-flow-fy-2024-25.pdf",
+      href: "/assets/investors/financial-statements-fy-2024-25.pdf",
     },
   ],
-  "annual-return": [
+  "audit-report": [
     {
-      id: "annual-return-fy-2024-25",
-      title: "Annual Return FY 2024-25",
+      id: "audit-report-fy-2024-25",
+      title: "Audit Report FY 2024-25",
       financialYear: "FY 2024-25",
-      href: "/assets/investors/annual-return-fy-2024-25.pdf",
+      href: "/assets/investors/audit-report-fy-2024-25.pdf",
     },
+  ],
+  "mgt-7": [
     {
-      id: "annual-return-fy-2023-24",
-      title: "Annual Return FY 2023-24",
-      financialYear: "FY 2023-24",
-      href: "/assets/investors/annual-return-fy-2023-24.pdf",
+      id: "mgt-7-fy-2024-25",
+      title: "MGT-7 FY 2024-25",
+      financialYear: "FY 2024-25",
+      href: "/assets/investors/mgt-7-fy-2024-25.pdf",
     },
   ],
 };

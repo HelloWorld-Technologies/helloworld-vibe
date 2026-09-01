@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { HomepageAsset } from "@/components/marketing/homepage-asset";
 import { pageShell } from "@/src/tokens/layout";
-import { homepageStats, homepageVideo } from "@/src/tokens/homepage";
+import { homepageStats, homepageVideo, homepageVideoWebm } from "@/src/tokens/homepage";
 
 function StatDivider() {
   return (
@@ -42,13 +42,15 @@ export function HomepageWeekends() {
           <div className="overflow-hidden rounded-tl-[1.5rem] bg-gray-900 shadow-[8px_7px_0_0_#0baaec] sm:rounded-tl-[2rem] sm:shadow-[11px_9px_0_0_#0baaec]">
             <video
               className="aspect-video w-full object-cover"
-              src={homepageVideo.file}
               muted
               loop
               playsInline
               autoPlay
               aria-label={homepageVideo.name}
-            />
+            >
+              <source src={homepageVideoWebm.file} type="video/webm" />
+              <source src={homepageVideo.file} type="video/mp4" />
+            </video>
           </div>
 
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">

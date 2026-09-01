@@ -29,6 +29,7 @@ export type HomepageFeaturedProperty = {
 export const homepageHeroDesktop = asset("hero-desktop");
 export const homepageHeroMobile = asset("hero-mobile");
 export const homepageVideo = asset("homepage-video");
+export const homepageVideoWebm = asset("homepage-video-webm");
 export const homepageAppScreenshot1 = asset("footer-screenshot-1");
 export const homepageAppScreenshot2 = asset("footer-screenshot-2");
 
