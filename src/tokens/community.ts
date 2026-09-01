@@ -7,6 +7,7 @@ function communityAsset(id: string) {
 }
 
 export const communityPageVideo = communityAsset("community-page-video");
+export const communityPageVideoWebm = communityAsset("community-page-video-webm");
 
 /** Figma artboard `2130:18209` — 1164.708 × 677 */
 export const communityHeroFrame = {

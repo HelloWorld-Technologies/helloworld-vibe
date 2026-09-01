@@ -3,7 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { HomepageSectionHeading } from "@/components/marketing/homepage-section-heading";
 import { MomentsCarouselControls } from "@/components/marketing/moments-carousel-controls";
-import { MomentCard } from "@/components/marketing/moment-card";
+import {
+  MOMENT_CARD_FEED_ASPECT_CLASS,
+  MomentCard,
+} from "@/components/marketing/moment-card";
 import {
   getMomentsCarouselState,
   getMomentsPageStartIndex,
@@ -97,6 +100,7 @@ export function HomepageFeed({
             <MomentCard
               key={item.id}
               item={item}
+              aspectClass={MOMENT_CARD_FEED_ASPECT_CLASS}
               playWithAudio
               isActivePlaying={playingId === item.id}
               onPlayingChange={(playing) =>

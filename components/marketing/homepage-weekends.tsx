@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { HomepageAsset } from "@/components/marketing/homepage-asset";
+import { AdaptiveVideo } from "@/components/media/adaptive-video";
 import { pageShell } from "@/src/tokens/layout";
 import { homepageStats, homepageVideo, homepageVideoWebm } from "@/src/tokens/homepage";
 
@@ -40,17 +41,16 @@ export function HomepageWeekends() {
       <div className={pageShell.homepage}>
         <div className="grid items-center gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-16">
           <div className="overflow-hidden rounded-tl-[1.5rem] bg-gray-900 shadow-[8px_7px_0_0_#0baaec] sm:rounded-tl-[2rem] sm:shadow-[11px_9px_0_0_#0baaec]">
-            <video
+            <AdaptiveVideo
               className="aspect-video w-full object-cover"
+              mp4Src={homepageVideo.file}
+              webmSrc={homepageVideoWebm.file}
               muted
               loop
               playsInline
               autoPlay
               aria-label={homepageVideo.name}
-            >
-              <source src={homepageVideoWebm.file} type="video/webm" />
-              <source src={homepageVideo.file} type="video/mp4" />
-            </video>
+            />
           </div>
 
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">

@@ -1,11 +1,15 @@
 "use client";
 
 import Image from "next/image";
+import { AdaptiveVideo } from "@/components/media/adaptive-video";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { cn } from "@/src/lib/cn";
 import type { GalleryMediaItem } from "@/src/models/gallery";
 
 export const MOMENT_CARD_WIDTH_CLASS = "w-[16.5rem] sm:w-[18.5rem]";
+export const MOMENT_CARD_ASPECT_CLASS = "aspect-3/4";
+/** Slightly taller cards for homepage and community feed carousels. */
+export const MOMENT_CARD_FEED_ASPECT_CLASS = "aspect-[5/7]";
 
 function PlayIcon({ className }: { className?: string }) {
   return (
@@ -32,12 +36,14 @@ function PlayIcon({ className }: { className?: string }) {
 export function MomentCard({
   item,
   className,
+  aspectClass = MOMENT_CARD_ASPECT_CLASS,
   playWithAudio = false,
   isActivePlaying = false,
   onPlayingChange,
 }: {
   item: GalleryMediaItem;
   className?: string;
+  aspectClass?: string;
   /** Homepage feed: click-to-play with sound. HDP keeps muted hover preview. */
   playWithAudio?: boolean;
   isActivePlaying?: boolean;
@@ -117,7 +123,8 @@ export function MomentCard({
   return (
     <article
       className={cn(
-        "relative aspect-3/4 shrink-0 snap-start overflow-hidden rounded-2xl bg-black",
+        "relative shrink-0 snap-start overflow-hidden rounded-2xl bg-black",
+        aspectClass,
         MOMENT_CARD_WIDTH_CLASS,
         playWithAudio && hasVideo && "cursor-pointer",
         className,
@@ -141,13 +148,14 @@ export function MomentCard({
     >
       {hasVideo ? (
         <>
-          <video
+          <AdaptiveVideo
             ref={videoRef}
             className={cn(
               "absolute inset-0 size-full object-cover transition-opacity duration-200",
               isShowingVideo ? "opacity-100" : "opacity-0",
             )}
-            src={item.videoSrc}
+            mp4Src={item.videoSrc!}
+            webmSrc={item.videoWebmSrc}
             poster={hasImagePoster ? item.imageSrc : undefined}
             muted={!playWithAudio || !isActivePlaying}
             playsInline

@@ -27,7 +27,9 @@ export type HomepageFeaturedProperty = {
 };
 
 export const homepageHeroDesktop = asset("hero-desktop");
+export const homepageHeroDesktopWebp = asset("hero-desktop-webp");
 export const homepageHeroMobile = asset("hero-mobile");
+export const homepageHeroMobileWebp = asset("hero-mobile-webp");
 export const homepageVideo = asset("homepage-video");
 export const homepageVideoWebm = asset("homepage-video-webm");
 export const homepageAppScreenshot1 = asset("footer-screenshot-1");
@@ -136,12 +138,15 @@ export const homepageFeaturedProperties: HomepageFeaturedProperty[] = [
   },
 ];
 
-/** Homepage “Straight from the Feed!” — static insta-media videos (no API). */
-const INSTA_MEDIA_BASE =
-  "https://images.thehelloworld.com/insta-media/";
+/** Homepage “Straight from the Feed!” — local compressed insta-media videos. */
+const FEED_VIDEO_BASE = "/assets/feed";
 
-function instaMediaUrl(filename: string): string {
-  return `${INSTA_MEDIA_BASE}${encodeURIComponent(filename).replace(/%2F/gi, "/")}`;
+function feedVideo(slug: string) {
+  return {
+    mp4: `${FEED_VIDEO_BASE}/${slug}.mp4`,
+    webm: `${FEED_VIDEO_BASE}/${slug}.webm`,
+    poster: `${FEED_VIDEO_BASE}/${slug}-poster.webp`,
+  };
 }
 
 export const homepageFeedMoments: readonly GalleryMediaItem[] = [
@@ -150,45 +155,50 @@ export const homepageFeedMoments: readonly GalleryMediaItem[] = [
     category: "moments",
     label: "Unspoken Rules",
     caption: "Unspoken Rules",
-    imageSrc: "",
+    imageSrc: feedVideo("01-unspoken-rules").poster,
     kind: "video",
-    videoSrc: instaMediaUrl("01_Unspoken Rules.mp4"),
+    videoSrc: feedVideo("01-unspoken-rules").mp4,
+    videoWebmSrc: feedVideo("01-unspoken-rules").webm,
   },
   {
     id: "feed-02-tpl-kolkata",
     category: "moments",
     label: "TPL Kolkata",
     caption: "TPL Kolkata",
-    imageSrc: "",
+    imageSrc: feedVideo("02-tpl-kolkata").poster,
     kind: "video",
-    videoSrc: instaMediaUrl("02_TPL_Kolkata.mp4"),
+    videoSrc: feedVideo("02-tpl-kolkata").mp4,
+    videoWebmSrc: feedVideo("02-tpl-kolkata").webm,
   },
   {
     id: "feed-03-independence-day",
     category: "moments",
     label: "Independence Day",
     caption: "Independence Day",
-    imageSrc: "",
+    imageSrc: feedVideo("03-independence-day").poster,
     kind: "video",
-    videoSrc: instaMediaUrl("03_Independence Day_HW.mp4"),
+    videoSrc: feedVideo("03-independence-day").mp4,
+    videoWebmSrc: feedVideo("03-independence-day").webm,
   },
   {
     id: "feed-04-we-rated-each-other",
     category: "moments",
     label: "We rated each other",
     caption: "We rated each other",
-    imageSrc: "",
+    imageSrc: feedVideo("04-we-rated-each-other").poster,
     kind: "video",
-    videoSrc: instaMediaUrl("04_We rated each other.mp4"),
+    videoSrc: feedVideo("04-we-rated-each-other").mp4,
+    videoWebmSrc: feedVideo("04-we-rated-each-other").webm,
   },
   {
     id: "feed-05-tenants-open-mic",
     category: "moments",
     label: "Tenants Open Mic",
     caption: "Tenants Open Mic",
-    imageSrc: "",
+    imageSrc: feedVideo("05-tenants-open-mic").poster,
     kind: "video",
-    videoSrc: instaMediaUrl("05_Tenants Open Mic.mp4"),
+    videoSrc: feedVideo("05-tenants-open-mic").mp4,
+    videoWebmSrc: feedVideo("05-tenants-open-mic").webm,
   },
 ];
 

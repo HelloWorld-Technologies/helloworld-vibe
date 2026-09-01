@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { CommunityBoringWeekendsHeading } from "@/components/marketing/community-headings";
+import { AdaptiveVideo } from "@/components/media/adaptive-video";
 import { cn } from "@/src/lib/cn";
 import {
   communityExplorePropertiesHref,
   communityPageVideo,
+  communityPageVideoWebm,
 } from "@/src/tokens/community";
 import { pageShell } from "@/src/tokens/layout";
 
@@ -13,9 +15,10 @@ export function CommunityVideo() {
       <div className={pageShell.community}>
         <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-14">
           <div className="overflow-hidden rounded-tl-[1.685rem] bg-gray-900 shadow-[9px_8px_0_0_#0baaec,5px_5px_23px_rgba(0,0,0,0.15)] lg:w-[48.5%] lg:max-w-[38.8125rem]">
-            <video
+            <AdaptiveVideo
               className="aspect-[621/369] w-full object-cover"
-              src={communityPageVideo.file}
+              mp4Src={communityPageVideo.file}
+              webmSrc={communityPageVideoWebm.file}
               muted
               loop
               playsInline

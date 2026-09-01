@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AdaptiveImage } from "@/components/media/adaptive-image";
 import { LocationSearch } from "@/components/search/location-search";
 import { VibeChips } from "@/components/ui/vibe-chips";
 import { cn } from "@/src/lib/cn";
@@ -9,7 +9,9 @@ import { useVibeList } from "@/src/lib/use-vibe-list";
 import { pageShell } from "@/src/tokens/layout";
 import {
   homepageHeroDesktop,
+  homepageHeroDesktopWebp,
   homepageHeroMobile,
+  homepageHeroMobileWebp,
 } from "@/src/tokens/homepage";
 import type { VibeChip } from "@/src/tokens/vibes";
 
@@ -104,12 +106,13 @@ export function HomepageHero() {
             </div>
 
             <div className="relative -mt-2 w-full">
-              <Image
+              <AdaptiveImage
                 src={homepageHeroMobile.file}
+                webpSrc={homepageHeroMobileWebp.file}
                 alt=""
                 width={750}
                 height={560}
-                priority
+                fetchPriority="high"
                 sizes="100vw"
                 className="h-auto w-full object-bottom"
               />
@@ -138,11 +141,12 @@ export function HomepageHero() {
       {/* Desktop */}
       <div className="relative hidden rounded-b-[50px] bg-gray-50 lg:block lg:min-h-[28.875rem]">
         <div className="pointer-events-none absolute inset-y-0 right-0 w-[58%] overflow-hidden rounded-b-[50px]">
-          <Image
+          <AdaptiveImage
             src={homepageHeroDesktop.file}
+            webpSrc={homepageHeroDesktopWebp.file}
             alt={homepageHeroDesktop.name}
             fill
-            priority
+            fetchPriority="high"
             sizes="58vw"
             className="object-cover object-left-bottom"
           />

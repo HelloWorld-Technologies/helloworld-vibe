@@ -24,6 +24,14 @@
         "extension": ".mp4"
       },
       {
+        "id": "community-page-video-webm",
+        "name": "Community Page Video (WebM)",
+        "file": "/assets/community/community-page-video.webm",
+        "originalName": "Community page video.webm",
+        "type": "video",
+        "extension": ".webm"
+      },
+      {
         "id": "hero-1",
         "name": "Hero 1",
         "file": "/assets/community/hero/hero-1.webp",
@@ -610,12 +618,28 @@
         "extension": ".png"
       },
       {
+        "id": "hero-mobile-webp",
+        "name": "Hero Mobile (WebP)",
+        "file": "/assets/homepage-website/hero-mobile.webp",
+        "originalName": "Hero_Mobile.webp",
+        "type": "image",
+        "extension": ".webp"
+      },
+      {
         "id": "hero-desktop",
         "name": "Hero Desktop",
         "file": "/assets/homepage-website/hero-desktop.png",
         "originalName": "Hero_desktop.png",
         "type": "image",
         "extension": ".png"
+      },
+      {
+        "id": "hero-desktop-webp",
+        "name": "Hero Desktop (WebP)",
+        "file": "/assets/homepage-website/hero-desktop.webp",
+        "originalName": "Hero_desktop.webp",
+        "type": "image",
+        "extension": ".webp"
       },
       {
         "id": "homepage-video",

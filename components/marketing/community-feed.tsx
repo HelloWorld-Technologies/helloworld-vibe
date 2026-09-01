@@ -5,7 +5,10 @@ import { useRef, useState } from "react";
 import { CommunityFeedHeading } from "@/components/marketing/community-headings";
 import { HomepageCarouselNav } from "@/components/marketing/homepage-carousel-nav";
 import { LocalityPaginationDots } from "@/components/marketing/locality-card";
-import { MomentCard } from "@/components/marketing/moment-card";
+import {
+  MOMENT_CARD_FEED_ASPECT_CLASS,
+  MomentCard,
+} from "@/components/marketing/moment-card";
 import { cn } from "@/src/lib/cn";
 import { communityInstagramUrl } from "@/src/tokens/community";
 import { homepageFeedMoments } from "@/src/tokens/homepage";
@@ -96,6 +99,7 @@ export function CommunityFeed() {
             <MomentCard
               key={item.id}
               item={item}
+              aspectClass={MOMENT_CARD_FEED_ASPECT_CLASS}
               playWithAudio
               isActivePlaying={playingId === item.id}
               onPlayingChange={(playing) =>
@@ -134,6 +138,7 @@ export function CommunityFeed() {
               <MomentCard
                 key={item.id}
                 item={item}
+                aspectClass={MOMENT_CARD_FEED_ASPECT_CLASS}
                 playWithAudio
                 isActivePlaying={playingId === item.id}
                 onPlayingChange={(playing) =>
