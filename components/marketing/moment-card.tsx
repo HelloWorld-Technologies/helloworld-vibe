@@ -167,6 +167,7 @@ export function MomentCard({
               src={item.imageSrc}
               alt={title}
               fill
+              loading="lazy"
               className={cn(
                 "object-cover transition-opacity duration-200",
                 playWithAudio
@@ -187,6 +188,7 @@ export function MomentCard({
           src={item.imageSrc}
           alt={title}
           fill
+          loading="lazy"
           className="object-cover"
           sizes="(max-width: 640px) 70vw, 296px"
         />

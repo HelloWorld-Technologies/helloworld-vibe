@@ -6,6 +6,19 @@ function communityAsset(id: string) {
   return found;
 }
 
+export type CommunityImage = {
+  src: string;
+  webpSrc: string;
+};
+
+/** PNG/JPG fallback + compressed WebP source for `<picture>` / `AdaptiveImage`. */
+export function communityImage(id: string): CommunityImage {
+  return {
+    src: communityAsset(id).file,
+    webpSrc: communityAsset(`${id}-webp`).file,
+  };
+}
+
 export const communityPageVideo = communityAsset("community-page-video");
 export const communityPageVideoWebm = communityAsset("community-page-video-webm");
 
@@ -19,7 +32,7 @@ export const communityHeroPolaroids = [
   {
     id: "marathon",
     label: "Marathon",
-    image: "/assets/community/hero/hero-1.webp",
+    ...communityImage("hero-1"),
     rotation: -6.34,
     left: 0,
     top: 0,
@@ -29,7 +42,7 @@ export const communityHeroPolaroids = [
   {
     id: "art-workshop",
     label: "Art Workshop",
-    image: "/assets/community/hero/hero-2.webp",
+    ...communityImage("hero-2"),
     rotation: 8.98,
     left: 191,
     top: 255,
@@ -39,7 +52,7 @@ export const communityHeroPolaroids = [
   {
     id: "epic-meetup",
     label: "Epic Meetup",
-    image: "/assets/community/hero/hero-3.webp",
+    ...communityImage("hero-3"),
     rotation: -2.24,
     left: 631,
     top: 289,
@@ -49,7 +62,7 @@ export const communityHeroPolaroids = [
   {
     id: "halloween-night",
     label: "Halloween Night",
-    image: "/assets/community/hero/hero-4.webp",
+    ...communityImage("hero-4"),
     rotation: 2.85,
     left: 888.94,
     top: 28.97,

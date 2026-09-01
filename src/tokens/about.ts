@@ -99,11 +99,6 @@ export const aboutCoreTeam: AboutPerson[] = [
     image: "/assets/about/team/dayal.jpg",
   },
   {
-    name: "Pratik Amar",
-    role: "AVP - Business",
-    image: "/assets/about/team/pratik.jpg",
-  },
-  {
     name: "Vikram Saravag",
     role: "AVP - Business",
     image: "/assets/about/team/vikram.jpg",

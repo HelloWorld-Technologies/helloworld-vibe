@@ -1,5 +1,11 @@
 import { cn } from "@/src/lib/cn";
-import type { ComponentPropsWithoutRef } from "react";
+import { Fragment, type ComponentPropsWithoutRef } from "react";
+
+export type AdaptiveImageMediaSource = {
+  media: string;
+  src: string;
+  webpSrc?: string;
+};
 
 export type AdaptiveImageProps = Omit<
   ComponentPropsWithoutRef<"img">,
@@ -7,12 +13,15 @@ export type AdaptiveImageProps = Omit<
 > & {
   src: string;
   webpSrc?: string;
+  /** Larger-breakpoint sources; list most specific media queries first. */
+  mediaSources?: readonly AdaptiveImageMediaSource[];
   fill?: boolean;
 };
 
 export function AdaptiveImage({
   src,
   webpSrc,
+  mediaSources,
   fill,
   className,
   alt,
@@ -22,6 +31,18 @@ export function AdaptiveImage({
     <picture
       className={cn(fill && "absolute inset-0 block h-full w-full")}
     >
+      {mediaSources?.map(({ media, src: mediaSrc, webpSrc: mediaWebpSrc }) => (
+        <Fragment key={media}>
+          {mediaWebpSrc ? (
+            <source
+              media={media}
+              srcSet={mediaWebpSrc}
+              type="image/webp"
+            />
+          ) : null}
+          <source media={media} srcSet={mediaSrc} />
+        </Fragment>
+      ))}
       {webpSrc ? <source srcSet={webpSrc} type="image/webp" /> : null}
       <img
         src={src}

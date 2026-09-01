@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { AdaptiveImage } from "@/components/media/adaptive-image";
 import { CommunityWeekendsHeading } from "@/components/marketing/community-headings";
 import {
   communityHeroFrame,
@@ -13,7 +13,8 @@ function toPercent(value: number, total: number) {
 
 function PolaroidCard({
   label,
-  image,
+  src,
+  webpSrc,
   rotation,
   left,
   top,
@@ -21,7 +22,8 @@ function PolaroidCard({
   zIndex,
 }: {
   label: string;
-  image: string;
+  src: string;
+  webpSrc: string;
   rotation: number;
   left: number;
   top: number;
@@ -43,12 +45,15 @@ function PolaroidCard({
     >
       <div className="flex flex-col items-center bg-white px-2 py-[3px] shadow-[0_19px_20px_rgba(26,35,50,0.45)]">
         <div className="relative aspect-[244/306] w-full overflow-hidden">
-          <Image
-            src={image}
+          <AdaptiveImage
+            src={src}
+            webpSrc={webpSrc}
             alt={label}
             fill
-            className="object-cover"
+            loading="lazy"
+            decoding="async"
             sizes="275px"
+            className="object-cover"
           />
         </div>
         <p className="py-1 font-caveat text-[0.8125rem] leading-5 text-[rgba(26,35,50,0.7)]">
@@ -72,12 +77,15 @@ function MobilePolaroidCard({
     >
       <div className="flex flex-col items-center bg-white px-1.5 py-1 shadow-[0_12px_16px_rgba(26,35,50,0.35)]">
         <div className="relative aspect-[244/306] w-full overflow-hidden">
-          <Image
-            src={polaroid.image}
+          <AdaptiveImage
+            src={polaroid.src}
+            webpSrc={polaroid.webpSrc}
             alt={polaroid.label}
             fill
-            className="object-cover"
+            loading="lazy"
+            decoding="async"
             sizes="144px"
+            className="object-cover"
           />
         </div>
         <p className="py-0.5 font-caveat text-xs text-[rgba(26,35,50,0.7)]">
