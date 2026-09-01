@@ -32,7 +32,7 @@ function HomepageHeroHeading({
       className={cn(
         "font-bold tracking-tight text-gray-900",
         size === "desktop"
-          ? "max-w-xl text-display-md sm:text-display-lg lg:text-[3.75rem] lg:leading-[4.5rem]"
+          ? "overflow-visible text-display-md sm:text-display-lg lg:text-[3.75rem] lg:leading-[4.5rem]"
           : "text-center text-[1.25rem] leading-[1.5rem]",
         className,
       )}
@@ -104,7 +104,7 @@ export function HomepageHero() {
   return (
     <section className="relative mx-auto max-w-7xl bg-white">
       <div className="relative lg:min-h-[28.875rem]">
-        <div className="relative">
+        <div className="relative lg:absolute lg:inset-0 lg:z-[1]">
           <div className="overflow-hidden rounded-b-[3.5rem] bg-[#f3f4f6] lg:pointer-events-none lg:absolute lg:inset-0 lg:overflow-visible lg:rounded-none lg:bg-transparent">
             <div className="lg:hidden">
               <div className="relative z-10 px-4 pb-1 pt-3">
@@ -152,11 +152,11 @@ export function HomepageHero() {
         </div>
 
         <div className="relative hidden rounded-b-[50px] bg-gray-50 lg:block">
-          <div className={pageShell.homepageHero}>
+          <div className={cn(pageShell.homepageHero, "lg:pl-4 xl:pl-6")}>
             <div
               className={cn(
                 pageShell.homepageHeroCopy,
-                "pb-10 pt-10 xl:pb-12 xl:pt-12",
+                "relative lg:z-10 pb-8 pt-8 xl:pb-10 xl:pt-10",
               )}
             >
               <HomepageHeroHeading />
