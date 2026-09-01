@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Caveat, Playfair_Display } from "next/font/google";
 import localFont from "next/font/local";
+import { GoogleTagManager } from "@/components/analytics/google-tag-manager";
+import { UtmStorage } from "@/components/analytics/utm-storage";
 import { WishlistProvider } from "@/components/wishlist/wishlist-provider";
 import { getPublicSiteUrl } from "@/src/lib/schema";
 import "./globals.css";
@@ -93,6 +95,8 @@ export default function RootLayout({
       className={`${satoshi.variable} ${playfair.variable} ${caveat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-white font-satoshi text-gray-900">
+        <GoogleTagManager />
+        <UtmStorage />
         <WishlistProvider>{children}</WishlistProvider>
       </body>
     </html>

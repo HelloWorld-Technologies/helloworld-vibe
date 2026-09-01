@@ -12,6 +12,8 @@ import { Button } from "@/components/ui/button";
 import { OtpInput } from "@/components/ui/otp-input";
 import { readStoredCity } from "@/src/lib/city-storage";
 import { cn } from "@/src/lib/cn";
+import { trackContactLead, trackLeadConversion } from "@/src/lib/gtm";
+import { getStoredUtmSource } from "@/src/lib/utm";
 import {
   cities,
   isCitySlug,
@@ -51,6 +53,7 @@ export function LocalityContactCard({
   locationEditable = true,
   locationPlaceholder = "Search your location here",
   showCallFallback = true,
+  leadTracking = "srp",
 }: {
   className?: string;
   sticky?: boolean;
@@ -59,6 +62,8 @@ export function LocalityContactCard({
   locationEditable?: boolean;
   locationPlaceholder?: string;
   showCallFallback?: boolean;
+  /** `conversion` fires generate_lead_* events (contact page); `srp` fires name/phone only. */
+  leadTracking?: "srp" | "conversion";
 }) {
   const [step, setStep] = useState<Step>("form");
   const [name, setName] = useState("");
@@ -138,6 +143,16 @@ export function LocalityContactCard({
     setLoading(false);
 
     if (response.success) {
+      if (leadTracking === "conversion") {
+        trackLeadConversion({
+          name,
+          phone,
+          city: searchCity,
+          utmSource: getStoredUtmSource(),
+        });
+      } else {
+        trackContactLead({ name, phone });
+      }
       setStep("success");
       return;
     }

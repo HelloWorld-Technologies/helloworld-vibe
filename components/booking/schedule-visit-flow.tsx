@@ -16,6 +16,7 @@ import { getPropertyVisitSlots, postCreateVisit } from "@/src/apis/visit";
 import { postSendOtp, postVerifyOtp } from "@/src/apis/user";
 import { isLoggedIn } from "@/src/lib/auth-storage";
 import { validateField } from "@/src/lib/form-validation";
+import { trackVisitScheduled } from "@/src/lib/gtm";
 import { cn } from "@/src/lib/cn";
 import {
   formatVisitDate,
@@ -186,6 +187,7 @@ export function ScheduleVisitFlow({
     setLoading(false);
 
     if (response.success) {
+      trackVisitScheduled({ name, phone, email });
       setScheduledAt(buildScheduledAtLabel());
       setStep("success");
       onSuccess?.();

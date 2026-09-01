@@ -22,6 +22,7 @@ export function ContactPageContent () {
           <LocalityContactCard
             locationPlaceholder='Search your location here'
             showCallFallback={false}
+            leadTracking='conversion'
             className='w-full self-start'
           />
         </div>

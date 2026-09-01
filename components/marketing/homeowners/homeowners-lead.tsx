@@ -8,6 +8,7 @@ import { CallbackRequestSuccess } from "@/components/booking/callback-request-su
 import { HomeownersBeforeAfter } from "@/components/marketing/homeowners/homeowners-before-after";
 import { LocationSuggestField } from "@/components/search/location-suggest-field";
 import { validateField } from "@/src/lib/form-validation";
+import { trackContactLead } from "@/src/lib/gtm";
 import { cn } from "@/src/lib/cn";
 import { readStoredCity } from "@/src/lib/city-storage";
 import {
@@ -93,6 +94,7 @@ export function HomeownersLead() {
     setLoading(false);
 
     if (response.success === true) {
+      trackContactLead({ name: name.trim(), phone });
       setSubmitted(true);
       return;
     }
