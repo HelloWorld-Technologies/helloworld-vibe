@@ -41,6 +41,7 @@ export interface SrpCardProps {
   propertyUrl?: string;
   /** Eager-load the first carousel photo (above-the-fold SRP cards). */
   imagePriority?: boolean;
+  showRequestCallback?: boolean;
   onRequestCallback?: () => void;
   onTakeTour?: () => void;
   onSaveToggle?: () => void;
@@ -305,6 +306,7 @@ export function SrpCard({
   href,
   propertyUrl,
   imagePriority = false,
+  showRequestCallback = true,
   onRequestCallback,
   onTakeTour,
   onSaveToggle,
@@ -473,18 +475,20 @@ export function SrpCard({
           </div>
         </div>
 
-        <div className="mt-1 grid grid-cols-2 gap-2">
-          <Button
-            hierarchy="secondary-gray"
-            size="lg"
-            className="w-full min-w-0 rounded-lg border-gray-300 !px-2.5 text-gray-800 whitespace-nowrap sm:!px-[18px]"
-            onClick={(event) => {
-              event.stopPropagation();
-              onRequestCallback?.();
-            }}
-          >
-            Request Callback
-          </Button>
+        <div className={cn("mt-1 grid gap-2", showRequestCallback ? "grid-cols-2" : "grid-cols-1")}>
+          {showRequestCallback ? (
+            <Button
+              hierarchy="secondary-gray"
+              size="lg"
+              className="w-full min-w-0 rounded-lg border-gray-300 !px-2.5 text-gray-800 whitespace-nowrap sm:!px-[18px]"
+              onClick={(event) => {
+                event.stopPropagation();
+                onRequestCallback?.();
+              }}
+            >
+              Request Callback
+            </Button>
+          ) : null}
           <Button
             hierarchy="primary"
             size="lg"

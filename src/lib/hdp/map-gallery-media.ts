@@ -4,14 +4,39 @@ import type { PropertyMediaItem } from "@/src/models/property-media";
 import { imageUrlFormatter } from "@/src/lib/images";
 import { srpCardComingSoonImage } from "@/src/tokens/srp-card";
 
+/** S3 hosts that store original property media keys (not final CDN URLs). */
+const PROPERTY_MEDIA_S3_HOSTS = new Set([
+  "hw-production-original-image.s3.ap-south-1.amazonaws.com",
+  "hw-production-compressed-image.s3.ap-south-1.amazonaws.com",
+  "property-videos-original.s3.ap-south-1.amazonaws.com",
+  "property-videos-originals.s3.ap-south-1.amazonaws.com",
+  "property-videos-original-staging.s3.ap-south-1.amazonaws.com",
+  "hw-staging-media.s3.ap-south-1.amazonaws.com",
+]);
+
+function propertyMediaKeyFromUrl(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    if (!PROPERTY_MEDIA_S3_HOSTS.has(parsed.hostname)) return null;
+    const path = parsed.pathname.replace(/^\/+/, "");
+    return path.startsWith("property/") ? path : null;
+  } catch {
+    return null;
+  }
+}
+
 function formatMediaUrl(url: string | null | undefined): string {
   if (!url) return "";
   if (url.includes("coming-soon")) return srpCardComingSoonImage;
-  if (url.startsWith("/") || url.includes("http")) {
-    return url.includes("http")
-      ? url.replace(/\(/g, "%28").replace(/\)/g, "%29").replace(/ /g, "%20")
-      : url;
+  if (url.startsWith("/")) return url;
+
+  const mediaKey = url.includes("http") ? propertyMediaKeyFromUrl(url) : url;
+  if (mediaKey) return imageUrlFormatter("hdp", mediaKey);
+
+  if (url.includes("http")) {
+    return url.replace(/\(/g, "%28").replace(/\)/g, "%29").replace(/ /g, "%20");
   }
+
   return imageUrlFormatter("hdp", url);
 }
 

@@ -70,7 +70,9 @@ export function LocalityContactCard({
   /** `conversion` fires generate_lead_* events (contact page); `srp` fires name/phone only. */
   leadTracking?: "srp" | "conversion";
   /** When set, navigates here after a successful lead instead of inline success UI. */
-  redirectOnSuccess?: string;
+  redirectOnSuccess?:
+    | string
+    | ((ctx: { city: CitySlug; location: string }) => string);
 }) {
   const [step, setStep] = useState<Step>("form");
   const [name, setName] = useState("");
@@ -162,7 +164,14 @@ export function LocalityContactCard({
         trackContactLead({ name, phone });
       }
       if (redirectOnSuccess) {
-        router.push(redirectOnSuccess);
+        const href =
+          typeof redirectOnSuccess === "function"
+            ? redirectOnSuccess({
+                city: searchCity,
+                location: location.trim(),
+              })
+            : redirectOnSuccess;
+        router.push(href);
         return;
       }
       setStep("success");
