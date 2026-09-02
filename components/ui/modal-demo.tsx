@@ -31,7 +31,6 @@ export function ModalDemo() {
         onClose={() => setOpen(false)}
         onLogin={handleLogin}
         loading={loading}
-        defaultPhone="9777964438"
       />
     </div>
   );

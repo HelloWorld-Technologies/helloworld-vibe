@@ -149,7 +149,7 @@ export function VisitScheduler({
       ref={viewRef}
       className={cn(
         embedded
-          ? "w-full text-left"
+          ? "w-full text-center md:text-left"
           : "mx-auto w-full max-w-3xl px-2 text-center",
         className,
       )}
@@ -172,7 +172,7 @@ export function VisitScheduler({
         <div
           className={cn(
             "overflow-x-auto scrollbar-none",
-            embedded ? "mt-4" : "mt-8",
+            embedded ? "mt-1.5 md:mt-4" : "mt-8",
           )}
         >
           <div
@@ -180,8 +180,10 @@ export function VisitScheduler({
             role="radiogroup"
             aria-label="Visit date"
             className={cn(
-              "relative flex w-max min-w-full gap-3 py-2 sm:gap-4",
-              embedded ? "justify-start px-0" : "justify-center px-3",
+                  "relative flex w-max min-w-full gap-2 sm:gap-4",
+                  embedded
+                    ? "justify-start px-0 py-0.5 md:gap-3 md:py-2"
+                    : "justify-center px-3 py-2",
             )}
           >
           {dateIndicator ? (
@@ -215,7 +217,8 @@ export function VisitScheduler({
                   }
                 }}
                 className={cn(
-                  "relative z-10 flex w-18 shrink-0 cursor-pointer flex-col items-center justify-center rounded-2xl border px-3 py-4",
+                  "relative z-10 flex w-18 shrink-0 cursor-pointer flex-col items-center justify-center rounded-2xl border px-3",
+                  embedded ? "py-3 md:py-4" : "py-4",
                   "transition-[border-color,transform,box-shadow] duration-300 motion-reduce:transition-none",
                   "focus-within:outline-none focus-within:ring-4 focus-within:ring-blue-light-100",
                   isSelected
@@ -259,11 +262,11 @@ export function VisitScheduler({
         shouldAnimate={shouldAnimate}
         delayOffset={180}
       >
-        <div className={embedded ? "mt-4" : "mt-6 sm:mt-8"}>
+        <div className={embedded ? "mt-1.5 md:mt-4" : "mt-6 sm:mt-8"}>
           {embedded ? (
             <div
               ref={timeScrollRef}
-              className="overflow-y-auto scrollbar-none"
+              className="scrollbar-none overflow-y-auto max-md:max-h-none"
               style={{ maxHeight: visitTimeSlotListMaxHeight }}
             >
               <div
@@ -272,7 +275,7 @@ export function VisitScheduler({
                 role="radiogroup"
                 aria-label="Visit time"
                 className={cn(
-                  "relative flex flex-wrap gap-3 py-2",
+                  "relative flex flex-wrap gap-2 py-0.5 md:gap-3 md:py-2",
                   "justify-start px-0",
                 )}
               >
@@ -307,7 +310,7 @@ export function VisitScheduler({
                         }
                       }}
                       className={cn(
-                        "relative z-10 cursor-pointer rounded-full px-5 py-3 text-sm font-semibold",
+                        "relative z-10 cursor-pointer rounded-full px-4 py-2.5 text-sm font-semibold md:px-5 md:py-3",
                         "transition-[color,transform] duration-300 motion-reduce:transition-none",
                         "focus-within:outline-none focus-within:ring-4 focus-within:ring-blue-light-100",
                         "animate-tab-panel-in motion-reduce:animate-none",

@@ -1,5 +1,6 @@
 import { getAssetById } from "@/src/tokens/assets";
 import { buildNestedHdpHref } from "@/src/lib/sitemap-slug";
+import type { GalleryMediaItem } from "@/src/models/gallery";
 import { pressLogos } from "@/src/tokens/press";
 import { srpCardSampleImages, type SrpCardStatusLabel } from "@/src/tokens/srp-card";
 
@@ -26,8 +27,11 @@ export type HomepageFeaturedProperty = {
 };
 
 export const homepageHeroDesktop = asset("hero-desktop");
+export const homepageHeroDesktopWebp = asset("hero-desktop-webp");
 export const homepageHeroMobile = asset("hero-mobile");
+export const homepageHeroMobileWebp = asset("hero-mobile-webp");
 export const homepageVideo = asset("homepage-video");
+export const homepageVideoWebm = asset("homepage-video-webm");
 export const homepageAppScreenshot1 = asset("footer-screenshot-1");
 export const homepageAppScreenshot2 = asset("footer-screenshot-2");
 
@@ -40,7 +44,7 @@ export const homepageBenefits = [
   },
   {
     id: "lock-in",
-    title: "Minimum Lock-in Period",
+    title: "Minimum lock-in period",
     description: "Don't worry about uncertainties anymore",
     icon: asset("no-lockin-period"),
   },
@@ -134,12 +138,69 @@ export const homepageFeaturedProperties: HomepageFeaturedProperty[] = [
   },
 ];
 
-export const homepageFeedItems = [
-  "/assets/community/hero/hero-1.png",
-  "/assets/community/hero/hero-2.png",
-  "/assets/community/hero/hero-3.png",
-  "/assets/community/hero/hero-4.png",
-] as const;
+/** Homepage “Straight from the Feed!” — local compressed insta-media videos. */
+const FEED_VIDEO_BASE = "/assets/feed";
+
+function feedVideo(slug: string) {
+  return {
+    mp4: `${FEED_VIDEO_BASE}/${slug}.mp4`,
+    webm: `${FEED_VIDEO_BASE}/${slug}.webm`,
+    poster: `${FEED_VIDEO_BASE}/${slug}-poster.webp`,
+  };
+}
+
+export const homepageFeedMoments: readonly GalleryMediaItem[] = [
+  {
+    id: "feed-01-unspoken-rules",
+    category: "moments",
+    label: "Unspoken Rules",
+    caption: "Unspoken Rules",
+    imageSrc: feedVideo("01-unspoken-rules").poster,
+    kind: "video",
+    videoSrc: feedVideo("01-unspoken-rules").mp4,
+    videoWebmSrc: feedVideo("01-unspoken-rules").webm,
+  },
+  {
+    id: "feed-02-tpl-kolkata",
+    category: "moments",
+    label: "TPL Kolkata",
+    caption: "TPL Kolkata",
+    imageSrc: feedVideo("02-tpl-kolkata").poster,
+    kind: "video",
+    videoSrc: feedVideo("02-tpl-kolkata").mp4,
+    videoWebmSrc: feedVideo("02-tpl-kolkata").webm,
+  },
+  {
+    id: "feed-03-independence-day",
+    category: "moments",
+    label: "Independence Day",
+    caption: "Independence Day",
+    imageSrc: feedVideo("03-independence-day").poster,
+    kind: "video",
+    videoSrc: feedVideo("03-independence-day").mp4,
+    videoWebmSrc: feedVideo("03-independence-day").webm,
+  },
+  {
+    id: "feed-04-we-rated-each-other",
+    category: "moments",
+    label: "We rated each other",
+    caption: "We rated each other",
+    imageSrc: feedVideo("04-we-rated-each-other").poster,
+    kind: "video",
+    videoSrc: feedVideo("04-we-rated-each-other").mp4,
+    videoWebmSrc: feedVideo("04-we-rated-each-other").webm,
+  },
+  {
+    id: "feed-05-tenants-open-mic",
+    category: "moments",
+    label: "Tenants Open Mic",
+    caption: "Tenants Open Mic",
+    imageSrc: feedVideo("05-tenants-open-mic").poster,
+    kind: "video",
+    videoSrc: feedVideo("05-tenants-open-mic").mp4,
+    videoWebmSrc: feedVideo("05-tenants-open-mic").webm,
+  },
+];
 
 export {
   footerAboutLinks,

@@ -34,7 +34,7 @@ const footerCities = [
   { label: "Indore", slug: "indore" },
   { label: "Kolkata", slug: "kolkata" },
   { label: "Mumbai", slug: "mumbai" },
-  { label: "Greater Noida", slug: "greater-noida" },
+  { label: "Noida", slug: "greater-noida" },
   { label: "Visakhapatnam", slug: "visakhapatnam" },
 ] as const;
 

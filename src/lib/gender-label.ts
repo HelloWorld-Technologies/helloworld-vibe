@@ -45,3 +45,28 @@ export function getGenderDisplayLabel(
       return undefined;
   }
 }
+
+/** Capitalized prefix for property card subtitles: "Boys ", "Girls ", or "". */
+export function getGenderSubtitlePrefix(
+  gender?: string | null,
+): string {
+  const key = normalizeGenderKey(gender);
+  switch (key) {
+    case "MALE":
+    case "BOYS":
+    case "BOYS_ONLY":
+    case "MEN":
+    case "MEN_ONLY":
+    case "MALE_ONLY":
+      return "Boys ";
+    case "FEMALE":
+    case "GIRLS":
+    case "GIRLS_ONLY":
+    case "WOMEN":
+    case "WOMEN_ONLY":
+    case "FEMALE_ONLY":
+      return "Girls ";
+    default:
+      return "";
+  }
+}

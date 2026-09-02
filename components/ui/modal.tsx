@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
+import { CloseIcon } from "@/components/icons/close-icon";
 import { cn } from "@/src/lib/cn";
 
 const MODAL_TRANSITION_MS = 300;
@@ -22,25 +23,8 @@ export interface ModalProps {
   closeLabel?: string;
   /** Overlay stacking class. Use higher than `z-50` for nested modals (e.g. date picker). */
   overlayClassName?: string;
-}
-
-function CloseIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 20 20"
-      fill="none"
-      className={className}
-    >
-      <path
-        d="M15 5 5 15M5 5l10 10"
-        stroke="currentColor"
-        strokeWidth="1.67"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
+  /** Panel padding. Use `"none"` when child content provides its own spacing. */
+  padding?: "default" | "none";
 }
 
 export function Modal({
@@ -53,6 +37,7 @@ export function Modal({
   describedBy,
   closeLabel = "Close dialog",
   overlayClassName = "z-50",
+  padding = "default",
 }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(open);
@@ -147,7 +132,7 @@ export function Modal({
             "right-4 -top-12 md:-right-4 md:-top-12",
           )}
         >
-          <CloseIcon className="size-5" />
+          <CloseIcon className="size-[17px]" />
         </button>
 
         <div
@@ -160,8 +145,11 @@ export function Modal({
           className={cn(
             "relative overflow-y-auto bg-white shadow-xl outline-none",
             // Bottom sheet on mobile; rounded dialog on desktop.
-            "max-h-[min(92dvh,calc(100dvh-3.5rem))] rounded-t-3xl rounded-b-none p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:p-6",
-            "md:max-h-[calc(100dvh-2rem)] md:rounded-3xl md:p-10 md:pb-10",
+            "max-md:h-auto max-md:min-h-0",
+            "max-h-[min(92dvh,calc(100dvh-3.5rem))] rounded-t-3xl rounded-b-none",
+            "md:max-h-[calc(100dvh-2rem)] md:rounded-3xl",
+            padding !== "none" &&
+              "p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:p-6 md:p-10 md:pb-10",
             className,
           )}
         >

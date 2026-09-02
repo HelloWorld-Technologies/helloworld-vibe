@@ -50,14 +50,7 @@ export function SiteHeader({
 
   return (
     <>
-      <header
-        className={cn(
-          "z-50 bg-white",
-          isBanner
-            ? "relative"
-            : "sticky top-0 border-b border-gray-100 bg-white/95 backdrop-blur-sm",
-        )}
-      >
+      <header className="fixed top-0 z-50 w-full border-b border-[#E4E4E4] bg-white">
         <div
           className={cn(
             pageShell.chrome,
@@ -66,10 +59,10 @@ export function SiteHeader({
         >
           <Link href="/" className="shrink-0">
             <Logo
-              width={105}
-              height={40}
+              width={84}
+              height={32}
               priority
-              className="h-10 w-auto"
+              className="h-8 w-auto"
             />
           </Link>
 
@@ -89,7 +82,7 @@ export function SiteHeader({
               className={cn(
                 "flex size-9 items-center justify-center text-gray-900 transition-colors",
                 isBanner
-                  ? "rounded-full bg-gray-100 hover:bg-gray-200"
+                  ? "rounded-full bg-[#F2F2F2] hover:bg-gray-200"
                   : "rounded-lg hover:bg-gray-50",
               )}
             >
@@ -98,6 +91,7 @@ export function SiteHeader({
           </div>
         </div>
       </header>
+      <div className="h-[4.5rem] shrink-0" aria-hidden />
 
       <SiteHeaderSidebar
         open={menuOpen}

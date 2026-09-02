@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
-import { getApiOriginHeader } from "@/src/lib/api";
 import { getAllBlogPostsMeta } from "@/src/lib/blog.server";
 import { BLOG_PAGE_SIZE, paginate } from "@/src/lib/pagination";
+import { getPublicSiteUrl } from "@/src/lib/schema";
 import { pageShell } from "@/src/tokens/layout";
 
 export const revalidate = 86400;
@@ -25,7 +25,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { page } = await params;
   const pageNum = Number(page);
-  const baseUrl = getApiOriginHeader();
+  const baseUrl = getPublicSiteUrl();
   return {
     title: `Blogs — Page ${pageNum} | HelloWorld`,
     description:

@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { HomepageAsset } from "@/components/marketing/homepage-asset";
+import { AdaptiveVideo } from "@/components/media/adaptive-video";
 import { pageShell } from "@/src/tokens/layout";
-import { homepageStats, homepageVideo } from "@/src/tokens/homepage";
+import { homepageStats, homepageVideo, homepageVideoWebm } from "@/src/tokens/homepage";
 
 function StatDivider() {
   return (
     <div
       aria-hidden
-      className="h-10 w-px shrink-0 self-center bg-gray-200 sm:h-12 lg:mx-1"
+      className="w-px shrink-0 self-stretch bg-gray-200 sm:h-12 sm:self-center lg:mx-1"
     />
   );
 }
@@ -15,7 +16,7 @@ function StatDivider() {
 function WeekendsHeading() {
   return (
     <div className="relative inline-block text-center lg:text-left">
-      <h2 className="font-playfair text-display-md font-bold leading-[1.08] tracking-tight text-gray-900 sm:text-display-lg lg:text-display-2xl lg:leading-[1.05]">
+      <h2 className="font-playfair text-display-lg font-bold leading-[1.08] tracking-tight text-gray-900 sm:text-display-lg lg:text-display-2xl lg:leading-[1.05]">
         <span className="block">Weekends hit</span>
         <span className="mt-1 block leading-none sm:mt-2">
           <span className="italic text-gradient-different">Different</span>{" "}
@@ -23,7 +24,7 @@ function WeekendsHeading() {
             <span className="relative z-0">here</span>
             <span
               aria-hidden
-              className="absolute -bottom-4 left-1/2 z-10 w-max -translate-x-1/3 rotate-[-4deg] bg-blue-light-300 px-3 py-0.5 font-caveat text-base leading-none text-gray-900 sm:left-0 sm:translate-x-0 sm:px-5 sm:text-lg lg:left-0 lg:text-xl"
+              className="absolute -bottom-4 left-1/2 z-10 w-max -translate-x-1/3 rotate-[-4deg] bg-blue-light-300 px-2 py-0.5 font-caveat text-base font-normal leading-none text-gray-900 sm:left-0 sm:translate-x-0 sm:px-5 sm:text-lg lg:left-0 lg:text-xl"
             >
               ✦ ps. Good vibes only!
             </span>
@@ -36,13 +37,14 @@ function WeekendsHeading() {
 
 export function HomepageWeekends() {
   return (
-    <section className="bg-white py-10 sm:py-16 lg:py-20">
+    <section className="bg-white py-8 sm:py-12 lg:py-14">
       <div className={pageShell.homepage}>
         <div className="grid items-center gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-16">
           <div className="overflow-hidden rounded-tl-[1.5rem] bg-gray-900 shadow-[8px_7px_0_0_#0baaec] sm:rounded-tl-[2rem] sm:shadow-[11px_9px_0_0_#0baaec]">
-            <video
+            <AdaptiveVideo
               className="aspect-video w-full object-cover"
-              src={homepageVideo.file}
+              mp4Src={homepageVideo.file}
+              webmSrc={homepageVideoWebm.file}
               muted
               loop
               playsInline
@@ -61,18 +63,18 @@ export function HomepageWeekends() {
                 {homepageStats.map((stat, index) => (
                   <div key={stat.id} className="contents">
                     {index > 0 ? <StatDivider /> : null}
-                    <div className="flex min-w-0 flex-1 items-center gap-1.5 px-1 sm:min-w-[5rem] sm:flex-none sm:gap-2 sm:px-3 lg:px-4">
+                    <div className="flex min-w-0 flex-1 flex-col items-center gap-1 px-1 text-center sm:min-w-[5rem] sm:flex-none sm:flex-row sm:items-center sm:gap-2 sm:px-3 lg:px-4">
                       <HomepageAsset
                         asset={stat.icon}
                         width={40}
                         height={40}
                         className="size-8 shrink-0 sm:size-10 opacity-80"
                       />
-                      <div className="min-w-0 text-left">
+                      <div className="min-w-0 w-full text-center sm:w-auto">
                         <p className="text-lg font-bold leading-6 text-gray-900 sm:text-xl sm:leading-7 lg:text-2xl lg:leading-8">
                           {stat.value}
                         </p>
-                        <p className="text-xs leading-[1.125rem] text-gray-600 sm:text-sm sm:leading-5">
+                        <p className="text-[10px] leading-tight text-gray-600 sm:text-sm sm:leading-5">
                           {stat.label}
                         </p>
                       </div>

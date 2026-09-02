@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { HomepageAppDownload } from "@/components/marketing/homepage-app-download";
@@ -8,22 +9,47 @@ import { HomepagePress } from "@/components/marketing/homepage-press";
 import { HomepageProperties } from "@/components/marketing/homepage-properties";
 import { HomepageTestimonials } from "@/components/marketing/homepage-testimonials";
 import { HomepageWeekends } from "@/components/marketing/homepage-weekends";
-import { fetchFeedMoments } from "@/src/apis/moments";
-import { mapMomentsToGalleryItems } from "@/src/lib/hdp/map-gallery-media";
-import type { PropertyMoment } from "@/src/models/moment";
+import { JsonLd } from "@/components/seo/json-ld";
+import {
+  getBreadcrumbSchema,
+  getPublicSiteUrl,
+  getWebPageSchema,
+} from "@/src/lib/schema";
 
-export default async function Home() {
-  const feedResponse = await fetchFeedMoments({
-    mediaType: "video",
-    page: 1,
-    pageSize: 20,
-  });
-  const feedMoments = mapMomentsToGalleryItems(
-    (feedResponse.data ?? []) as PropertyMoment[],
-  );
+const title = "HelloWorld Coliving & Student Hostels";
+const description =
+  "HelloWorld provides coliving, student housing, coworking, social spaces and natural habitats to those exploring the evolution of humanity through positive impact.";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: title,
+  },
+  description,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title,
+    description,
+    url: "/",
+  },
+};
+
+export default function Home() {
+  const baseUrl = getPublicSiteUrl();
+  const schema = {
+    webPage: getWebPageSchema({
+      baseUrl,
+      path: "",
+      name: title,
+      description,
+    }),
+    breadcrumb: getBreadcrumbSchema(baseUrl, [{ name: "Home", path: "" }]),
+  };
 
   return (
     <div className="bg-white">
+      <JsonLd schema={schema} />
       <SiteHeader variant="banner" />
       <HomepageHero />
       <HomepageBenefits />
@@ -32,7 +58,7 @@ export default async function Home() {
         <HomepageProperties />
         <HomepageTestimonials />
         <HomepagePress />
-        <HomepageFeed moments={feedMoments} />
+        <HomepageFeed />
         <HomepageAppDownload />
       </main>
       <SiteFooter />

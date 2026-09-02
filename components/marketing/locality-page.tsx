@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeaderSearch } from "@/components/layout/site-header-search";
 import { LocalityContactCard } from "@/components/marketing/locality-contact-card";
@@ -21,11 +22,21 @@ import { pageLayout } from "@/src/tokens/layout";
 
 export function LocalityPageContent() {
   const [mobileTab, setMobileTab] = useState<LocalityMobileTab>("properties");
+  const propertiesRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
 
   function showDetails() {
-    setMobileTab("details");
+    flushSync(() => {
+      setMobileTab("details");
+    });
     detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function showProperties() {
+    flushSync(() => {
+      setMobileTab("properties");
+    });
+    propertiesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   return (
@@ -43,6 +54,7 @@ export function LocalityPageContent() {
           />
 
           <div
+            ref={propertiesRef}
             className={cn(
               mobileTab === "properties" ? "block" : "hidden md:block",
             )}
@@ -85,7 +97,11 @@ export function LocalityPageContent() {
       </main>
 
       <SiteFooter />
-      <LocalityMobileActions onShowDetails={showDetails} />
+      <LocalityMobileActions
+        activeTab={mobileTab}
+        onShowDetails={showDetails}
+        onShowProperties={showProperties}
+      />
     </div>
   );
 }

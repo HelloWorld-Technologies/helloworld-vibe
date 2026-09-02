@@ -3,6 +3,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { CommunityEvents } from "@/components/marketing/community-events";
 import { CommunityFeed } from "@/components/marketing/community-feed";
+import { CommunityReviews } from "@/components/marketing/community-reviews";
 import { CommunityHero } from "@/components/marketing/community-hero";
 import { CommunityVideo } from "@/components/marketing/community-video";
 
@@ -20,6 +21,7 @@ export default function CommunityPage() {
         <CommunityHero />
         <CommunityVideo />
         <CommunityEvents />
+        <CommunityReviews />
         <CommunityFeed />
       </main>
       <SiteFooter />

@@ -1,13 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/brand/logo";
 import { SiteHeaderSidebar } from "@/components/layout/site-header-sidebar";
 import { LocationSearch } from "@/components/search/location-search";
 import { getStoredMobile, logout } from "@/src/lib/auth-storage";
 import { cn } from "@/src/lib/cn";
 import type { CitySlug } from "@/src/tokens/cities";
+
+/** Always show mobile search row when within this distance from page top. */
+const MOBILE_SEARCH_TOP_THRESHOLD_PX = 8;
+
+/** Accumulated scroll distance before toggling visibility (avoids jitter). */
+const MOBILE_SEARCH_SCROLL_DELTA_PX = 24;
+
+/** Ignore scroll deltas briefly after a reveal toggle (matches CSS transition). */
+const MOBILE_SEARCH_TOGGLE_COOLDOWN_MS = 320;
 
 function MenuIcon({ className }: { className?: string }) {
   return (
@@ -39,10 +48,98 @@ export function SiteHeaderSearch({
 } = {}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userPhone, setUserPhone] = useState<string | null>(userPhoneProp);
+  const [mobileSearchRevealed, setMobileSearchRevealed] = useState(true);
+  const [mobileSearchPanelOpen, setMobileSearchPanelOpen] = useState(false);
+  const lastScrollYRef = useRef(0);
+  const scrollAccumulatorRef = useRef(0);
+  const mobileSearchRevealedRef = useRef(true);
+  const mobileSearchPanelOpenRef = useRef(false);
+  const scrollRafRef = useRef<number | null>(null);
+  const scrollToggleLockUntilRef = useRef(0);
 
   useEffect(() => {
     setUserPhone(userPhoneProp ?? getStoredMobile());
   }, [userPhoneProp]);
+
+  useEffect(() => {
+    mobileSearchRevealedRef.current = mobileSearchRevealed;
+  }, [mobileSearchRevealed]);
+
+  useEffect(() => {
+    mobileSearchPanelOpenRef.current = mobileSearchPanelOpen;
+  }, [mobileSearchPanelOpen]);
+
+  useEffect(() => {
+    lastScrollYRef.current = window.scrollY;
+
+    function applyMobileSearchReveal(next: boolean) {
+      if (mobileSearchRevealedRef.current === next) return;
+      mobileSearchRevealedRef.current = next;
+      setMobileSearchRevealed(next);
+      scrollToggleLockUntilRef.current =
+        performance.now() + MOBILE_SEARCH_TOGGLE_COOLDOWN_MS;
+      lastScrollYRef.current = window.scrollY;
+      scrollAccumulatorRef.current = 0;
+    }
+
+    function updateMobileSearchVisibility() {
+      const currentScrollY = window.scrollY;
+
+      if (performance.now() < scrollToggleLockUntilRef.current) {
+        lastScrollYRef.current = currentScrollY;
+        return;
+      }
+
+      if (currentScrollY <= MOBILE_SEARCH_TOP_THRESHOLD_PX) {
+        applyMobileSearchReveal(true);
+        scrollAccumulatorRef.current = 0;
+      } else if (mobileSearchPanelOpenRef.current) {
+        applyMobileSearchReveal(true);
+      } else {
+        const delta = currentScrollY - lastScrollYRef.current;
+
+        if (Math.abs(delta) >= 1) {
+          if (
+            (delta > 0 && scrollAccumulatorRef.current < 0) ||
+            (delta < 0 && scrollAccumulatorRef.current > 0)
+          ) {
+            scrollAccumulatorRef.current = 0;
+          }
+
+          scrollAccumulatorRef.current += delta;
+
+          if (scrollAccumulatorRef.current >= MOBILE_SEARCH_SCROLL_DELTA_PX) {
+            applyMobileSearchReveal(false);
+            scrollAccumulatorRef.current = 0;
+          } else if (
+            scrollAccumulatorRef.current <= -MOBILE_SEARCH_SCROLL_DELTA_PX
+          ) {
+            applyMobileSearchReveal(true);
+            scrollAccumulatorRef.current = 0;
+          }
+        }
+      }
+
+      lastScrollYRef.current = currentScrollY;
+    }
+
+    function onScroll() {
+      if (scrollRafRef.current !== null) return;
+      scrollRafRef.current = requestAnimationFrame(() => {
+        scrollRafRef.current = null;
+        updateMobileSearchVisibility();
+      });
+    }
+
+    updateMobileSearchVisibility();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (scrollRafRef.current !== null) {
+        cancelAnimationFrame(scrollRafRef.current);
+      }
+    };
+  }, []);
 
   function handleLoginSuccess(phone: string) {
     setUserPhone(phone);
@@ -56,6 +153,7 @@ export function SiteHeaderSearch({
 
   const locationSearchProps = {
     localityPlaceholder: "Search for Localities" as const,
+    variant: "header" as const,
     city,
     defaultLocality,
     srpSlug,
@@ -64,10 +162,11 @@ export function SiteHeaderSearch({
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur-sm">
-        <div className="mx-auto flex h-[5.5rem] max-w-7xl items-center gap-4 px-4 sm:px-6 lg:gap-6">
+      <header className="sticky top-0 z-50 isolate w-full bg-white/95 backdrop-blur-sm">
+        <div className="relative border-b border-[#E4E4E4]">
+          <div className="relative z-10 mx-auto flex h-[5.5rem] max-w-7xl shrink-0 items-center gap-4 bg-white px-4 sm:px-6 lg:gap-6">
           <Link href="/" className="shrink-0">
-            <Logo width={105} height={40} priority className="h-10 w-auto" />
+            <Logo width={84} height={32} priority className="h-8 w-auto" />
           </Link>
 
           <div className="hidden min-w-0 flex-1 lg:block max-w-lg mx-auto">
@@ -92,10 +191,35 @@ export function SiteHeaderSearch({
               <MenuIcon className="size-6" />
             </button>
           </div>
-        </div>
+          </div>
 
-        <div className="border-t border-gray-100 px-4 pb-3 pt-2 lg:hidden">
-          <LocationSearch {...locationSearchProps} />
+          <div
+            className={cn(
+              "absolute inset-x-0 top-full z-[9] overflow-hidden border-b border-[#E4E4E4] bg-white transition-[max-height,opacity] duration-300 ease-out motion-reduce:transition-none lg:hidden",
+              mobileSearchRevealed
+                ? "max-h-24 opacity-100"
+                : "max-h-0 opacity-0 border-b-transparent",
+            )}
+          >
+            <div
+              className={cn(
+                mobileSearchRevealed && mobileSearchPanelOpen
+                  ? "overflow-visible"
+                  : "overflow-hidden",
+                mobileSearchRevealed
+                  ? "border-t border-gray-100 px-4 pb-3 pt-2"
+                  : "pointer-events-none invisible border-t-0 px-4 pb-0 pt-0",
+              )}
+              aria-hidden={!mobileSearchRevealed}
+            >
+              <LocationSearch
+                {...locationSearchProps}
+                onActivePanelChange={(panel) =>
+                  setMobileSearchPanelOpen(panel !== null)
+                }
+              />
+            </div>
+          </div>
         </div>
       </header>
 

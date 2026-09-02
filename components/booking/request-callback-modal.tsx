@@ -4,6 +4,7 @@ import { useId, useState, type FormEvent } from "react";
 import { uploadContactLead } from "@/src/apis/contact";
 import { postSendOtpLeads } from "@/src/apis/user";
 import { validateField } from "@/src/lib/form-validation";
+import { trackContactLead } from "@/src/lib/gtm";
 import { CallbackRequestSuccess } from "@/components/booking/callback-request-success";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -100,6 +101,7 @@ export function RequestCallbackModal({
     setLoading(false);
 
     if (response.success) {
+      trackContactLead({ name, phone });
       setStep("success");
       return;
     }

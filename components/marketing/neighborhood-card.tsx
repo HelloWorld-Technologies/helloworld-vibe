@@ -7,7 +7,8 @@ import { NeighborhoodCategoryPickerModal } from "@/components/marketing/neighbor
 import { cn } from "@/src/lib/cn";
 import { useAnimateOnView } from "@/src/lib/use-animate-on-view";
 import type { NeighborhoodCardData } from "@/src/tokens/neighborhood-card";
-import { srpCardComingSoonImage } from "@/src/tokens/srp-card";
+import { nearbyComingSoonImage } from "@/src/tokens/nearby-categories";
+import { isSrpComingSoonImage } from "@/src/tokens/srp-card";
 
 const CARD_ANIMATION_MS = 700;
 const STAGGER_MS = 100;
@@ -52,9 +53,17 @@ export function NeighborhoodCard({
 }: NeighborhoodCardProps) {
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const displayImageSrc =
-    !imageSrc || failedSrc === imageSrc
-      ? srpCardComingSoonImage
+    !imageSrc || failedSrc === imageSrc || isSrpComingSoonImage(imageSrc)
+      ? nearbyComingSoonImage
       : imageSrc;
+  const isComingSoon = isSrpComingSoonImage(displayImageSrc);
+  // Next/Image blocks hosts outside remotePatterns; keep external API photos loading.
+  const isRemoteApiImage =
+    !isComingSoon &&
+    (displayImageSrc.startsWith("http://") ||
+      displayImageSrc.startsWith("https://")) &&
+    !displayImageSrc.includes("images.thehelloworld.com") &&
+    !displayImageSrc.includes("hello-assets-items.s3");
 
   const linkContent = (
     <>
@@ -80,15 +89,23 @@ export function NeighborhoodCard({
         <h3 className="text-sm font-bold text-blue-light-700">{category}</h3>
       </div>
 
-      <div className="relative mt-3 aspect-[5/4] overflow-hidden rounded-xl bg-white">
+      <div
+        className={cn(
+          "relative mt-3 aspect-[5/4] overflow-hidden rounded-xl",
+          isComingSoon ? "bg-white p-3" : "bg-gray-100",
+        )}
+      >
         <Image
           key={displayImageSrc}
           src={displayImageSrc}
-          alt={imageAlt ?? placeName}
+          alt={isComingSoon ? "Photo coming soon" : (imageAlt ?? placeName)}
           fill
-          className="object-cover"
+          unoptimized={isRemoteApiImage || isComingSoon}
+          className={isComingSoon ? "object-contain" : "object-cover"}
           onError={() => {
-            if (imageSrc) setFailedSrc(imageSrc);
+            if (imageSrc && !isSrpComingSoonImage(imageSrc)) {
+              setFailedSrc(imageSrc);
+            }
           }}
         />
       </div>

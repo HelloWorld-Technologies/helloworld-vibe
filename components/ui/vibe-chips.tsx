@@ -9,14 +9,24 @@ const vibeChipSelectedBorderClass =
 
 function VibeCheckIcon({ className }: { className?: string }) {
   return (
-    <svg aria-hidden viewBox="0 0 16 16" fill="none" className={className}>
-      <circle cx="8" cy="8" r="7" fill="currentColor" />
+    <svg
+      aria-hidden
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
       <path
-        d="M5 8l2 2 4-4"
-        stroke="white"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        d="M8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16Z"
+        fill="#00BA00"
+      />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M2.57613 8.77008C2.17556 8.34136 2.19855 7.66306 2.62728 7.26249C3.056 6.86192 3.7343 6.88498 4.13487 7.31364L6.39175 9.72913L9.9641 6.39137C9.99622 6.36132 10.0298 6.3338 10.0645 6.30847L11.7444 4.7389C12.1732 4.33833 12.8515 4.36139 13.252 4.79011C13.6526 5.21877 13.6295 5.89713 13.2009 6.2977L8.06992 11.0917L8.06444 11.0859L6.28958 12.7442L2.57613 8.77008Z"
+        fill="white"
       />
     </svg>
   );

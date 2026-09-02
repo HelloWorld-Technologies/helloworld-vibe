@@ -1,25 +1,51 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CommunityReviews } from "@/components/marketing/community-reviews";
 import { HomepageCarouselNav } from "@/components/marketing/homepage-carousel-nav";
 import { HomepageReviews } from "@/components/marketing/homepage-reviews";
 import { HomepageSectionHeading } from "@/components/marketing/homepage-section-heading";
+import {
+  getMomentsCarouselState,
+  getMomentsPageStartIndex,
+} from "@/src/lib/moments-carousel";
 import { pageLayout, pageShell } from "@/src/tokens/layout";
 import { cn } from "@/src/lib/cn";
 
-export function HomepageTestimonials() {
+function measureCarouselGap(container: HTMLElement): number {
+  const styles = getComputedStyle(container);
+  return (
+    Number.parseFloat(styles.columnGap) ||
+    Number.parseFloat(styles.gap) ||
+    16
+  );
+}
+
+export function HomepageTestimonials({
+  headingSize = "default",
+  variant = "homepage",
+}: {
+  headingSize?: "default" | "properties";
+  variant?: "homepage" | "community";
+}) {
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
+  const [activePage, setActivePage] = useState(0);
+  const [pageCount, setPageCount] = useState(1);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const updateScrollState = useCallback(() => {
     const container = scrollRef.current;
     if (!container) return;
 
-    setCanScrollPrev(container.scrollLeft > 8);
-    setCanScrollNext(
-      container.scrollLeft + container.clientWidth < container.scrollWidth - 8,
+    const state = getMomentsCarouselState(
+      container,
+      measureCarouselGap(container),
     );
+    setCanScrollPrev(state.canScrollPrev);
+    setCanScrollNext(state.canScrollNext);
+    setPageCount(state.pageCount);
+    setActivePage(state.activePage);
   }, []);
 
   useEffect(() => {
@@ -28,26 +54,51 @@ export function HomepageTestimonials() {
     return () => window.removeEventListener("resize", updateScrollState);
   }, [updateScrollState]);
 
-  function scrollByCard(direction: "prev" | "next") {
+  function goToPage(page: number) {
     const container = scrollRef.current;
     if (!container) return;
 
-    const card = container.querySelector("article") as HTMLElement | null;
-    const offset = (card?.offsetWidth ?? 320) + 24;
-    container.scrollBy({
-      left: direction === "next" ? offset : -offset,
+    const nextPage = Math.max(0, Math.min(page, pageCount - 1));
+    const gap = measureCarouselGap(container);
+    const cardIndex = getMomentsPageStartIndex(container, nextPage, gap);
+    const card = container.children[cardIndex] as HTMLElement | undefined;
+    card?.scrollIntoView({
       behavior: "smooth",
+      inline: "start",
+      block: "nearest",
     });
+    setActivePage(nextPage);
+  }
+
+  if (variant === "community") {
+    return (
+      <section className={cn("py-8 sm:py-12 lg:py-14", pageLayout.container)}>
+        <HomepageSectionHeading
+          prefix="Hear from our"
+          highlight="Tribe!"
+          gradient="home"
+          size={headingSize}
+          className={headingSize === "default" ? "text-center" : undefined}
+        />
+        <CommunityReviews
+          embedded
+          title={false}
+          className="mt-8"
+          desktopVisibleCount={2.333}
+        />
+      </section>
+    );
   }
 
   return (
-    <section className={cn("py-12 sm:py-16 lg:py-20", pageLayout.container)}>
+    <section className={cn("py-8 sm:py-12 lg:py-14", pageLayout.container)}>
       <div className={pageShell.homepage}>
         <HomepageSectionHeading
           prefix="Hear from our"
           highlight="Tribe!"
           gradient="home"
-          className="text-center"
+          size={headingSize}
+          className={headingSize === "default" ? "text-center" : undefined}
         />
       </div>
       <div className="mt-8">
@@ -62,10 +113,13 @@ export function HomepageTestimonials() {
       <div className={pageShell.homepage}>
         <HomepageCarouselNav
           className="mt-8"
+          pageCount={pageCount}
+          activeIndex={activePage}
           prevDisabled={!canScrollPrev}
           nextDisabled={!canScrollNext}
-          onPrev={() => scrollByCard("prev")}
-          onNext={() => scrollByCard("next")}
+          onPrev={() => goToPage(activePage - 1)}
+          onNext={() => goToPage(activePage + 1)}
+          onSelectPage={goToPage}
         />
       </div>
     </section>

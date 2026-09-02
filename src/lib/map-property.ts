@@ -1,4 +1,7 @@
-import { getGenderDisplayLabel } from "@/src/lib/gender-label";
+import {
+  getGenderDisplayLabel,
+  getGenderSubtitlePrefix,
+} from "@/src/lib/gender-label";
 import { formatCityDisplayName } from "@/src/tokens/cities";
 import { imageUrlFormatter } from "@/src/lib/images";
 import { getPropertyHref } from "@/src/lib/sitemap-slug";
@@ -33,6 +36,14 @@ function vibeMatchScore(property: Property): number | undefined {
   return Math.round(score);
 }
 
+function propertyRating(property: Property): number | undefined {
+  const raw = property.rating ?? property.google_rating;
+  if (raw == null) return undefined;
+  const rating = typeof raw === "number" ? raw : Number(raw);
+  if (!Number.isFinite(rating) || rating <= 0) return undefined;
+  return rating;
+}
+
 /** Prefer property locality; list APIs often leave `locality` null and put it in address.line2. */
 export function resolvePropertyLocality(property: Property): string | undefined {
   const candidates = [
@@ -60,9 +71,31 @@ export function colivingPgSubtitle(
   return `Coliving PG in ${locality || "your city"}`;
 }
 
+/** Campaign carousel card subtitle — kota uses "hostel"; other cities use "Coliving PG". */
+export function campaignPropertySubtitle(
+  property: Property,
+  citySlug: string,
+  fallbackLocality?: string,
+): string {
+  const locality =
+    resolvePropertyLocality(property) ||
+    String(fallbackLocality ?? "").trim() ||
+    formatCityDisplayName(property.city || property.address?.city || "");
+  const place = locality || "your city";
+  const genderPrefix = getGenderSubtitlePrefix(property.gender);
+  const isKota = citySlug.toLowerCase() === "kota";
+
+  if (isKota) {
+    return `${genderPrefix}hostel in ${place}`;
+  }
+  return `${genderPrefix}Coliving PG in ${place}`;
+}
+
 function propertyImages(property: Property): readonly string[] {
   const candidates = [
     property.image,
+    property.hdp_image,
+    ...(typeof property.srp_image === "string" ? [property.srp_image] : []),
     ...(Array.isArray(property.property_image) ? property.property_image : []),
   ];
 
@@ -93,7 +126,7 @@ export function mapPropertyToSrpCard(
     name: property.display_name || property.name,
     subtitle,
     images: propertyImages(property),
-    rating: Number(property.address?.latitude ? 4.5 : 4.5),
+    rating: propertyRating(property),
     roomTypes: ["Private", "Double", "Triple"],
     rent: property.min_rent ?? 0,
     statusLabel: statusLabel(property),

@@ -127,7 +127,10 @@ export function HdpPageContent({ config }: { config: HdpPageConfig }) {
             />
             <HdpHeader view={view} />
             <div className="mt-4 md:mt-6">
-              <PropertyGalleryDesktop items={view.galleryItems} />
+              <PropertyGalleryDesktop
+                items={view.galleryItems}
+                moments={view.moments}
+              />
             </div>
           </div>
 

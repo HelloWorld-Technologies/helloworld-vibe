@@ -16,6 +16,7 @@ import { getPropertyVisitSlots, postCreateVisit } from "@/src/apis/visit";
 import { postSendOtp, postVerifyOtp } from "@/src/apis/user";
 import { isLoggedIn } from "@/src/lib/auth-storage";
 import { validateField } from "@/src/lib/form-validation";
+import { trackVisitScheduled } from "@/src/lib/gtm";
 import { cn } from "@/src/lib/cn";
 import {
   formatVisitDate,
@@ -186,6 +187,7 @@ export function ScheduleVisitFlow({
     setLoading(false);
 
     if (response.success) {
+      trackVisitScheduled({ name, phone, email });
       setScheduledAt(buildScheduledAtLabel());
       setStep("success");
       onSuccess?.();
@@ -374,7 +376,10 @@ export function ScheduleVisitFlow({
     );
   } else {
     content = (
-      <form className="space-y-6" onSubmit={handleScheduleContinue}>
+      <form
+        className={cn(embedded ? "space-y-2 md:space-y-6" : "space-y-6")}
+        onSubmit={handleScheduleContinue}
+      >
         {loadingSlots ? (
           <p className="text-sm text-gray-500">Loading available slots...</p>
         ) : noSlots ? (

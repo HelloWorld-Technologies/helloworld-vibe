@@ -80,7 +80,11 @@ export function useSrpPagination(
   context: SrpPaginationContext,
   resetKey: string,
   query: SrpQuery,
+  options?: { enabled?: boolean },
 ) {
+  const enabled = options?.enabled ?? true;
+  const enabledRef = useRef(enabled);
+  enabledRef.current = enabled;
   const { selectedVibes } = useSelectedVibes();
   const { vibes } = useVibeList();
   const vibeIds = useMemo(
@@ -202,7 +206,7 @@ export function useSrpPagination(
   }, [resetSnapshot]);
 
   const loadMore = useCallback(async () => {
-    if (loadingRef.current || !hasMoreRef.current) return;
+    if (!enabledRef.current || loadingRef.current || !hasMoreRef.current) return;
 
     const nextPage = pageRef.current + 1;
     loadingRef.current = true;
@@ -248,6 +252,7 @@ export function useSrpPagination(
   }, []);
 
   const maybeLoadMore = useCallback(() => {
+    if (!enabledRef.current) return;
     const sentinel = sentinelRef.current;
     if (!sentinel || !hasMoreRef.current || loadingRef.current) return;
     if (!sentinelNearViewport(sentinel)) return;
@@ -255,13 +260,14 @@ export function useSrpPagination(
   }, [loadMore]);
 
   useEffect(() => {
-    if (!hasMore) return;
+    if (!enabled || !hasMore) return;
 
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
+        if (!enabledRef.current) return;
         if (entries[0]?.isIntersecting) {
           void loadMore();
         }
@@ -271,10 +277,10 @@ export function useSrpPagination(
 
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [hasMore, loadMore]);
+  }, [enabled, hasMore, loadMore]);
 
   useEffect(() => {
-    if (!hasMore) return;
+    if (!enabled || !hasMore) return;
 
     let ticking = false;
     const onScroll = () => {
@@ -288,14 +294,14 @@ export function useSrpPagination(
 
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [hasMore, maybeLoadMore]);
+  }, [enabled, hasMore, maybeLoadMore]);
 
   useEffect(() => {
-    if (!hasMore || isLoading || isRefreshing) return;
+    if (!enabled || !hasMore || isLoading || isRefreshing) return;
     requestAnimationFrame(() => {
       maybeLoadMore();
     });
-  }, [properties.length, hasMore, isLoading, isRefreshing, maybeLoadMore]);
+  }, [enabled, properties.length, hasMore, isLoading, isRefreshing, maybeLoadMore]);
 
   return {
     properties,

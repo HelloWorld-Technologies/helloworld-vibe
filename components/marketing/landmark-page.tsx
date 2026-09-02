@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeaderSearch } from "@/components/layout/site-header-search";
 import { LandmarkContactCard } from "@/components/marketing/landmark-contact-card";
@@ -20,11 +21,21 @@ import { pageLayout } from "@/src/tokens/layout";
 
 export function LandmarkPageContent() {
   const [mobileTab, setMobileTab] = useState<LocalityMobileTab>("properties");
+  const propertiesRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
 
   function showDetails() {
-    setMobileTab("details");
+    flushSync(() => {
+      setMobileTab("details");
+    });
     detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function showProperties() {
+    flushSync(() => {
+      setMobileTab("properties");
+    });
+    propertiesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   return (
@@ -42,6 +53,7 @@ export function LandmarkPageContent() {
           />
 
           <div
+            ref={propertiesRef}
             className={cn(
               mobileTab === "properties" ? "block" : "hidden md:block",
             )}
@@ -77,7 +89,11 @@ export function LandmarkPageContent() {
       </main>
 
       <SiteFooter />
-      <LocalityMobileActions onShowDetails={showDetails} />
+      <LocalityMobileActions
+        activeTab={mobileTab}
+        onShowDetails={showDetails}
+        onShowProperties={showProperties}
+      />
     </div>
   );
 }

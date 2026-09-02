@@ -7,7 +7,9 @@ export type GalleryMediaItem = {
   label?: string;
   imageSrc: string;
   kind: "video" | "image";
+  /** MP4 fallback (and sole source when no WebM is provided). */
   videoSrc?: string;
+  videoWebmSrc?: string;
   caption?: string;
 };
 

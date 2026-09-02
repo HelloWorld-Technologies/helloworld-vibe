@@ -26,26 +26,6 @@ export async function fetchPropertyMoments(
   }
 }
 
-/** Public feed moments (no property filter) — homepage “Straight from the Feed!”. */
-export async function fetchFeedMoments(options?: {
-  mediaType?: "image" | "video";
-  page?: number;
-  pageSize?: number;
-}): Promise<FetchMomentsResponse> {
-  try {
-    const { data } = await createHttpClient().get("moments", {
-      params: {
-        ...(options?.mediaType ? { media_type: options.mediaType } : {}),
-        page: options?.page ?? 1,
-        pageSize: options?.pageSize ?? 20,
-      },
-    });
-    return data;
-  } catch {
-    return { success: false, data: [] };
-  }
-}
-
 export async function fetchBookingMoments(
   bookingId: string | number,
   options?: {

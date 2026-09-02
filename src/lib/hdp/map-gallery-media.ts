@@ -15,6 +15,26 @@ function formatMediaUrl(url: string | null | undefined): string {
   return imageUrlFormatter("hdp", url);
 }
 
+/** Compare media URLs across moments vs gallery (ignore query/hash/host/bucket variant). */
+export function mediaUrlKey(url: string | null | undefined): string {
+  if (!url) return "";
+  try {
+    const parsed = new URL(url, "https://images.thehelloworld.com");
+    let path = parsed.pathname.toLowerCase();
+    // Moments CDN vs original S3 often differ by host and original/compressed segment.
+    path = path.replace(/\/compressed\//g, "/original/");
+    const propertyPath = path.match(
+      /\/property\/\d+\/(?:original|compressed)\/[^/]+$/,
+    );
+    if (propertyPath) return propertyPath[0].replace(/\/compressed\//g, "/original/");
+    const file = path.split("/").pop();
+    return file || path;
+  } catch {
+    const raw = url.split("?")[0]?.split("#")[0]?.toLowerCase() ?? "";
+    return raw.split("/").pop() || raw;
+  }
+}
+
 function isVideoMedia(
   mediaType: string,
   url: string,
@@ -65,23 +85,24 @@ export function mapPropertyMediaToGalleryItems(
     const label = mediaLabel(tag);
     const id = `media-${item.id}`;
 
-    if (isVideoMedia(mediaType, url)) {
-      if (isMomentsTag(tag)) {
-        moments.push({
-          id,
-          category: "moments",
-          label,
-          imageSrc: thumbnail || url,
-          kind: "video",
-          videoSrc: url || undefined,
-          caption: label,
-        });
-        continue;
-      }
+    if (isMomentsTag(tag)) {
+      const isVideo = isVideoMedia(mediaType, url);
+      moments.push({
+        id,
+        category: "moments",
+        label,
+        imageSrc: isVideo ? thumbnail || url : url || thumbnail,
+        kind: isVideo ? "video" : "image",
+        videoSrc: isVideo ? url || undefined : undefined,
+        caption: label,
+      });
+      continue;
+    }
 
+    if (isVideoMedia(mediaType, url)) {
       const normalizedTag = tag?.toLowerCase();
       const videoLabel =
-        normalizedTag === "property" ? "Property Video" : label;
+        normalizedTag === "property" ? "Community Vibe" : label;
 
       videos.push({
         id,
@@ -148,6 +169,20 @@ export function mapMomentsToGalleryItems(
   }
 
   return items;
+}
+
+/** Keys for excluding moments media from the property photo gallery. */
+export function momentMediaUrlKeys(
+  moments: readonly GalleryMediaItem[],
+): Set<string> {
+  const keys = new Set<string>();
+  for (const item of moments) {
+    const imageKey = mediaUrlKey(item.imageSrc);
+    const videoKey = mediaUrlKey(item.videoSrc);
+    if (imageKey) keys.add(imageKey);
+    if (videoKey) keys.add(videoKey);
+  }
+  return keys;
 }
 
 export function mapLegacyPropertyPhotosToGalleryItems(

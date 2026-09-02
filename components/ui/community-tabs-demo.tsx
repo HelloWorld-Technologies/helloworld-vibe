@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { useId, useState } from "react";
+import { AdaptiveImage } from "@/components/media/adaptive-image";
 import {
   UnderlineTabPanel,
   UnderlineTabs,
@@ -42,19 +42,22 @@ export function CommunityTabsDemo() {
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
           {panel.images.map((image, index) => (
             <div
-              key={image}
+              key={image.src}
               className={cn(
                 "relative aspect-square overflow-hidden rounded-2xl bg-gray-100",
                 "animate-tab-panel-in motion-reduce:animate-none",
               )}
               style={{ animationDelay: `${80 + index * 60}ms` }}
             >
-              <Image
-                src={image}
+              <AdaptiveImage
+                src={image.src}
+                webpSrc={image.webpSrc}
                 alt=""
                 fill
-                className="object-cover"
+                loading="lazy"
+                decoding="async"
                 sizes="(max-width: 640px) 50vw, 200px"
+                className="object-cover"
               />
             </div>
           ))}

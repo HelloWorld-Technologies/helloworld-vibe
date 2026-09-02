@@ -67,6 +67,8 @@ export function ErrorState({
   actions: ErrorStateActionWithHandler[];
 }) {
   const isNotFound = id === "not-found";
+  const isEmptyWishlist = id === "empty-wishlist";
+  const useRectangleActions = isNotFound || isEmptyWishlist;
 
   return (
     <section className="flex flex-1 items-center justify-center px-4 py-10 sm:px-6 sm:py-16">
@@ -75,16 +77,26 @@ export function ErrorState({
           asset={image}
           width={imageWidth}
           height={imageHeight}
-          className="h-auto w-full max-w-[18rem] sm:max-w-[20rem]"
+          className={cn(
+            "h-auto w-full",
+            isEmptyWishlist
+              ? "max-w-[14.5rem] sm:max-w-[16rem]"
+              : "max-w-[18rem] sm:max-w-[20rem]",
+          )}
           priority
         />
 
         <h1
           className={cn(
-            "mt-8 font-bold text-gray-900",
-            isNotFound
-              ? "text-3xl leading-9 sm:mt-10 sm:text-4xl sm:leading-[2.75rem] lg:text-[2.4rem] lg:leading-[3.25rem]"
-              : "text-2xl leading-8 sm:mt-10 sm:text-[2rem] sm:leading-10",
+            "mt-8 text-gray-900",
+            isEmptyWishlist
+              ? "text-4xl leading-10 font-bold sm:mt-10"
+              : cn(
+                  "font-bold",
+                  isNotFound
+                    ? "text-3xl leading-9 sm:mt-10 sm:text-4xl sm:leading-[2.75rem] lg:text-[2.4rem] lg:leading-[3.25rem]"
+                    : "text-2xl leading-8 sm:mt-10 sm:text-[2rem] sm:leading-10",
+                ),
           )}
         >
           {title}
@@ -92,8 +104,15 @@ export function ErrorState({
 
         <p
           className={cn(
-            "mt-3 max-w-lg text-base leading-7",
-            isNotFound ? "text-gray-800 sm:text-lg sm:leading-8" : "text-gray-600",
+            "mt-3 max-w-lg",
+            isEmptyWishlist
+              ? "text-center text-base leading-6 font-medium text-gray-900"
+              : cn(
+                  "text-base leading-7",
+                  isNotFound
+                    ? "text-gray-800 sm:text-lg sm:leading-8"
+                    : "text-gray-600",
+                ),
           )}
         >
           {description}
@@ -105,7 +124,7 @@ export function ErrorState({
               <ErrorStateActionButton
                 key={action.label}
                 action={action}
-                shape={isNotFound ? "rectangle" : "pill"}
+                shape={useRectangleActions ? "rectangle" : "pill"}
               />
             ))}
           </div>

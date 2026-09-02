@@ -14,7 +14,7 @@ export const galleryCategoryTabs: {
   value: GalleryCategory;
   label: string;
 }[] = [
-  { value: "property-video", label: "Property Video" },
+  { value: "property-video", label: "Community Vibe" },
   { value: "moments", label: "Moments" },
   { value: "photos", label: "Photos" },
 ];
@@ -22,10 +22,10 @@ export const galleryCategoryTabs: {
 export const propertyGalleryTotal = 20;
 
 const galleryImages = [
-  "/assets/community/hero/hero-1.png",
-  "/assets/community/hero/hero-2.png",
-  "/assets/community/hero/hero-3.png",
-  "/assets/community/hero/hero-4.png",
+  "/assets/community/hero/hero-1.webp",
+  "/assets/community/hero/hero-2.webp",
+  "/assets/community/hero/hero-3.webp",
+  "/assets/community/hero/hero-4.webp",
   "/assets/locality/dinning-bento-desktop.png",
   "/assets/locality/nightlife-bento-desktop.png",
   "/assets/locality/health-bento-desktop.png",
@@ -36,7 +36,7 @@ export const propertyGalleryItems: GalleryMediaItem[] = [
   {
     id: "video-1",
     category: "property-video",
-    label: "Property Video",
+    label: "Community Vibe",
     imageSrc: galleryImages[0],
     kind: "video",
   },

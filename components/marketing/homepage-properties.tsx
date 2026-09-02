@@ -195,7 +195,7 @@ export function HomepageProperties() {
 
   return (
     <PropertyActionsProvider defaultCity={city} defaultLocation={getCityLabel(city)}>
-      <section className="bg-white py-12 sm:py-16 lg:py-20">
+      <section className="bg-white py-8 sm:py-12 lg:py-14">
         <div className={pageShell.homepage}>
           <div className="flex justify-center">
             <HomepageSectionHeading

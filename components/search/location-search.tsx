@@ -39,6 +39,11 @@ export interface LocationSearchValue {
 export interface LocationSearchProps {
   className?: string;
   barClassName?: string;
+  /**
+   * `header` places city outside the border; only locality input + search sit in a pill.
+   * Default keeps a single bordered shell with shadow and city/locality divider.
+   */
+  variant?: "default" | "header";
   city?: CitySlug;
   defaultCity?: CitySlug;
   locality?: string;
@@ -54,6 +59,8 @@ export interface LocationSearchProps {
   onCityChange?: (city: CitySlug) => void;
   onLocalityChange?: (locality: string) => void;
   onSearch?: (value: LocationSearchValue) => void;
+  /** Fires when city or locality dropdown opens/closes (e.g. to relax ancestor overflow). */
+  onActivePanelChange?: (panel: Panel) => void;
 }
 
 type Panel = "city" | "locality" | null;
@@ -200,6 +207,7 @@ function SearchDropdown({
 export function LocationSearch({
   className,
   barClassName,
+  variant = "default",
   city: cityProp,
   defaultCity = defaultCitySlug,
   locality: localityProp,
@@ -212,6 +220,7 @@ export function LocationSearch({
   onCityChange,
   onLocalityChange,
   onSearch,
+  onActivePanelChange,
 }: LocationSearchProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -348,14 +357,66 @@ export function LocationSearch({
     selectProperty(item.property);
   }
 
-  function handleSearch() {
-    onSearch?.({ city, locality: localityQuery.trim() || locality });
+  function matchLocalityLabel(
+    labels: readonly string[],
+    query: string,
+  ): string | undefined {
+    const normalizedQuery = query.trim().toLowerCase();
+    if (!normalizedQuery || labels.length === 0) return undefined;
+
+    const exact = labels.find(
+      (label) => label.trim().toLowerCase() === normalizedQuery,
+    );
+    return exact ?? labels[0];
+  }
+
+  function goToCitySrp() {
+    const href = buildCitySrpHref(city, { pathname, srpSlug });
+    if (href) router.push(href);
+  }
+
+  async function handleSearch() {
+    const query = localityQuery.trim();
+    onSearch?.({ city, locality: query || locality });
     setActivePanel(null);
 
     if (searchOnly) return;
 
-    const href = buildCitySrpHref(city, { pathname, srpSlug });
-    if (href) router.push(href);
+    if (!query) {
+      goToCitySrp();
+      return;
+    }
+
+    const suggestedLabels = localitySuggestions.map((item) => item.label);
+    const fromSuggestions = matchLocalityLabel(suggestedLabels, query);
+    if (fromSuggestions) {
+      selectLocality(fromSuggestions);
+      return;
+    }
+
+    if (query.length >= LOCALITY_SUGGEST_MIN_LENGTH) {
+      try {
+        const { success, data } = await fetchLocalitySuggest({
+          city,
+          keyword: query,
+          campaign: strictLocality ? "ok" : "",
+        });
+        const fromApi = success
+          ? matchLocalityLabel(data.locality, query)
+          : undefined;
+        if (fromApi) {
+          selectLocality(fromApi);
+          return;
+        }
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === "AbortError")) {
+          goToCitySrp();
+          return;
+        }
+      }
+    }
+
+    goToCitySrp();
   }
 
   useEffect(() => {
@@ -450,6 +511,10 @@ export function LocationSearch({
   }, [highlightedLocalityIndex, suggestions]);
 
   useEffect(() => {
+    onActivePanelChange?.(activePanel);
+  }, [activePanel, onActivePanelChange]);
+
+  useEffect(() => {
     function handlePointerDown(event: MouseEvent) {
       if (!rootRef.current?.contains(event.target as Node)) {
         setActivePanel(null);
@@ -470,12 +535,19 @@ export function LocationSearch({
     };
   }, []);
 
+  const isHeader = variant === "header";
+
   return (
     <div ref={rootRef} className={cn("relative w-full min-w-0", className)}>
       <div
         className={cn(
-          "flex items-center gap-0 rounded-full border border-gray-200 bg-white p-1.5 sm:p-2",
-          barClassName ?? "shadow-lg",
+          "flex items-center",
+          isHeader
+            ? cn("gap-1.5 sm:gap-2", barClassName)
+            : cn(
+                "gap-0 rounded-full border border-gray-200 bg-white p-1.5 sm:p-2",
+                barClassName ?? "shadow-lg",
+              ),
         )}
       >
         <div className="relative w-auto shrink-0">
@@ -487,10 +559,25 @@ export function LocationSearch({
             onClick={() =>
               setActivePanel((panel) => (panel === "city" ? null : "city"))
             }
-            className="flex w-auto min-w-0 items-center gap-2 rounded-full px-1.5 py-1 transition-colors hover:bg-gray-50 sm:gap-3 sm:px-2 sm:py-1.5"
+            className={cn(
+              "flex w-auto min-w-0 items-center gap-2 rounded-full py-1 transition-colors hover:bg-gray-50",
+              isHeader
+                ? "px-1.5 sm:gap-3 sm:px-2 sm:py-1.5"
+                : "px-1.5 sm:px-2",
+            )}
           >
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gray-100 sm:size-10">
-              <LocationIcon className="size-4 text-black sm:size-5" />
+            <span
+              className={cn(
+                "flex shrink-0 items-center justify-center rounded-full bg-gray-100",
+                isHeader ? "size-8 sm:size-9" : "size-9",
+              )}
+            >
+              <LocationIcon
+                className={cn(
+                  "text-black",
+                  isHeader ? "size-4 sm:size-5" : "size-5",
+                )}
+              />
             </span>
             <span className="min-w-0 text-left">
               <span className="block opacity-50 font-satoshi text-xs font-bold leading-[18px] text-[#0A0F14]">
@@ -542,12 +629,20 @@ export function LocationSearch({
           </SearchDropdown>
         </div>
 
-        <span
-          aria-hidden
-          className="mx-1 h-8 w-px shrink-0 bg-gray-200 sm:mx-2 sm:h-10"
-        />
+        {!isHeader ? (
+          <span
+            aria-hidden
+            className="mx-1 h-9 w-px shrink-0 bg-gray-200 sm:mx-2"
+          />
+        ) : null}
 
-        <div className="flex min-w-0 flex-1 items-center">
+        <div
+          className={cn(
+            "flex min-w-0 flex-1 items-center",
+            isHeader &&
+              "rounded-full border border-[#B3B3B3] bg-white p-1",
+          )}
+        >
           <div className="relative min-w-0 flex-1">
             <label htmlFor={localityInputId} className="sr-only">
               {localityPlaceholder}
@@ -597,7 +692,12 @@ export function LocationSearch({
                   handleSearch();
                 }
               }}
-              className="w-full bg-transparent px-1 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none sm:px-3 sm:py-2.5"
+              className={cn(
+                "search-cancel-black w-full bg-transparent text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none",
+                isHeader
+                  ? "px-1.5 py-1.5 sm:px-2.5 sm:py-1.5"
+                  : "px-1 py-2 sm:px-3 sm:py-2.5",
+              )}
             />
 
             <SearchDropdown
@@ -644,7 +744,7 @@ export function LocationSearch({
                           "w-full px-4 py-3.5 text-left text-sm font-medium text-[#0A0F14] transition-colors",
                           index < suggestions.length - 1 && "border-b border-gray-100",
                           item.kind === "property" && "flex items-center gap-2.5",
-                          isHighlighted ? "bg-gray-100" : "hover:bg-gray-25",
+                          isHighlighted ? "bg-hello-lime-100" : "hover:bg-hello-lime-100",
                         )}
                       >
                         {item.kind === "property" ? (
@@ -681,14 +781,21 @@ export function LocationSearch({
             aria-label="Search localities"
             onClick={handleSearch}
             className={cn(
-              "group ml-1 flex h-9 w-9 shrink-0 items-center justify-center gap-0 overflow-visible rounded-full bg-hello-lime-500 text-white",
+              "group ml-1 flex shrink-0 items-center justify-center gap-0 overflow-visible rounded-full bg-hello-lime-600 text-white",
               "transition-[width,background-color,padding,gap] duration-200 ease-out motion-reduce:transition-none",
               "hover:bg-hello-lime-600",
               "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-hello-lime-100",
-              "sm:h-11 sm:w-11 sm:hover:w-[6.75rem] sm:hover:justify-start sm:hover:gap-2 sm:hover:px-3.5",
+              isHeader
+                ? "h-8 w-8 sm:h-9 sm:w-9 sm:hover:w-[6.25rem] sm:hover:justify-start sm:hover:gap-2 sm:hover:px-3"
+                : "mr-1.5 h-9 w-9 sm:mr-2 sm:hover:w-[6.75rem] sm:hover:justify-start sm:hover:gap-2 sm:hover:px-3.5",
             )}
           >
-            <SearchIcon className="size-4 shrink-0 sm:size-5" />
+            <SearchIcon
+              className={cn(
+                "shrink-0",
+                isHeader ? "size-3.5 sm:size-4" : "size-4",
+              )}
+            />
             <span
               aria-hidden
               className="hidden max-w-0 overflow-hidden whitespace-nowrap text-sm font-semibold opacity-0 transition-[max-width,opacity] duration-200 ease-out motion-reduce:transition-none sm:inline sm:group-hover:max-w-[3.5rem] sm:group-hover:opacity-100"

@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AdaptiveImage } from "@/components/media/adaptive-image";
 import { LocationSearch } from "@/components/search/location-search";
 import { VibeChips } from "@/components/ui/vibe-chips";
 import { cn } from "@/src/lib/cn";
@@ -9,7 +9,9 @@ import { useVibeList } from "@/src/lib/use-vibe-list";
 import { pageShell } from "@/src/tokens/layout";
 import {
   homepageHeroDesktop,
+  homepageHeroDesktopWebp,
   homepageHeroMobile,
+  homepageHeroMobileWebp,
 } from "@/src/tokens/homepage";
 import type { VibeChip } from "@/src/tokens/vibes";
 
@@ -30,8 +32,8 @@ function HomepageHeroHeading({
       className={cn(
         "font-bold tracking-tight text-gray-900",
         size === "desktop"
-          ? "max-w-xl text-display-md sm:text-display-lg lg:text-[3.75rem] lg:leading-[4.5rem]"
-          : "max-w-[17.5rem] text-center text-[1.625rem] leading-[2rem]",
+          ? "overflow-visible text-display-md sm:text-display-lg lg:text-[3.75rem] lg:leading-[4.5rem]"
+          : "text-center text-[1.25rem] leading-[1.5rem]",
         className,
       )}
     >
@@ -68,7 +70,7 @@ function VibeFilters({
 }) {
   return (
     <div className="mt-0 lg:mt-5">
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-gray-900">
         <span aria-hidden className="mr-1">
           ✨
         </span>
@@ -87,36 +89,51 @@ function VibeFilters({
   );
 }
 
+const homepageHeroImageMediaSources = [
+  {
+    media: "(min-width: 1024px)",
+    src: homepageHeroDesktop.file,
+    webpSrc: homepageHeroDesktopWebp.file,
+  },
+] as const;
+
 export function HomepageHero() {
   const { vibes } = useVibeList();
   const { selectedVibes, toggleVibe } = useSelectedVibes();
 
   return (
     <section className="relative mx-auto max-w-7xl bg-white">
-      {/* Mobile */}
-      <div className="lg:hidden">
-        <div className="relative">
-          <div className="overflow-hidden rounded-b-[3.5rem] bg-[#f3f4f6]">
-            <div className="relative z-10 px-4 pb-1 pt-3">
-              <div className="flex justify-center">
-                <HomepageHeroHeading size="mobile" />
+      <div className="relative lg:min-h-[28.875rem]">
+        <div className="relative lg:absolute lg:inset-0 lg:z-[1]">
+          <div className="overflow-hidden rounded-b-[3.5rem] bg-[#f3f4f6] lg:pointer-events-none lg:absolute lg:inset-0 lg:overflow-visible lg:rounded-none lg:bg-transparent">
+            <div className="lg:hidden">
+              <div className="relative z-10 px-4 pb-1 pt-3">
+                <div className="flex justify-center">
+                  <HomepageHeroHeading size="mobile" />
+                </div>
               </div>
             </div>
 
-            <div className="relative -mt-2 w-full">
-              <Image
+            <div className="relative -mt-2 w-full lg:absolute lg:inset-y-0 lg:right-0 lg:mt-0 lg:w-[58%] lg:overflow-hidden lg:rounded-b-[50px]">
+              <AdaptiveImage
                 src={homepageHeroMobile.file}
-                alt=""
+                webpSrc={homepageHeroMobileWebp.file}
+                mediaSources={homepageHeroImageMediaSources}
+                alt={homepageHeroDesktop.name}
                 width={750}
                 height={560}
-                priority
-                sizes="100vw"
-                className="h-auto w-full object-bottom"
+                fetchPriority="high"
+                sizes="(min-width: 1024px) 58vw, 100vw"
+                className="h-auto w-full object-bottom lg:absolute lg:inset-0 lg:h-full lg:w-full lg:object-cover lg:object-left-bottom"
+              />
+              <div
+                aria-hidden
+                className={cn(heroImageBlendOverlayClass, "hidden lg:block")}
               />
             </div>
           </div>
 
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 translate-y-1/2 px-4 sm:px-6">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 translate-y-1/2 px-4 sm:px-6 lg:hidden">
             <div className="pointer-events-auto">
               <LocationSearch
                 localityPlaceholder="Search Localities"
@@ -126,50 +143,37 @@ export function HomepageHero() {
           </div>
         </div>
 
-        <div className="px-4 pb-8 pt-[3.25rem] sm:px-6">
+        <div className="px-4 pb-8 pt-[3.25rem] sm:px-6 lg:hidden">
           <VibeFilters
             chips={vibes}
             selectedVibes={selectedVibes}
             onToggle={toggleVibe}
           />
         </div>
-      </div>
 
-      {/* Desktop */}
-      <div className="relative hidden rounded-b-[50px] bg-gray-50 lg:block lg:min-h-[28.875rem]">
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-[58%] overflow-hidden rounded-b-[50px]">
-          <Image
-            src={homepageHeroDesktop.file}
-            alt={homepageHeroDesktop.name}
-            fill
-            priority
-            sizes="58vw"
-            className="object-cover object-left-bottom"
-          />
-          <div aria-hidden className={heroImageBlendOverlayClass} />
-        </div>
+        <div className="relative hidden rounded-b-[50px] bg-gray-50 lg:block">
+          <div className={cn(pageShell.homepageHero, "lg:pl-4 xl:pl-6")}>
+            <div
+              className={cn(
+                pageShell.homepageHeroCopy,
+                "relative lg:z-10 pb-8 pt-8 xl:pb-10 xl:pt-10",
+              )}
+            >
+              <HomepageHeroHeading />
 
-        <div className={pageShell.homepageHero}>
-          <div
-            className={cn(
-              pageShell.homepageHeroCopy,
-              "pb-10 pt-10 xl:pb-12 xl:pt-12",
-            )}
-          >
-            <HomepageHeroHeading />
+              <div className="relative z-20 mt-8">
+                <LocationSearch
+                  localityPlaceholder="Search for Localities"
+                  barClassName={homepageSearchBarClassName}
+                />
+              </div>
 
-            <div className="relative z-20 mt-8">
-              <LocationSearch
-                localityPlaceholder="Search for Localities"
-                barClassName={homepageSearchBarClassName}
+              <VibeFilters
+                chips={vibes}
+                selectedVibes={selectedVibes}
+                onToggle={toggleVibe}
               />
             </div>
-
-            <VibeFilters
-              chips={vibes}
-              selectedVibes={selectedVibes}
-              onToggle={toggleVibe}
-            />
           </div>
         </div>
       </div>

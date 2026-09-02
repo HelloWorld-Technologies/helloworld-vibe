@@ -2,6 +2,7 @@ import {
   fetchAllProperty,
   fetchCityLocalities,
   fetchNearbyPlaces,
+  fetchPopularLocalities,
   fetchPropertiesBySlug,
   SRP_LIST_PAGE_SIZE,
   type LocalityListItem,
@@ -67,6 +68,7 @@ import {
   mapLocalityNearbyToDayFromHere,
 } from "@/src/lib/srp/map-locality-info";
 import type { LocalityInfo } from "@/src/models/locality-info";
+import { getCityRatings } from "@/src/tokens/city-ratings";
 
 export type SrpPageKind = "city" | "locality" | "landmark";
 
@@ -100,6 +102,8 @@ export type SrpPageConfig = {
   aboutText: string;
   breadcrumbItems: SrpBreadcrumbItem[];
   localityLinks: LocalityListItem[];
+  /** Popular localities from `hello/localities` (same source as the mobile app). */
+  popularLocalities: LocalityListItem[];
   relatedLandmarkLinks: SrpRelatedLandmarkLink[];
   faqs: { question: string; answer: string }[];
   schema: SrpPageSchema;
@@ -177,21 +181,29 @@ async function loadLocalityLinks(
   return localityLinks;
 }
 
+async function loadPopularLocalities(city: string): Promise<LocalityListItem[]> {
+  return fetchPopularLocalities(city, 12);
+}
+
 function localityPageFields(
   localityInfo: LocalityInfo | undefined,
   fallbacks: { startingRent: number; total: number; aboutText: string },
+  options?: { city?: string; useHardcodedCityRatings?: boolean },
 ) {
   const startingRent = localityStartingRent(
     localityInfo,
     fallbacks.startingRent,
   );
   const dayFromHereItems = mapLocalityNearbyToDayFromHere(localityInfo?.nearby);
+  // Hardcoded ratings only on city SRPs; locality/landmark use API ratings.
+  const ratings =
+    options?.useHardcodedCityRatings && options.city
+      ? getCityRatings(options.city)
+      : localityInfo?.ratings;
   return {
     heroSubtitle: formatStartingSubtitle(startingRent, fallbacks.total),
     heroImageSrc: localityHeroImageSrc(localityInfo),
-    bentoTiles: localityInfo?.ratings
-      ? mapLocalityBentoTiles(localityInfo.ratings)
-      : undefined,
+    bentoTiles: mapLocalityBentoTiles(ratings),
     dayFromHereItems: localityInfo ? dayFromHereItems : undefined,
     aboutText: localityAboutText(localityInfo, fallbacks.aboutText),
   };
@@ -329,6 +341,7 @@ export async function resolveSrpPage(
       aboutTitle: "About this place",
       breadcrumbItems,
       localityLinks: [],
+      popularLocalities: [],
       relatedLandmarkLinks,
       faqs: [],
       hideFaqSection: true,
@@ -375,7 +388,10 @@ export async function resolveSrpPage(
     if (!success || !Array.isArray(data) || data.length === 0) return emptyResult();
 
     const total = pageInfo?.total ?? data.length;
-    const localityLinks = await loadLocalityLinks(branch.city, branch.livingType);
+    const [localityLinks, popularLocalities] = await Promise.all([
+      loadLocalityLinks(branch.city, branch.livingType),
+      loadPopularLocalities(branch.city),
+    ]);
     const faqs = getFaqsForSchema(branch.city, branch.faqArea, branch.faqGender);
     const itemList = buildPropertyItemList(
       baseUrl,
@@ -417,6 +433,7 @@ export async function resolveSrpPage(
       aboutTitle: `About ${localityName}`,
       breadcrumbItems: branch.breadcrumbItems,
       localityLinks,
+      popularLocalities,
       relatedLandmarkLinks: [],
       faqs,
       hideFaqSection: false,
@@ -621,7 +638,10 @@ export async function resolveSrpPage(
   if (!success || !Array.isArray(data) || data.length === 0) return emptyResult();
 
   const total = pageInfo?.total ?? data.length;
-  const localityLinks = await loadLocalityLinks(city, livingType);
+  const [localityLinks, popularLocalities] = await Promise.all([
+    loadLocalityLinks(city, livingType),
+    loadPopularLocalities(city),
+  ]);
   const isColivingSrpFamily = slug.startsWith("coliving-in-");
   const cityColivingSeo = getColivingCityMarketingSeoOverride(slug);
   const kotaCityHostelsSeo = getKotaCityHostelsSeoOverride(slug);
@@ -670,11 +690,15 @@ export async function resolveSrpPage(
     pageMetaDescription,
     total,
   );
-  const localityFields = localityPageFields(localityInfo, {
-    startingRent: minRentFromProperties(data) ?? data[0]?.min_rent ?? 0,
-    total,
-    aboutText: pageDescription,
-  });
+  const localityFields = localityPageFields(
+    localityInfo,
+    {
+      startingRent: minRentFromProperties(data) ?? data[0]?.min_rent ?? 0,
+      total,
+      aboutText: pageDescription,
+    },
+    { city, useHardcodedCityRatings: true },
+  );
 
   return {
     kind: "city",
@@ -698,6 +722,7 @@ export async function resolveSrpPage(
     aboutTitle: `About ${cityLabel}`,
     breadcrumbItems,
     localityLinks,
+    popularLocalities,
     relatedLandmarkLinks: [],
     faqs,
     hideFaqSection: false,

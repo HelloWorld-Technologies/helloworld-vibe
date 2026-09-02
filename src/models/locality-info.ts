@@ -4,6 +4,9 @@ export interface LocalityInfoPlace {
   distance_meters: number | null;
   latitude?: number;
   longitude?: number;
+  image?: string | null;
+  photo?: string | null;
+  image_url?: string | null;
 }
 
 export interface LocalityInfoRatings {
@@ -48,12 +51,18 @@ function parsePlace(value: unknown): LocalityInfoPlace | null {
   const meters = parseNumber(record.distance_meters);
   const latitude = parseNumber(record.latitude ?? record.lat);
   const longitude = parseNumber(record.longitude ?? record.lng ?? record.lon);
+  const image = String(record.image ?? "").trim() || null;
+  const photo = String(record.photo ?? "").trim() || null;
+  const imageUrl = String(record.image_url ?? record.imageUrl ?? "").trim() || null;
   return {
     id: String(record.id ?? name),
     name,
     distance_meters: meters ?? null,
     ...(latitude != null ? { latitude } : {}),
     ...(longitude != null ? { longitude } : {}),
+    ...(image ? { image } : {}),
+    ...(photo ? { photo } : {}),
+    ...(imageUrl ? { image_url: imageUrl } : {}),
   };
 }
 

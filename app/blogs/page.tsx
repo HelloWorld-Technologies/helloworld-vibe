@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
-import { getApiOriginHeader } from "@/src/lib/api";
 import { getAllBlogPostsMeta } from "@/src/lib/blog.server";
 import { BLOG_PAGE_SIZE, paginate } from "@/src/lib/pagination";
+import { getPublicSiteUrl } from "@/src/lib/schema";
 import { pageShell } from "@/src/tokens/layout";
 
 export const revalidate = 86400;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const baseUrl = getApiOriginHeader();
+  const baseUrl = getPublicSiteUrl();
   return {
     title: "Blogs | HelloWorld",
     description:

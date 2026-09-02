@@ -6,9 +6,7 @@ export type HdpReviewCategory = {
 export type HdpResidentReview = {
   id: string;
   name: string;
-  rating: number;
   quote: string;
-  avatarSrc: string;
 };
 
 export const hdpReviewSummary = {
@@ -28,33 +26,25 @@ export const hdpResidentReviews: readonly HdpResidentReview[] = [
   {
     id: "review-1",
     name: "Jim Halpert",
-    rating: 5,
     quote:
       "Lorem ipsum dolor sit amet consectetur. Turpis vitae in ullamcorper tortor quis non. Porttitor leo eget semper adipiscing nam molestie. Enim et turpis nulla feugiat lorem. Tempor iaculis et nunc elementum neque dis lobortis.",
-    avatarSrc: "/assets/community/feed/feed-1.png",
   },
   {
     id: "review-2",
     name: "Pam Beesly",
-    rating: 5,
     quote:
       "The community events and common areas made settling in effortless. Staff were responsive, rooms were spotless, and the location worked perfectly for my commute to Electronic City.",
-    avatarSrc: "/assets/community/feed/feed-2.png",
   },
   {
     id: "review-3",
     name: "Dwight Schrute",
-    rating: 5,
     quote:
       "Clean rooms, reliable Wi‑Fi, and a well-managed property. The vibe match felt accurate and I met people with similar routines within the first week.",
-    avatarSrc: "/assets/community/feed/feed-3.png",
   },
   {
     id: "review-4",
     name: "Angela Martin",
-    rating: 5,
     quote:
       "Housekeeping and security were consistently good. Booking a visit was simple, and the room options were clearly explained before I moved in.",
-    avatarSrc: "/assets/community/feed/feed-4.png",
   },
 ];

@@ -119,27 +119,16 @@ export function WishlistPageContent() {
   return (
     <PropertyActionsProvider>
       <div className={cn(pageLayout.container, "py-10 md:py-14")}>
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
-            My Wishlist
-          </h1>
-          {!loading && properties.length > 0 ? (
-            <p className="text-base text-gray-600">
-              {properties.length} saved{" "}
-              {properties.length === 1 ? "property" : "properties"}
-            </p>
-          ) : null}
-        </div>
-
         {loading ? (
-          <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 3 }, (_, index) => (
               <WishlistCardSkeleton key={`loading-${index}`} />
             ))}
           </div>
         ) : properties.length === 0 ? (
-          <div className="mt-8 flex justify-center">
+          <div className="flex justify-center">
             <ErrorState
+              id={emptyWishlistConfig.id}
               title={emptyWishlistConfig.title}
               description={emptyWishlistConfig.description}
               image={emptyWishlistConfig.image}
@@ -149,27 +138,39 @@ export function WishlistPageContent() {
             />
           </div>
         ) : (
-          <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {properties.map((property) => (
-              <WishlistSrpCard
-                key={property.id}
-                propertyId={property.propertyId}
-                href={property.href}
-                name={property.name}
-                subtitle={property.subtitle}
-                images={property.images}
-                rating={property.rating}
-                roomTypes={property.roomTypes}
-                rent={property.rent}
-                originalRent={property.originalRent}
-                offerLabel={property.offerLabel}
-                statusLabel={property.statusLabel}
-                visitsToday={property.visitsToday}
-                genderLabel={property.genderLabel}
-                vibeMatchScore={property.vibeMatchScore}
-              />
-            ))}
-          </div>
+          <>
+            <div className="space-y-2">
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
+                My Wishlist
+              </h1>
+              <p className="text-base text-gray-600">
+                {properties.length} saved{" "}
+                {properties.length === 1 ? "property" : "properties"}
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {properties.map((property) => (
+                <WishlistSrpCard
+                  key={property.id}
+                  propertyId={property.propertyId}
+                  href={property.href}
+                  name={property.name}
+                  subtitle={property.subtitle}
+                  images={property.images}
+                  rating={property.rating}
+                  roomTypes={property.roomTypes}
+                  rent={property.rent}
+                  originalRent={property.originalRent}
+                  offerLabel={property.offerLabel}
+                  statusLabel={property.statusLabel}
+                  visitsToday={property.visitsToday}
+                  genderLabel={property.genderLabel}
+                  vibeMatchScore={property.vibeMatchScore}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
     </PropertyActionsProvider>

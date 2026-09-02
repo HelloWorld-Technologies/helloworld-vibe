@@ -1,7 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { cn } from "@/src/lib/cn";
 import { formatLocalityDetails } from "@/src/tokens/locality-card";
+import {
+  isSrpComingSoonImage,
+  srpCardComingSoonImage,
+} from "@/src/tokens/srp-card";
 
 export type LocalityCardLayout = "desktop" | "mobile";
 
@@ -77,25 +82,50 @@ function LocalityCardContent({
   | "showArrow"
 >) {
   const displayName = toTitleCaseName(name);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const displayImageSrc =
+    !imageSrc || failedSrc === imageSrc || isSrpComingSoonImage(imageSrc)
+      ? srpCardComingSoonImage
+      : imageSrc;
+  const isComingSoon = isSrpComingSoonImage(displayImageSrc);
 
   return (
     <>
       <Image
-        src={imageSrc}
-        alt={imageAlt ?? displayName}
+        key={displayImageSrc}
+        src={displayImageSrc}
+        alt={isComingSoon ? `${displayName} coming soon` : (imageAlt ?? displayName)}
         fill
-        className="object-cover"
+        className={
+          isComingSoon
+            ? "object-contain object-top p-3 pb-16"
+            : "object-cover"
+        }
         sizes={
           layout === "mobile"
             ? "170px"
             : "(max-width: 640px) 100vw, 280px"
         }
+        onError={() => {
+          if (imageSrc && !isSrpComingSoonImage(imageSrc)) {
+            setFailedSrc(imageSrc);
+          }
+        }}
       />
+      {!isComingSoon ? (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"
+        />
+      ) : null}
       <div
-        aria-hidden
-        className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"
-      />
-      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3 text-white sm:p-4">
+        className={cn(
+          "absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-2 p-3 sm:p-4",
+          isComingSoon
+            ? "bg-white text-gray-900"
+            : "text-white",
+        )}
+      >
         <div className="min-w-0">
           <h3
             className={cn(
@@ -105,7 +135,12 @@ function LocalityCardContent({
           >
             {displayName}
           </h3>
-          <p className="mt-0.5 text-[11px] text-white/90 sm:text-xs">
+          <p
+            className={cn(
+              "mt-0.5 text-[11px] sm:text-xs",
+              isComingSoon ? "text-gray-600" : "text-white/90",
+            )}
+          >
             {formatLocalityDetails(startingRent, propertyCount)}
           </p>
         </div>
@@ -129,7 +164,8 @@ export function LocalityCard({
   className,
 }: LocalityCardProps) {
   const sharedClassName = cn(
-    "relative overflow-hidden rounded-2xl bg-gray-200",
+    "relative overflow-hidden rounded-2xl",
+    isSrpComingSoonImage(imageSrc) ? "bg-white" : "bg-gray-200",
     layoutClassName[layout],
     className,
   );
@@ -213,8 +249,10 @@ export function LocalityPaginationDots({
           aria-current={index === activeIndex}
           onClick={() => onSelect(index)}
           className={cn(
-            "h-2 rounded-full bg-gray-800 transition-all",
-            index === activeIndex ? "w-8" : "w-2 opacity-40",
+            "h-2 rounded-full transition-all",
+            index === activeIndex
+              ? "w-8 bg-hello-lime-400"
+              : "w-2 bg-gray-300 hover:bg-gray-400",
           )}
         />
       ))}

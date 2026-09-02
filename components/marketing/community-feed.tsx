@@ -1,16 +1,17 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { CommunityFeedHeading } from "@/components/marketing/community-headings";
 import { HomepageCarouselNav } from "@/components/marketing/homepage-carousel-nav";
 import { LocalityPaginationDots } from "@/components/marketing/locality-card";
-import { cn } from "@/src/lib/cn";
 import {
-  communityFeedItems,
-  communityInstagramUrl,
-} from "@/src/tokens/community";
+  MOMENT_CARD_FEED_ASPECT_CLASS,
+  MomentCard,
+} from "@/components/marketing/moment-card";
+import { cn } from "@/src/lib/cn";
+import { communityInstagramUrl } from "@/src/tokens/community";
+import { homepageFeedMoments } from "@/src/tokens/homepage";
 import { pageShell } from "@/src/tokens/layout";
 
 function InstagramIcon({ className }: { className?: string }) {
@@ -51,8 +52,10 @@ function FollowButton({ className }: { className?: string }) {
 export function CommunityFeed() {
   const [desktopIndex, setDesktopIndex] = useState(0);
   const [mobileIndex, setMobileIndex] = useState(0);
+  const [playingId, setPlayingId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const count = communityFeedItems.length;
+  const moments = homepageFeedMoments;
+  const count = moments.length;
   const visibleCount = 4;
 
   function goToMobileIndex(index: number) {
@@ -81,10 +84,7 @@ export function CommunityFeed() {
     setMobileIndex(nextIndex === -1 ? 0 : nextIndex);
   }
 
-  const desktopItems = communityFeedItems.slice(
-    desktopIndex,
-    desktopIndex + visibleCount,
-  );
+  const desktopItems = moments.slice(desktopIndex, desktopIndex + visibleCount);
 
   return (
     <section className="bg-white pb-12 sm:pb-16 lg:pb-20">
@@ -95,30 +95,35 @@ export function CommunityFeed() {
         </div>
 
         <div className="mt-8 hidden gap-6 lg:flex">
-          {desktopItems.map((src, index) => (
-            <div
-              key={`${src}-${index}`}
-              className="w-[18.875rem] shrink-0 overflow-hidden rounded-2xl shadow-[0_8px_10px_-6px_rgba(0,0,0,0.1),0_20px_25px_-5px_rgba(0,0,0,0.1)]"
-            >
-              <Image
-                src={src}
-                alt="HelloWorld community moment"
-                width={302}
-                height={437}
-                className="aspect-[302/437] w-full object-cover"
-              />
-            </div>
+          {desktopItems.map((item) => (
+            <MomentCard
+              key={item.id}
+              item={item}
+              aspectClass={MOMENT_CARD_FEED_ASPECT_CLASS}
+              playWithAudio
+              isActivePlaying={playingId === item.id}
+              onPlayingChange={(playing) =>
+                setPlayingId(playing ? item.id : null)
+              }
+            />
           ))}
         </div>
 
         <HomepageCarouselNav
           className="mt-8 hidden lg:flex"
+          pageCount={Math.max(1, count - visibleCount + 1)}
+          activeIndex={desktopIndex}
           prevDisabled={desktopIndex === 0}
           nextDisabled={desktopIndex >= count - visibleCount}
           onPrev={() => setDesktopIndex((index) => Math.max(0, index - 1))}
           onNext={() =>
             setDesktopIndex((index) =>
               Math.min(count - visibleCount, index + 1),
+            )
+          }
+          onSelectPage={(index) =>
+            setDesktopIndex(
+              Math.max(0, Math.min(index, Math.max(0, count - visibleCount))),
             )
           }
         />
@@ -129,19 +134,17 @@ export function CommunityFeed() {
             onScroll={handleMobileScroll}
             className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-none"
           >
-            {communityFeedItems.map((src, index) => (
-              <div
-                key={`${src}-${index}`}
-                className="w-44 shrink-0 snap-center overflow-hidden rounded-2xl bg-gray-100 shadow-md sm:w-52"
-              >
-                <Image
-                  src={src}
-                  alt="HelloWorld community moment"
-                  width={208}
-                  height={312}
-                  className="aspect-[3/4] w-full object-cover"
-                />
-              </div>
+            {moments.map((item) => (
+              <MomentCard
+                key={item.id}
+                item={item}
+                aspectClass={MOMENT_CARD_FEED_ASPECT_CLASS}
+                playWithAudio
+                isActivePlaying={playingId === item.id}
+                onPlayingChange={(playing) =>
+                  setPlayingId(playing ? item.id : null)
+                }
+              />
             ))}
           </div>
           <div className="mt-6">

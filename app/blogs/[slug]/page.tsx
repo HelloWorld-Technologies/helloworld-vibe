@@ -4,11 +4,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BlogArticle } from "@/components/blog/blog-article";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
-import { getApiOriginHeader } from "@/src/lib/api";
 import {
   getAllBlogPostsMeta,
   getBlogPostBySlug,
 } from "@/src/lib/blog.server";
+import { getPublicSiteUrl } from "@/src/lib/schema";
 import { pageShell } from "@/src/tokens/layout";
 
 export const revalidate = 86400;
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const post = await getBlogPostBySlug(slug);
   if (!post) return { title: "Blog | HelloWorld" };
 
-  const baseUrl = getApiOriginHeader();
+  const baseUrl = getPublicSiteUrl();
   const canonical =
     post.canonicalUrl || `${baseUrl}${post.urlPath}`;
   const ogImage = post.image?.startsWith("http")

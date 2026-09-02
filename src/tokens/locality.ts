@@ -31,7 +31,7 @@ export type LocalityProperty = {
   name: string;
   subtitle: string;
   images: readonly string[];
-  rating: number;
+  rating?: number;
   roomTypes: readonly string[];
   rent: number;
   originalRent?: number;
@@ -124,8 +124,7 @@ export const localityBentoDesktopLayout = {
 } as const;
 
 export const localityDayFromHereTitle = "A Day from here";
-export const localityDayFromHereSubtitle =
-  "See nearby utilities, facilities, transport, hospitals and more.";
+export const localityDayFromHereSubtitle = `What living at ${localityPage.name} actually looks like.`;
 
 export const localityDayFromHereItems: readonly NeighborhoodCardData[] = [
   {
@@ -133,7 +132,7 @@ export const localityDayFromHereItems: readonly NeighborhoodCardData[] = [
     emoji: "☀️",
     category: "Morning",
     placeName: "Blue Tokai Coffee",
-    imageSrc: "/assets/community/hero/hero-1.png",
+    imageSrc: "/assets/community/hero/hero-1.webp",
     walkTime: "3 min walk",
     linkLabel: "View Cafes Nearby",
     href: "#",
@@ -153,7 +152,7 @@ export const localityDayFromHereItems: readonly NeighborhoodCardData[] = [
     emoji: "👩🏼‍💻",
     category: "Work",
     placeName: "Prestige Tech Park",
-    imageSrc: "/assets/community/hero/hero-2.png",
+    imageSrc: "/assets/community/hero/hero-2.webp",
     walkTime: "5 min walk",
     linkLabel: "View Offices Nearby",
     href: "#",
@@ -173,7 +172,7 @@ export const localityDayFromHereItems: readonly NeighborhoodCardData[] = [
     emoji: "🛒",
     category: "Shopping",
     placeName: "100 Feet Road",
-    imageSrc: "/assets/community/hero/hero-3.png",
+    imageSrc: "/assets/community/hero/hero-3.webp",
     walkTime: "6 min walk",
     linkLabel: "View Malls Nearby",
     href: "#",

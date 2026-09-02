@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -31,6 +32,12 @@ type PendingWishlistItem = {
   propertyName?: string;
 };
 
+type AuthPurpose = "wishlist" | "login";
+
+export type OpenLoginOptions = {
+  onSuccess?: (phone: string) => void;
+};
+
 interface WishlistContextValue {
   isWishlisted: (propertyId: number) => boolean;
   toggleWishlist: (
@@ -38,9 +45,26 @@ interface WishlistContextValue {
     propertyName?: string,
   ) => Promise<void>;
   refreshWishlist: () => Promise<void>;
+  /** Opens the shared phone → OTP auth popup (same as wishlist save). */
+  openLogin: (options?: OpenLoginOptions) => void;
   isLoading: boolean;
   revision: number;
 }
+
+const AUTH_COPY: Record<
+  AuthPurpose,
+  { title: string; description: string }
+> = {
+  wishlist: {
+    title: "Save to wishlist",
+    description:
+      "Sign in with your mobile number to save properties for later.",
+  },
+  login: {
+    title: "Let's Get You In",
+    description: "Coliving that matches your vibe- let's find yours.",
+  },
+};
 
 const WishlistContext = createContext<WishlistContextValue | null>(null);
 
@@ -77,6 +101,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [authStep, setAuthStep] = useState<"phone" | "otp">("phone");
+  const [authPurpose, setAuthPurpose] = useState<AuthPurpose>("wishlist");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
@@ -85,6 +110,23 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     useState<PendingWishlistItem | null>(null);
   const [snackbar, setSnackbar] = useState<WishlistSnackbarState | null>(null);
   const [revision, setRevision] = useState(0);
+  const loginSuccessRef = useRef<((phone: string) => void) | null>(null);
+
+  const resetAuthForm = useCallback(() => {
+    setAuthStep("phone");
+    setOtp("");
+    setAuthError(null);
+  }, []);
+
+  const openAuthModal = useCallback(
+    (purpose: AuthPurpose) => {
+      setPhone(getStoredMobile()?.replace(/\D/g, "").slice(-10) ?? "");
+      resetAuthForm();
+      setAuthPurpose(purpose);
+      setAuthOpen(true);
+    },
+    [resetAuthForm],
+  );
 
   const showSnackbar = useCallback((next: WishlistSnackbarState) => {
     setSnackbar(next);
@@ -157,11 +199,11 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
 
   const closeAuthModal = useCallback(() => {
     setAuthOpen(false);
-    setAuthStep("phone");
-    setOtp("");
-    setAuthError(null);
+    resetAuthForm();
     setPendingWishlist(null);
-  }, []);
+    loginSuccessRef.current = null;
+    setAuthPurpose("wishlist");
+  }, [resetAuthForm]);
 
   const completePendingWishlist = useCallback(async () => {
     if (!pendingWishlist) return;
@@ -170,14 +212,21 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     await applyWishlistChange(propertyId, true, propertyName);
   }, [applyWishlistChange, pendingWishlist]);
 
+  const openLogin = useCallback(
+    (options?: OpenLoginOptions) => {
+      loginSuccessRef.current = options?.onSuccess ?? null;
+      setPendingWishlist(null);
+      openAuthModal("login");
+    },
+    [openAuthModal],
+  );
+
   const toggleWishlist = useCallback(
     async (propertyId: number, propertyName?: string) => {
       if (!isLoggedIn()) {
+        loginSuccessRef.current = null;
         setPendingWishlist({ propertyId, propertyName });
-        setPhone(getStoredMobile()?.replace(/\D/g, "").slice(-10) ?? "");
-        setAuthStep("phone");
-        setAuthError(null);
-        setAuthOpen(true);
+        openAuthModal("wishlist");
         return;
       }
 
@@ -187,7 +236,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         propertyName,
       );
     },
-    [applyWishlistChange, wishlistIds],
+    [applyWishlistChange, openAuthModal, wishlistIds],
   );
 
   const handleSendOtp = useCallback(async () => {
@@ -219,24 +268,41 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    const onLoginSuccess = loginSuccessRef.current;
+    loginSuccessRef.current = null;
+
     await refreshWishlist();
     setAuthOpen(false);
-    setAuthStep("phone");
-    setOtp("");
-    setAuthError(null);
+    resetAuthForm();
+    setAuthPurpose("wishlist");
     await completePendingWishlist();
+    onLoginSuccess?.(phone);
     refreshAfterLogin();
-  }, [completePendingWishlist, otp, phone, refreshWishlist]);
+  }, [
+    completePendingWishlist,
+    otp,
+    phone,
+    refreshWishlist,
+    resetAuthForm,
+  ]);
 
   const value = useMemo(
     () => ({
       isWishlisted,
       toggleWishlist,
       refreshWishlist,
+      openLogin,
       isLoading,
       revision,
     }),
-    [isLoading, isWishlisted, refreshWishlist, revision, toggleWishlist],
+    [
+      isLoading,
+      isWishlisted,
+      openLogin,
+      refreshWishlist,
+      revision,
+      toggleWishlist,
+    ],
   );
 
   return (
@@ -251,14 +317,14 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         step={authStep}
         phone={phone}
         otp={otp}
+        title={AUTH_COPY[authPurpose].title}
+        description={AUTH_COPY[authPurpose].description}
         onPhoneChange={setPhone}
         onOtpChange={setOtp}
         onSendOtp={handleSendOtp}
         onVerifyOtp={handleVerifyOtp}
         onEditPhone={() => {
-          setAuthStep("phone");
-          setOtp("");
-          setAuthError(null);
+          resetAuthForm();
         }}
       />
     </WishlistContext.Provider>

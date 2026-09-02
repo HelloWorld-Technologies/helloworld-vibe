@@ -19,7 +19,6 @@ export const aboutPageCopy = {
   leadershipTitle: "Leading the Way",
   coreTeamTitle: "Our Core Team",
   headlinesTitle: "Making Headlines",
-  milestonesTitle: "Our Milestones",
   principlesTitle: "6 principles we actually run on",
   principlesSubtitle:
     "A common language for hard calls, from everyday collaboration to how we hire, develop and recognise people.",
@@ -100,11 +99,6 @@ export const aboutCoreTeam: AboutPerson[] = [
     image: "/assets/about/team/dayal.jpg",
   },
   {
-    name: "Pratik Amar",
-    role: "AVP - Business",
-    image: "/assets/about/team/pratik.jpg",
-  },
-  {
     name: "Vikram Saravag",
     role: "AVP - Business",
     image: "/assets/about/team/vikram.jpg",
@@ -131,65 +125,6 @@ export const aboutPressLogos = pressLogos.map((logo) => ({
   src: logo.src,
   href: logo.href,
 }));
-
-
-export type AboutMilestone = {
-  date: string;
-  description: string;
-  side: "left" | "right";
-};
-
-export const aboutMilestones: AboutMilestone[] = [
-  {
-    date: "2019",
-    description: "HelloWorld was Founded",
-    side: "right",
-  },
-  {
-    date: "October, 2019",
-    description: "Extended operational presence to 17 cities across India",
-    side: "left",
-  },
-  {
-    date: "April, 2020",
-    description:
-      "Launched Arogya homes collaborating with the top metro’s state government providing isolation centres for covid affected through the Vande Bharath mission",
-    side: "right",
-  },
-  {
-    date: "October, 2021",
-    description:
-      "Launched Covid safe homes exclusively for employees of Wipro, BCG, Capgemini, Daimler, GE Healthcare, KPMG, P&G, TCS, & Azim Premji Foundation",
-    side: "left",
-  },
-  {
-    date: "March, 2022",
-    description:
-      "Launched an exclusive housing offering for the incoming batch of students at ISB",
-    side: "right",
-  },
-  {
-    date: "April, 2022",
-    description:
-      "HelloWorld Technologies was acquired by Aurum PropTech, a publicly listed company building an integrated PropTech ecosystem. With a 700+ member team, Aurum operates across 15 cities in India.",
-    side: "left",
-  },
-  {
-    date: "2023",
-    description: "30,000+ paid customers across HelloWorld homes",
-    side: "right",
-  },
-  {
-    date: "2024",
-    description: "Expanded presence across 100+ micro markets in India",
-    side: "left",
-  },
-  {
-    date: "August, 2026",
-    description: "HelloWorld 2.0 Launched",
-    side: "right",
-  },
-];
 
 export const aboutPrinciples = [
   {

@@ -1,3 +1,4 @@
+import { HdpSectionHeading } from "@/components/marketing/hdp-section-heading";
 import type { HdpPageView } from "@/src/lib/hdp/hdp-page-view";
 import { cn } from "@/src/lib/cn";
 
@@ -18,9 +19,7 @@ export function HdpAbout({
       className={cn("scroll-mt-32 space-y-4", className)}
       aria-label="About section"
     >
-      <h2 className="text-2xl font-medium text-gray-900 md:text-3xl">
-        About {displayName}
-      </h2>
+      <HdpSectionHeading>About {displayName}</HdpSectionHeading>
       <p className="text-base leading-7 text-gray-700">{about}</p>
     </section>
   );

@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Caveat, Playfair_Display } from "next/font/google";
 import localFont from "next/font/local";
+import { GoogleTagManager } from "@/components/analytics/google-tag-manager";
+import { OnlineStatusBoundary } from "@/components/common/online-status-boundary";
+import { UtmStorage } from "@/components/analytics/utm-storage";
 import { WishlistProvider } from "@/components/wishlist/wishlist-provider";
+import { getPublicSiteUrl } from "@/src/lib/schema";
 import "./globals.css";
 
 const satoshi = localFont({
@@ -27,10 +31,44 @@ const caveat = Caveat({
   display: "swap",
 });
 
+const siteUrl = getPublicSiteUrl();
+const DEFAULT_OG_IMAGE =
+  "https://hw-prod-static-assets.s3.ap-south-1.amazonaws.com/marketing/share.jpg";
+const DEFAULT_TITLE = "HelloWorld Coliving & Student Hostels";
+const DEFAULT_DESCRIPTION =
+  "HelloWorld provides coliving, student housing, coworking, social spaces and natural habitats to those exploring the evolution of humanity through positive impact.";
+
 export const metadata: Metadata = {
-  title: "HelloWorld — Coliving that Matches Your Vibe",
-  description:
-    "Find premium coliving PGs across India. Just 1 month deposit, minimum lock-in, no brokerage, and instant move-in.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: DEFAULT_TITLE,
+    template: "%s | HelloWorld",
+  },
+  description: DEFAULT_DESCRIPTION,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "HelloWorld",
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    url: siteUrl,
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE],
+  },
   icons: {
     icon: [
       { url: "/assets/logos/favicon.svg", type: "image/svg+xml" },
@@ -58,7 +96,11 @@ export default function RootLayout({
       className={`${satoshi.variable} ${playfair.variable} ${caveat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-white font-satoshi text-gray-900">
-        <WishlistProvider>{children}</WishlistProvider>
+        <GoogleTagManager />
+        <UtmStorage />
+        <WishlistProvider>
+          <OnlineStatusBoundary>{children}</OnlineStatusBoundary>
+        </WishlistProvider>
       </body>
     </html>
   );

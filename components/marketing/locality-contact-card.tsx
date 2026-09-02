@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { uploadContactLead } from "@/src/apis/contact";
 import { postSendOtpLeads } from "@/src/apis/user";
@@ -12,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { OtpInput } from "@/components/ui/otp-input";
 import { readStoredCity } from "@/src/lib/city-storage";
 import { cn } from "@/src/lib/cn";
+import { trackContactLead, trackLeadConversion } from "@/src/lib/gtm";
+import { getStoredUtmSource } from "@/src/lib/utm";
 import {
   cities,
   isCitySlug,
@@ -51,6 +54,9 @@ export function LocalityContactCard({
   locationEditable = true,
   locationPlaceholder = "Search your location here",
   showCallFallback = true,
+  hideCitySelect = false,
+  leadTracking = "srp",
+  redirectOnSuccess,
 }: {
   className?: string;
   sticky?: boolean;
@@ -59,6 +65,12 @@ export function LocalityContactCard({
   locationEditable?: boolean;
   locationPlaceholder?: string;
   showCallFallback?: boolean;
+  /** Hides the city dropdown while keeping location search (e.g. campaign pages). */
+  hideCitySelect?: boolean;
+  /** `conversion` fires generate_lead_* events (contact page); `srp` fires name/phone only. */
+  leadTracking?: "srp" | "conversion";
+  /** When set, navigates here after a successful lead instead of inline success UI. */
+  redirectOnSuccess?: string;
 }) {
   const [step, setStep] = useState<Step>("form");
   const [name, setName] = useState("");
@@ -76,6 +88,7 @@ export function LocalityContactCard({
   }>({});
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     setLocation(locationDefault);
@@ -138,6 +151,20 @@ export function LocalityContactCard({
     setLoading(false);
 
     if (response.success) {
+      if (leadTracking === "conversion") {
+        trackLeadConversion({
+          name,
+          phone,
+          city: searchCity,
+          utmSource: getStoredUtmSource(),
+        });
+      } else {
+        trackContactLead({ name, phone });
+      }
+      if (redirectOnSuccess) {
+        router.push(redirectOnSuccess);
+        return;
+      }
       setStep("success");
       return;
     }
@@ -182,17 +209,19 @@ export function LocalityContactCard({
                   </p>
                 </div>
                 <form className="space-y-4" onSubmit={handleOtpSubmit}>
-                  <OtpInput
-                    value={otp}
-                    onChange={setOtp}
-                    error={errors.otp}
-                    disabled={loading}
-                  />
+                  <div className="flex justify-center">
+                    <OtpInput
+                      value={otp}
+                      onChange={setOtp}
+                      error={errors.otp}
+                      disabled={loading}
+                    />
+                  </div>
                   {errors.otp ? (
-                    <p className="text-sm text-error-600">Invalid OTP. Please try again.</p>
+                    <p className="text-center text-sm text-error-600">Invalid OTP. Please try again.</p>
                   ) : null}
                   {errorMessage ? (
-                    <p className="text-sm text-error-600">{errorMessage}</p>
+                    <p className="text-center text-sm text-error-600">{errorMessage}</p>
                   ) : null}
                   <div className="flex gap-3">
                     <Button
@@ -282,7 +311,7 @@ export function LocalityContactCard({
                         }
                       }}
                       placeholder={locationPlaceholder}
-                      showCitySelect={locationEditable}
+                      showCitySelect={locationEditable && !hideCitySelect}
                       readOnly={!locationEditable}
                       invalid={Boolean(errors.location)}
                       fieldClassName={cn(
@@ -293,7 +322,7 @@ export function LocalityContactCard({
                   </div>
 
                   {errorMessage ? (
-                    <p className="text-sm text-error-600">{errorMessage}</p>
+                    <p className="text-center text-sm text-error-600">{errorMessage}</p>
                   ) : null}
 
                   <button

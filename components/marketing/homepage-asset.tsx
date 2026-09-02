@@ -23,7 +23,7 @@ export function HomepageAsset({
         alt={asset.name}
         width={width}
         height={height}
-        className={cn("h-auto max-w-full object-contain", className)}
+        className={cn("max-w-full object-contain", className)}
       />
     );
   }
@@ -35,7 +35,7 @@ export function HomepageAsset({
       width={width}
       height={height}
       priority={priority}
-      className={cn("h-auto max-w-full object-contain", className)}
+      className={cn("max-w-full object-contain", className)}
     />
   );
 }

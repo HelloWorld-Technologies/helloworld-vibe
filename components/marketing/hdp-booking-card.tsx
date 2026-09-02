@@ -2,12 +2,20 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { OccupantDetailsForm } from "@/components/booking/occupant-details-form";
 import { ScheduleVisitFlow } from "@/components/booking/schedule-visit-flow";
 import { Button } from "@/components/ui/button";
 import { Modal, ModalDescription, ModalTitle } from "@/components/ui/modal";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { formatAmenityForDisplay } from "@/src/lib/amenity-display";
 import type { HdpPageView } from "@/src/lib/hdp/hdp-page-view";
 import { buildBookingHref } from "@/src/lib/booking/url";
 import {
@@ -53,13 +61,15 @@ function mapCategoryToBookingRoom(
   category: CategoryProps,
   occupancy: HdpOccupancy,
 ): BookingRoom {
+  const baseFeatures = category.key_feature?.length
+    ? category.key_feature
+    : category.amenities ?? [];
+
   return {
     id: String(category.id),
     name: category.display_name || category.name,
     rent: getRentForOccupancy(category, occupancy),
-    features: category.key_feature?.length
-      ? category.key_feature
-      : category.amenities?.slice(0, 3) ?? [],
+    features: baseFeatures,
     chipLabel: getBookingRoomChipLabel(category, occupancy),
     soldOut: category.sold_out,
   };
@@ -82,29 +92,73 @@ function formatRent(amount: number) {
   return `₹${amount.toLocaleString("en-IN")}/mo`;
 }
 
-function RoomFeatureIcon({ className }: { className?: string }) {
+function RoomFeatures({ features }: { features: readonly string[] }) {
+  const [expanded, setExpanded] = useState(false);
+  const [overflows, setOverflows] = useState(false);
+  const contentRef = useRef<HTMLParagraphElement>(null);
+
+  const items = useMemo(
+    () => features.map((feature) => formatAmenityForDisplay(feature)),
+    [features],
+  );
+
+  useLayoutEffect(() => {
+    setExpanded(false);
+    setOverflows(false);
+  }, [items]);
+
+  useLayoutEffect(() => {
+    const el = contentRef.current;
+    if (!el || expanded) return;
+
+    const measure = () => {
+      setOverflows(el.scrollHeight > el.clientHeight + 1);
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [items, expanded]);
+
+  if (items.length === 0) return null;
+
   return (
-    <svg
-      aria-hidden
-      viewBox="0 0 16 16"
-      fill="none"
-      className={className}
-    >
-      <path
-        d="M2.66667 14V6.66667L8 2.66667L13.3333 6.66667V14"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M6 14V9.33333H10V14"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <span className="mt-1.5 block min-w-0">
+      <p
+        ref={contentRef}
+        className={cn(
+          "text-xs leading-4 text-gray-500",
+          !expanded && "line-clamp-2",
+        )}
+      >
+        {items.map((item, index) => (
+          <span key={`${item.label}-${index}`}>
+            {index > 0 ? (
+              <span aria-hidden className="text-gray-400">
+                {" "}
+                •{" "}
+              </span>
+            ) : null}
+            {item.label}
+          </span>
+        ))}
+      </p>
+      {overflows || expanded ? (
+        <button
+          type="button"
+          aria-expanded={expanded}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            setExpanded((value) => !value);
+          }}
+          className="mt-0.5 text-xs font-semibold text-gray-700 underline-offset-2 hover:text-gray-900 hover:underline"
+        >
+          {expanded ? "Show less" : "Show more"}
+        </button>
+      ) : null}
+    </span>
   );
 }
 
@@ -123,7 +177,13 @@ function InfoIcon({ className }: { className?: string }) {
   );
 }
 
-function HdpBookingTourFooter({ minStayMonths }: { minStayMonths: number }) {
+function HdpBookingTourFooter({
+  minStayMonths,
+  variant = "card",
+}: {
+  minStayMonths: number;
+  variant?: "card" | "modal";
+}) {
   const months = Math.max(1, minStayMonths || 1);
   const lockInLabel =
     months === 1 ? "1-month Lock-in" : `${months}-month Lock-in`;
@@ -136,7 +196,12 @@ function HdpBookingTourFooter({ minStayMonths }: { minStayMonths: number }) {
 
   return (
     <>
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-base font-medium text-black">
+      <div
+        className={cn(
+          "flex flex-wrap items-center justify-center gap-2 text-base font-medium text-black",
+          variant === "modal" ? "mt-1.5 md:mt-4" : "mt-4",
+        )}
+      >
         <span className="inline-flex items-center gap-2">
           <Image
             src="/assets/homepage-website/no-brokerage.svg"
@@ -182,15 +247,25 @@ function HdpBookingTourFooter({ minStayMonths }: { minStayMonths: number }) {
 
 function HdpBookingBookFooter({ minStayMonths }: { minStayMonths: number }) {
   return (
-    <p className="mt-4 text-center text-xs leading-relaxed text-gray-900">
+    <p className="mt-4 text-center text-xs font-medium leading-relaxed text-black">
       Refund of Security Deposit requires a minimum {minStayMonths}-month stay.*
     </p>
   );
 }
 
-function HdpBookingTourPanel({ view }: { view: HdpPageView }) {
+function HdpBookingTourPanel({
+  view,
+  variant = "card",
+}: {
+  view: HdpPageView;
+  variant?: "card" | "modal";
+}) {
   return (
-    <div className="mt-6 space-y-6">
+    <div
+      className={cn(
+        variant === "modal" ? "mt-2 space-y-2 md:mt-4 md:space-y-4" : "mt-6 space-y-6",
+      )}
+    >
       <div className="grid grid-cols-2 gap-3">
         <div className="min-w-0">
           <p className="text-[13px] font-medium text-[#0a0e14]/50">
@@ -429,8 +504,11 @@ export function HdpBookingCard({
       >
         {mode === "tour" ? (
           <>
-            <HdpBookingTourPanel view={resolvedView} />
-            <HdpBookingTourFooter minStayMonths={resolvedView.minStayMonths} />
+            <HdpBookingTourPanel view={resolvedView} variant={variant} />
+            <HdpBookingTourFooter
+              minStayMonths={resolvedView.minStayMonths}
+              variant={variant}
+            />
           </>
         ) : bookStep === "occupant" ? (
           <>
@@ -463,7 +541,7 @@ export function HdpBookingCard({
                         className={cn(
                           "rounded-full px-4 py-2.5 text-sm font-semibold transition-colors",
                           isActive
-                            ? "bg-gray-800 text-white"
+                            ? "bg-blue-light-100 text-blue-light-800"
                             : "bg-gray-100 text-gray-900 hover:bg-gray-200",
                         )}
                       >
@@ -507,22 +585,7 @@ export function HdpBookingCard({
                                 </span>
                               </span>
                               {room.features.length > 0 ? (
-                                <span className="mt-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-gray-500">
-                                  {room.features.map((feature, featureIndex) => (
-                                    <span
-                                      key={feature}
-                                      className="inline-flex items-center gap-1"
-                                    >
-                                      {featureIndex > 0 ? (
-                                        <span aria-hidden className="text-gray-400">
-                                          •
-                                        </span>
-                                      ) : null}
-                                      <RoomFeatureIcon className="size-3.5 shrink-0 text-gray-400" />
-                                      <span>{feature}</span>
-                                    </span>
-                                  ))}
-                                </span>
+                                <RoomFeatures features={room.features} />
                               ) : null}
                             </span>
                           </span>
@@ -553,7 +616,7 @@ export function HdpBookingCard({
             >
               {resolvedView.soldOut
                 ? "Sold Out"
-                : (confirmLabel ?? (selectionOnly ? "Save" : "Next"))}
+                : (confirmLabel ?? (selectionOnly ? "Save" : "Book Now"))}
             </Button>
             {!selectionOnly ? (
               <HdpBookingBookFooter minStayMonths={resolvedView.minStayMonths} />

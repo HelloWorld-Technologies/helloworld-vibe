@@ -7,14 +7,13 @@ export type NearbyCategoryDef = {
   emoji: string;
   category: string;
   linkLabel: string;
-  imageSrc: string;
   /** Short label used in the map modal category strip. */
   modalLabel: string;
 };
 
 /**
  * Display order for HDP “A Day from here” cards (design flow).
- * Categories without API data still render with a coming-soon image.
+ * Place photos come from the API only; missing photos use {@link nearbyComingSoonImage}.
  */
 export const nearbyCategoryFlow = [
   {
@@ -23,7 +22,6 @@ export const nearbyCategoryFlow = [
     emoji: "💪",
     category: "Workout",
     linkLabel: "View Gyms Nearby",
-    imageSrc: "/assets/community/sports/rectangle-2363-3.png",
     modalLabel: "Gyms",
   },
   {
@@ -32,7 +30,6 @@ export const nearbyCategoryFlow = [
     emoji: "🚇",
     category: "Commute",
     linkLabel: "View Transit Nearby",
-    imageSrc: "/assets/locality/transit-bento-desktop.png",
     modalLabel: "Commute",
   },
   {
@@ -41,7 +38,6 @@ export const nearbyCategoryFlow = [
     emoji: "🏢",
     category: "Work",
     linkLabel: "View Offices Nearby",
-    imageSrc: "/assets/community/hero/hero-2.png",
     modalLabel: "Work",
   },
   {
@@ -50,7 +46,6 @@ export const nearbyCategoryFlow = [
     emoji: "🍔",
     category: "Lunch",
     linkLabel: "View Dining Nearby",
-    imageSrc: "/assets/locality/dinning-bento-desktop.png",
     modalLabel: "Cafes & Restaurants",
   },
   {
@@ -59,7 +54,6 @@ export const nearbyCategoryFlow = [
     emoji: "🛒",
     category: "Shopping",
     linkLabel: "View Markets Nearby",
-    imageSrc: "/assets/community/hero/hero-3.png",
     modalLabel: "Shopping & supplies",
   },
   {
@@ -68,7 +62,6 @@ export const nearbyCategoryFlow = [
     emoji: "🍿",
     category: "Entertainment",
     linkLabel: "View Entertainment Nearby",
-    imageSrc: "/assets/community/hero/hero-4.png",
     modalLabel: "Entertainment",
   },
   {
@@ -77,7 +70,6 @@ export const nearbyCategoryFlow = [
     emoji: "🌙",
     category: "Night Life",
     linkLabel: "View Nightlife Nearby",
-    imageSrc: "/assets/locality/nightlife-bento-desktop.png",
     modalLabel: "Night Life",
   },
   {
@@ -86,9 +78,9 @@ export const nearbyCategoryFlow = [
     emoji: "🏥",
     category: "Healthcare",
     linkLabel: "View Healthcare Nearby",
-    imageSrc: "/assets/locality/health-bento-desktop.png",
     modalLabel: "Healthcare",
   },
 ] as const satisfies readonly NearbyCategoryDef[];
 
+/** New coming-soon illustration for A Day from here when the API has no place photo. */
 export const nearbyComingSoonImage = srpCardComingSoonImage;

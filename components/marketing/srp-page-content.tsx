@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeaderSearch } from "@/components/layout/site-header-search";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
@@ -112,21 +113,32 @@ function resolveSrpNearbyMap(
 function SrpHero({
   config,
   heroImageSrc,
+  title,
+  subtitle,
 }: {
   config: SrpPageConfig;
   heroImageSrc?: string;
+  title: string;
+  subtitle: string;
 }) {
   const resolvedSrc = resolveSrpHeroImageSrc(config, heroImageSrc);
 
   return (
     <LocalityBentoHero
-      title={config.pageTitle}
-      subtitle={config.heroSubtitle}
-      heroImageSrc={resolvedSrc}
-      heroImageAlt={config.pageTitle}
+      title={title}
+      subtitle={subtitle}
+      heroImageSrc={resolvedSrc || undefined}
+      heroImageAlt={title}
       breadcrumbItems={config.breadcrumbItems}
       bentoTiles={config.bentoTiles}
     />
+  );
+}
+
+function hasSrpHeroMedia(config: SrpPageConfig, heroImageSrc?: string) {
+  return Boolean(
+    resolveSrpHeroImageSrc(config, heroImageSrc) ||
+      (config.bentoTiles && config.bentoTiles.length > 0),
   );
 }
 
@@ -209,12 +221,30 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
     paginationContext,
     config.canonicalPath,
     activeQuery,
+    {
+      // Pause infinite scroll while jumping to / viewing locality details so
+      // the listings sentinel passing through the viewport does not paginate.
+      enabled: mobileTab === "properties" && desktopSection === "properties",
+    },
   );
 
-  const listingsHeading = useMemo(
-    () => config.propertiesHeading.replace(/^\d+/, String(total)),
-    [config.propertiesHeading, total],
+  const heroSubtitle = useMemo(
+    () =>
+      config.heroSubtitle.replace(
+        /\|\s*\d+\s+Propert(?:y|ies)\b/i,
+        `| ${total} ${total === 1 ? "Property" : "Properties"}`,
+      ),
+    [config.heroSubtitle, total],
   );
+
+  const heroTitle = useMemo(() => {
+    const countHeading = config.propertiesHeading.replace(/^\d+/, String(total));
+    const suffixIndex = config.pageTitle.indexOf(" | ");
+    if (suffixIndex >= 0) {
+      return `${countHeading}${config.pageTitle.slice(suffixIndex)}`;
+    }
+    return countHeading;
+  }, [config.pageTitle, config.propertiesHeading, total]);
 
   const subtitleBuilder = (property: (typeof properties)[number]) => {
     if (config.kind === "landmark") {
@@ -234,9 +264,10 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
   });
 
   const contactLocation = config.localityName ?? config.city;
+  const dayFromHereLocation =
+    config.localityName ?? getCityLabel(config.city);
   const dayFromHereItems = config.dayFromHereItems ?? [];
-  const dayFromHereSubtitle =
-    "See nearby utilities, facilities, transport, hospitals and more.";
+  const dayFromHereSubtitle = `What living at ${dayFromHereLocation} actually looks like.`;
   const nearbyMap = useMemo(
     () => resolveSrpNearbyMap(config),
     [config],
@@ -263,16 +294,53 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
   };
 
   function showDetails() {
-    setMobileTab("details");
-    setDesktopSection("details");
+    flushSync(() => {
+      setMobileTab("details");
+      setDesktopSection("details");
+    });
     detailsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function showProperties() {
-    setMobileTab("properties");
-    setDesktopSection("properties");
+    flushSync(() => {
+      setMobileTab("properties");
+      setDesktopSection("properties");
+    });
     listingsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
+
+  // Keep the floating desktop toggle label in sync with which section is in view
+  // (same IntersectionObserver band as HdpSectionNav).
+  useEffect(() => {
+    if (!showSectionToggle) return;
+
+    const sections: {
+      el: HTMLElement;
+      id: "properties" | "details";
+    }[] = [];
+    if (listingsRef.current) {
+      sections.push({ el: listingsRef.current, id: "properties" });
+    }
+    if (detailsRef.current) {
+      sections.push({ el: detailsRef.current, id: "details" });
+    }
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        const match = sections.find((section) => section.el === visible.target);
+        if (match) setDesktopSection(match.id);
+      },
+      { rootMargin: "-30% 0px -55% 0px", threshold: [0, 0.25, 0.5, 1] },
+    );
+
+    sections.forEach(({ el }) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [showSectionToggle]);
 
   return (
     <PropertyActionsProvider
@@ -301,14 +369,20 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
           items={config.breadcrumbItems}
           className="mb-4 hidden md:mb-6 lg:block"
         />
-        <SrpHero config={config} />
+        <SrpHero config={config} title={heroTitle} subtitle={heroSubtitle} />
 
-        <div className="mt-8 md:mt-12">
+        <div
+          className={cn(
+            hasSrpHeroMedia(config)
+              ? "mt-8 md:mt-12"
+              : "mt-4 md:mt-6",
+          )}
+        >
           <LocalityMobileTabs
             value={mobileTab}
             onChange={setMobileTab}
             tabs={mobileTabs}
-            className="mb-6"
+            className="mb-4"
           />
 
           <div
@@ -318,7 +392,6 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
             )}
           >
             <SrpListingsSection
-              heading={listingsHeading}
               properties={cardProperties}
               isLoadingMore={isLoading}
               isRefreshing={isRefreshing}
@@ -333,7 +406,8 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
           <div
             ref={detailsRef}
             className={cn(
-              "mt-12 md:mt-16",
+              // On mobile only one tab panel shows, so skip the large top gap.
+              "mt-0 md:mt-16",
               mobileTab === "details" ? "block" : "hidden md:block",
             )}
           >
@@ -362,12 +436,12 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
             <LocalityContactCard {...contactCardProps} />
           </div>
 
-          {config.localityLinks.length > 0 ? (
+          {config.popularLocalities.length > 0 ? (
             <SrpPopularLocalities
               className="mt-12 md:mt-16"
               city={config.city}
               canonicalPath={config.canonicalPath}
-              localityLinks={config.localityLinks}
+              localityLinks={config.popularLocalities}
               properties={properties}
             />
           ) : null}
@@ -383,8 +457,12 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
       </main>
 
       <SiteFooter />
-      {hasDetails ? (
-        <LocalityMobileActions onShowDetails={showDetails} />
+      {hasDetails && !isCityPage ? (
+        <LocalityMobileActions
+          activeTab={mobileTab}
+          onShowDetails={showDetails}
+          onShowProperties={showProperties}
+        />
       ) : null}
       {showSectionToggle ? (
         <SrpSectionToggle

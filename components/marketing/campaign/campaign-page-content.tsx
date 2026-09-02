@@ -1,0 +1,90 @@
+"use client";
+
+import { useRef, useState } from "react";
+import { HomepageTestimonials } from "@/components/marketing/homepage-testimonials";
+import { LocalityContactCard } from "@/components/marketing/locality-contact-card";
+import { CampaignContactBanner, CampaignProperties } from "@/components/marketing/campaign/campaign-properties";
+import { CampaignHero, CampaignHeader } from "@/components/marketing/campaign/campaign-hero";
+import { CampaignMoreThanRoom } from "@/components/marketing/campaign/campaign-more-than-room";
+import { CampaignWeekendsCarousel } from "@/components/marketing/campaign/campaign-weekends";
+import { Modal } from "@/components/ui/modal";
+import type { CampaignCitySlug } from "@/src/constants/campaign-prices";
+import { getCampaignCityApiSlug } from "@/src/tokens/campaign";
+import { pageLayout } from "@/src/tokens/layout";
+import { cn } from "@/src/lib/cn";
+
+export function CampaignPageContent({ citySlug }: { citySlug: CampaignCitySlug }) {
+  const [contactOpen, setContactOpen] = useState(false);
+  const formRef = useRef<HTMLDivElement>(null);
+  const apiCity = getCampaignCityApiSlug(citySlug);
+
+  function openContact() {
+    if (window.matchMedia("(min-width: 1024px)").matches) {
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    setContactOpen(true);
+  }
+
+  return (
+    <div className={cn("min-h-screen bg-white", pageLayout.mobileStickyBottomPadding)}>
+      <CampaignHeader onContactClick={openContact} />
+
+      <div className="mx-auto max-w-7xl px-4 md:px-20">
+        <div className="lg:flex lg:items-stretch lg:gap-10">
+          <div className="min-w-0 flex-1">
+            <CampaignHero citySlug={citySlug} />
+            <CampaignProperties
+              citySlug={citySlug}
+              titlePrefix="This could be your"
+              titleHighlight="Home!"
+              onRequestCallback={openContact}
+            />
+            <CampaignWeekendsCarousel />
+            <CampaignContactBanner />
+            <HomepageTestimonials headingSize="properties" variant="community" />
+            <CampaignMoreThanRoom />
+          </div>
+
+          <aside ref={formRef} className="hidden w-[411px] shrink-0 lg:block">
+            <LocalityContactCard
+              sticky
+              city={apiCity}
+              locationEditable
+              hideCitySelect
+              leadTracking="conversion"
+              redirectOnSuccess="/campaign/thankyou"
+            />
+          </aside>
+        </div>
+      </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white p-4 lg:hidden">
+        <button
+          type="button"
+          onClick={openContact}
+          className="h-12 w-full rounded-lg bg-hello-lime-400 text-base font-bold text-gray-900 hover:bg-hello-lime-500"
+        >
+          Contact Us
+        </button>
+      </div>
+
+      <Modal
+        open={contactOpen}
+        onClose={() => setContactOpen(false)}
+        maxWidthClassName="max-w-md"
+        closeLabel="Close contact form"
+        padding="none"
+      >
+        <LocalityContactCard
+          city={apiCity}
+          locationEditable
+          hideCitySelect
+          leadTracking="conversion"
+          redirectOnSuccess="/campaign/thankyou"
+          className="shadow-none"
+        />
+      </Modal>
+    </div>
+  );
+}

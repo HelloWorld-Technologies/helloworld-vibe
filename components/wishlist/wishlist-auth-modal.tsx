@@ -15,6 +15,8 @@ export interface WishlistAuthModalProps {
   step: "phone" | "otp";
   phone: string;
   otp: string;
+  title?: string;
+  description?: string;
   onPhoneChange: (phone: string) => void;
   onOtpChange: (otp: string) => void;
   onSendOtp: () => void | Promise<void>;
@@ -47,6 +49,8 @@ export function WishlistAuthModal({
   step,
   phone,
   otp,
+  title = "Save to wishlist",
+  description = "Sign in with your mobile number to save properties for later.",
   onPhoneChange,
   onOtpChange,
   onSendOtp,
@@ -118,16 +122,16 @@ export function WishlistAuthModal({
     >
       {step === "phone" ? (
         <>
-          <ModalTitle id={titleId}>Save to wishlist</ModalTitle>
-          <ModalDescription id={descriptionId}>
-            Sign in with your mobile number to save properties for later.
+          <ModalTitle id={titleId}>{title}</ModalTitle>
+          <ModalDescription id={descriptionId} className="font-medium text-gray-900">
+            {description}
           </ModalDescription>
 
-          <form className="mt-8 space-y-6" onSubmit={handlePhoneSubmit}>
-            <div className="space-y-2">
+          <form className="mt-5 space-y-6" onSubmit={handlePhoneSubmit}>
+            <div className="space-y-3">
               <label
                 htmlFor={phoneInputId}
-                className="text-xs font-medium text-gray-500"
+                className="mb-1.5 text-xs font-medium text-gray-900"
               >
                 Please enter your phone number
               </label>
@@ -141,7 +145,7 @@ export function WishlistAuthModal({
                   type="tel"
                   inputMode="numeric"
                   autoComplete="tel-national"
-                  placeholder="9777964438"
+                  placeholder="10-digit mobile number"
                   value={phone}
                   disabled={loading}
                   onChange={(event) =>

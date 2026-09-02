@@ -8,6 +8,7 @@ import { CallbackRequestSuccess } from "@/components/booking/callback-request-su
 import { HomeownersBeforeAfter } from "@/components/marketing/homeowners/homeowners-before-after";
 import { LocationSuggestField } from "@/components/search/location-suggest-field";
 import { validateField } from "@/src/lib/form-validation";
+import { trackContactLead } from "@/src/lib/gtm";
 import { cn } from "@/src/lib/cn";
 import { readStoredCity } from "@/src/lib/city-storage";
 import {
@@ -93,6 +94,7 @@ export function HomeownersLead() {
     setLoading(false);
 
     if (response.success === true) {
+      trackContactLead({ name: name.trim(), phone });
       setSubmitted(true);
       return;
     }
@@ -112,7 +114,7 @@ export function HomeownersLead() {
           <HomeownersBeforeAfter className="h-full min-h-[22rem] rounded-[2rem] lg:min-h-[32rem] lg:aspect-auto" />
 
           <aside
-            className="flex flex-col overflow-visible rounded-[2rem] bg-white shadow-[0_12px_40px_rgba(16,24,40,0.08)]"
+            className="flex flex-col overflow-visible rounded-[2rem] bg-gradient-to-r from-[#D5ECF9] to-white shadow-[0_12px_40px_rgba(16,24,40,0.08)]"
             aria-label="List your property"
           >
             <div className="flex flex-1 flex-col px-6 pb-8 pt-6 md:px-8 md:pb-9 md:pt-7">
@@ -143,7 +145,7 @@ export function HomeownersLead() {
                         type="text"
                         value={name}
                         onChange={(event) => setName(event.target.value)}
-                        placeholder="Sheldon Cooper"
+                        placeholder="Full name"
                         autoComplete="name"
                         className={cn(
                           fieldInputClassName,
@@ -168,7 +170,7 @@ export function HomeownersLead() {
                               event.target.value.replace(/\D/g, "").slice(0, 10),
                             )
                           }
-                          placeholder="9777964438"
+                          placeholder="10-digit mobile number"
                           autoComplete="tel-national"
                           className={cn(
                             fieldInputClassName,

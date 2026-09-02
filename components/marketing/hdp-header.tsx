@@ -56,7 +56,7 @@ export function HdpHeader({
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <h1 className="font-satoshi text-2xl font-bold leading-tight text-gray-800 md:text-3xl">
+            <h1 className="font-satoshi text-lg font-bold leading-tight text-gray-800 md:text-2xl">
               {pageTitle}
             </h1>
             {badge ? (
@@ -83,7 +83,7 @@ export function HdpHeader({
                 aria-label={`Share ${pageTitle}`}
                 className="inline-flex items-center text-hello-lime-900 transition-colors hover:text-hello-lime-800"
               >
-                <ShareIcon className="size-5" />
+                <ShareIcon className="h-4 w-[15px] shrink-0" />
               </button>
               {shareStatus ? (
                 <span className="absolute right-0 top-full mt-1 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white">

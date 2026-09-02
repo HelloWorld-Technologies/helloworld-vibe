@@ -49,15 +49,15 @@ export function LoginModal({
       closeLabel="Close login dialog"
     >
       <ModalTitle id={titleId}>Let&apos;s Get You In</ModalTitle>
-      <ModalDescription id={descriptionId}>
+      <ModalDescription id={descriptionId} className="font-medium text-gray-900">
         Coliving that matches your vibe- let&apos;s find yours.
       </ModalDescription>
 
-      <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-        <div className="space-y-2">
+      <form className="mt-5 space-y-6" onSubmit={handleSubmit}>
+        <div className="space-y-3">
           <label
             htmlFor={inputId}
-            className="text-xs font-medium text-gray-500"
+            className="text-xs font-medium text-gray-900"
           >
             Please enter your phone number
           </label>
@@ -70,7 +70,7 @@ export function LoginModal({
               type="tel"
               inputMode="numeric"
               autoComplete="tel-national"
-              placeholder="9777964438"
+              placeholder="10-digit mobile number"
               value={phone}
               disabled={loading}
               onChange={(event) => setPhone(formatPhoneInput(event.target.value))}

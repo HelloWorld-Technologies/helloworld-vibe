@@ -11,6 +11,7 @@ import {
 import type { SimilarProperty } from "@/src/models/property";
 import type { HomepageFeaturedProperty } from "@/src/tokens/homepage";
 import type { LocalityProperty } from "@/src/tokens/locality";
+import { HdpSectionHeading } from "@/components/marketing/hdp-section-heading";
 import { hdpSimilarProperties } from "@/src/tokens/hdp";
 import { cn } from "@/src/lib/cn";
 
@@ -108,9 +109,7 @@ export function HdpSimilarProperties({
       aria-label="More places you'll like"
     >
       <div className="flex items-end justify-between gap-4">
-        <h2 className="text-2xl font-medium text-gray-900 md:text-3xl">
-          More Places you&apos;ll Like
-        </h2>
+        <HdpSectionHeading>More Places you&apos;ll Like</HdpSectionHeading>
       </div>
 
       <PaginatedCarousel

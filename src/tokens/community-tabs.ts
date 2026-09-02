@@ -1,3 +1,5 @@
+import { communityImage, type CommunityImage } from "@/src/tokens/community";
+
 export interface CommunityTabItem {
   id: string;
   label: string;
@@ -17,58 +19,58 @@ export const communityIntroCopy =
 
 export const communityTabPanels: Record<
   CommunityTabId,
-  { description: string; images: readonly string[] }
+  { description: string; images: readonly CommunityImage[] }
 > = {
   "sports-outdoor": {
     description: "Cricket nights, morning runs, and outdoor games with your neighbors.",
     images: [
-      "/assets/community/sports/rectangle-2363-3.png",
-      "/assets/community/sports/rectangle-2364-3.png",
-      "/assets/community/sports/rectangle-2365-3.png",
-      "/assets/community/sports/rectangle-2366-1-3.png",
-      "/assets/community/sports/rectangle-2366-2-3.png",
-      "/assets/community/sports/rectangle-2366-3-3.png",
-      "/assets/community/sports/rectangle-2366-4-3.png",
-      "/assets/community/sports/rectangle-2366-6.png",
+      communityImage("rectangle-2363-3"),
+      communityImage("rectangle-2364-3"),
+      communityImage("rectangle-2365-3"),
+      communityImage("rectangle-2366-1-3"),
+      communityImage("rectangle-2366-2-3"),
+      communityImage("rectangle-2366-3-3"),
+      communityImage("rectangle-2366-4-3"),
+      communityImage("rectangle-2366-6"),
     ],
   },
   "social-mixers": {
     description: "Casual mixers to meet roommates, make friends, and unwind together.",
     images: [
-      "/assets/community/social-mixers/rectangle-2363-2.png",
-      "/assets/community/social-mixers/rectangle-2364-2.png",
-      "/assets/community/social-mixers/rectangle-2365-2.png",
-      "/assets/community/social-mixers/rectangle-2366-1-2.png",
-      "/assets/community/social-mixers/rectangle-2366-2-2.png",
-      "/assets/community/social-mixers/rectangle-2366-3-2.png",
-      "/assets/community/social-mixers/rectangle-2366-4-2.png",
-      "/assets/community/social-mixers/rectangle-2366-5.png",
+      communityImage("rectangle-2363-2"),
+      communityImage("rectangle-2364-2"),
+      communityImage("rectangle-2365-2"),
+      communityImage("rectangle-2366-1-2"),
+      communityImage("rectangle-2366-2-2"),
+      communityImage("rectangle-2366-3-2"),
+      communityImage("rectangle-2366-4-2"),
+      communityImage("rectangle-2366-5"),
     ],
   },
   "social-events": {
     description: "Parties, celebrations, and community events all year round.",
     images: [
-      "/assets/community/social-events-parties/rectangle-2363.png",
-      "/assets/community/social-events-parties/rectangle-2364.png",
-      "/assets/community/social-events-parties/rectangle-2365.png",
-      "/assets/community/social-events-parties/rectangle-2366.png",
-      "/assets/community/social-events-parties/rectangle-2366-1.png",
-      "/assets/community/social-events-parties/rectangle-2366-2.png",
-      "/assets/community/social-events-parties/rectangle-2366-3.png",
-      "/assets/community/social-events-parties/rectangle-2366-4.png",
+      communityImage("rectangle-2363"),
+      communityImage("rectangle-2364"),
+      communityImage("rectangle-2365"),
+      communityImage("rectangle-2366"),
+      communityImage("rectangle-2366-1"),
+      communityImage("rectangle-2366-2"),
+      communityImage("rectangle-2366-3"),
+      communityImage("rectangle-2366-4"),
     ],
   },
   workshops: {
     description: "Skill-building sessions from cooking to career growth.",
     images: [
-      "/assets/community/workshops/rectangle-2363-4.png",
-      "/assets/community/workshops/rectangle-2364-4.png",
-      "/assets/community/workshops/rectangle-2365-4.png",
-      "/assets/community/workshops/rectangle-2366-1-4.png",
-      "/assets/community/workshops/rectangle-2366-2-4.png",
-      "/assets/community/workshops/rectangle-2366-3-4.png",
-      "/assets/community/workshops/rectangle-2366-4-4.png",
-      "/assets/community/workshops/rectangle-2366-7.png",
+      communityImage("rectangle-2363-4"),
+      communityImage("rectangle-2364-4"),
+      communityImage("rectangle-2365-4"),
+      communityImage("rectangle-2366-1-4"),
+      communityImage("rectangle-2366-2-4"),
+      communityImage("rectangle-2366-3-4"),
+      communityImage("rectangle-2366-4-4"),
+      communityImage("rectangle-2366-7"),
     ],
   },
 };

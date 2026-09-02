@@ -10,7 +10,7 @@ import {
 } from "@/src/models/locality-info";
 import type { Property } from "@/src/models/property";
 
-export const SRP_LIST_PAGE_SIZE = 32;
+export const SRP_LIST_PAGE_SIZE = 18;
 
 export interface Sorting {
   keyType?: string;
@@ -32,6 +32,10 @@ export interface Filters {
 export interface LocalityListItem {
   name: string;
   slug: string;
+  /** Locality cover / photo from `hello/localities` when available. */
+  coverImage?: string;
+  startingRent?: number;
+  propertyCount?: number;
 }
 
 interface FetchAllPropertyPayload {
@@ -169,4 +173,80 @@ export async function fetchCityLocalities(
   } catch {
     return [];
   }
+}
+
+function mapHelloLocalityRow(item: Record<string, unknown>): LocalityListItem | null {
+  const name = String(
+    item.display_name ?? item.locality_name ?? item.name ?? "",
+  ).trim();
+  if (!name) return null;
+  const slugRaw = String(item.slug ?? name).trim();
+  const slug = slugRaw
+    .toLowerCase()
+    .replace(/[_\s]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  const coverImage = String(
+    item.photo ?? item.cover_image ?? item.landmark_image ?? "",
+  ).trim();
+  const startingRent = Number(item.starting_rent);
+  const propertyCount = Number(item.no_of_properties);
+  return {
+    name,
+    slug,
+    ...(coverImage &&
+    coverImage !== "null" &&
+    !coverImage.includes("coming-soon")
+      ? { coverImage }
+      : {}),
+    ...(Number.isFinite(startingRent) && startingRent > 0
+      ? { startingRent }
+      : {}),
+    ...(Number.isFinite(propertyCount) && propertyCount > 0
+      ? { propertyCount }
+      : {}),
+  };
+}
+
+async function fetchHelloLocalitiesPage(
+  city: string,
+  params: Record<string, string | number | boolean>,
+): Promise<LocalityListItem[]> {
+  try {
+    const { data } = await createHttpClient().get("hello/localities", {
+      params: {
+        city: city.trim().toLowerCase(),
+        ...params,
+      },
+    });
+    const list = Array.isArray(data?.data) ? data.data : [];
+    return list
+      .map((item: Record<string, unknown>) => mapHelloLocalityRow(item))
+      .filter((item: LocalityListItem | null): item is LocalityListItem =>
+        Boolean(item?.name && item?.slug),
+      );
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Popular localities for a city — same source as the mobile app
+ * (`hello/localities?is_popular=true`, falling back to all localities).
+ */
+export async function fetchPopularLocalities(
+  city: string,
+  count = 12,
+): Promise<LocalityListItem[]> {
+  const popular = await fetchHelloLocalitiesPage(city, {
+    is_popular: true,
+    count,
+  });
+  if (popular.length > 0) return popular.slice(0, count);
+
+  const all = await fetchHelloLocalitiesPage(city, {
+    page: 1,
+    page_size: count,
+  });
+  return all.slice(0, count);
 }

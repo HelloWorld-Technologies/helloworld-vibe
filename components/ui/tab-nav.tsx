@@ -43,8 +43,9 @@ export function TabNav<T extends string>({
         aria-label={ariaLabel}
         aria-orientation="horizontal"
         className={cn(
-          "relative grid w-full items-center rounded-full bg-white p-1",
+          "relative flex w-full items-center overflow-x-auto rounded-full bg-white p-1 scrollbar-none",
           "shadow-[0_2px_10px_rgba(16,24,40,0.08)]",
+          "md:grid md:overflow-visible",
         )}
         style={{
           gridTemplateColumns: `repeat(${count}, minmax(0, 1fr))`,
@@ -53,7 +54,7 @@ export function TabNav<T extends string>({
         <span
           aria-hidden
           className={cn(
-            "pointer-events-none absolute inset-y-1 left-1 rounded-full bg-hello-lime-100",
+            "pointer-events-none absolute inset-y-1 left-1 hidden rounded-full bg-hello-lime-100 md:block",
             "transition-transform duration-300 ease-in-out",
             "motion-reduce:transition-none",
           )}
@@ -76,13 +77,18 @@ export function TabNav<T extends string>({
               aria-controls={`${tabListId}-${item.id}-panel`}
               onClick={() => onChange(item.id as T)}
               className={cn(
-                "relative z-10 min-w-0 cursor-pointer rounded-full px-2 py-2.5 text-center text-sm font-semibold transition-colors duration-300",
+                "relative z-10 shrink-0 cursor-pointer rounded-full px-3 py-2.5 text-center text-sm font-semibold transition-colors duration-300",
                 "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-hello-lime-100",
                 "motion-reduce:transition-none",
-                isActive ? "text-gray-900" : "text-gray-900 hover:text-gray-700",
+                "md:min-w-0 md:px-2",
+                isActive
+                  ? "bg-hello-lime-200 text-gray-900 md:bg-transparent"
+                  : "text-gray-900 hover:text-gray-700",
               )}
             >
-              <span className="block truncate">{item.label}</span>
+              <span className="block whitespace-nowrap md:truncate">
+                {item.label}
+              </span>
             </button>
           );
         })}

@@ -76,7 +76,7 @@ export const errorStates = {
     id: "offline",
     title: "You're not connected to the internet.",
     description:
-      "It looks like you're offline. Check your connection and give it another go.",
+      "Check your wifi or data and try again. Our dog is sitting by the door, ready to go.",
     image: requireAsset("no-internet-1"),
     imageWidth: 320,
     imageHeight: 280,
@@ -84,13 +84,13 @@ export const errorStates = {
   },
   "empty-wishlist": {
     id: "empty-wishlist",
-    title: "Your Wishlist Looks Empty 👀",
+    title: "Your Wishlist looks Empty 👀",
     description:
-      "Start exploring and add your favorite stays to your wishlist for later.",
+      "Browse verified coliving spaces and save the ones that match your vibe.",
     image: requireAsset("empty-state-1"),
-    imageWidth: 320,
-    imageHeight: 280,
-    actions: [{ label: "Explore Stays", href: "/", variant: "primary" }],
+    imageWidth: 256,
+    imageHeight: 224,
+    actions: [{ label: "Explore Residencies", href: "/", variant: "primary" }],
   },
   forbidden: {
     id: "forbidden",

@@ -4,6 +4,7 @@ export type HeaderMenuItemId =
   | "wishlist"
   | "community"
   | "homeowners"
+  | "investors"
   | "living"
   | "about"
   | "privacy"
@@ -24,6 +25,7 @@ const headerMenuItemsBase: Omit<HeaderMenuItem, "action">[] = [
   { id: "wishlist", label: "My Wishlist", href: "/wishlist" },
   { id: "community", label: "Community Events", href: "/community" },
   { id: "homeowners", label: "For Homeowners", href: "/owner" },
+  { id: "investors", label: "Investors", href: "/investors" },
   { id: "living", label: "HelloWorld Living", href: "/hello-world-living" },
   { id: "about", label: "About", href: "/about-us" },
   { id: "privacy", label: "Privacy Policy", href: "/policy" },

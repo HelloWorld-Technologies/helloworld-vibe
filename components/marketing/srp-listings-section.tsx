@@ -28,7 +28,6 @@ function SrpCardSkeleton() {
 }
 
 export function SrpListingsSection({
-  heading,
   properties,
   className,
   isLoadingMore = false,
@@ -39,7 +38,6 @@ export function SrpListingsSection({
   slugGender,
   showFilters = true,
 }: {
-  heading: string;
   properties: readonly LocalityProperty[];
   className?: string;
   isLoadingMore?: boolean;
@@ -65,10 +63,6 @@ export function SrpListingsSection({
   return (
     <section className={cn("space-y-6", className)} aria-label="Coliving listings">
       <div className="space-y-4">
-        <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
-          {heading}
-        </h2>
-
         {showFilters ? (
           <SrpFiltersBar
             query={filterQuery}
@@ -79,7 +73,7 @@ export function SrpListingsSection({
 
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-900">
               Pick upto 5 interests for better matches
             </p>
             <div className="hidden shrink-0 items-center gap-4 sm:flex">
@@ -129,7 +123,7 @@ export function SrpListingsSection({
             <button
               type="button"
               onClick={clearSelectedVibes}
-              className="ml-auto block w-fit text-sm font-semibold text-blue-light-600 hover:text-blue-light-700"
+              className="ml-auto block w-fit text-sm font-semibold text-blue-light-600 opacity-80 transition-opacity hover:text-blue-light-700 hover:opacity-100"
             >
               Clear All
             </button>
@@ -143,7 +137,7 @@ export function SrpListingsSection({
           isRefreshing && "pointer-events-none opacity-60",
         )}
       >
-        {properties.map((property) => (
+        {properties.map((property, index) => (
           <WishlistSrpCard
             key={property.id}
             propertyId={property.propertyId}
@@ -151,6 +145,7 @@ export function SrpListingsSection({
             name={property.name}
             subtitle={property.subtitle}
             images={property.images}
+            imagePriority={index < 6}
             rating={property.rating}
             roomTypes={property.roomTypes}
             rent={property.rent}
