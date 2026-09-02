@@ -1,4 +1,4 @@
-const CACHE_NAME = "helloworld-offline-assets-v3";
+const CACHE_NAME = "helloworld-offline-assets-v4";
 const OFFLINE_IMAGE = "/assets/error/no-internet-1.png";
 const OFFLINE_PAGE = "/offline";
 
@@ -40,7 +40,7 @@ self.addEventListener("fetch", (event) => {
 
   if (pathname === OFFLINE_IMAGE) {
     event.respondWith(
-      caches.match(request).then((cachedResponse) => {
+      caches.match(request, { ignoreSearch: true }).then((cachedResponse) => {
         if (cachedResponse) return cachedResponse;
         return fetch(request)
           .then((response) => {
@@ -50,7 +50,7 @@ self.addEventListener("fetch", (event) => {
               .then((cache) => cache.put(request, responseClone));
             return response;
           })
-          .catch(() => caches.match(request));
+          .catch(() => caches.match(request, { ignoreSearch: true }));
       }),
     );
     return;
