@@ -195,10 +195,12 @@ export function SiteHeaderSearch({
 
           <div
             className={cn(
-              "absolute inset-x-0 top-full z-[9] overflow-hidden border-b border-[#E4E4E4] bg-white transition-[max-height,opacity] duration-300 ease-out motion-reduce:transition-none lg:hidden",
+              "absolute inset-x-0 top-full z-[9] border-b border-[#E4E4E4] bg-white transition-[max-height,opacity] duration-300 ease-out motion-reduce:transition-none lg:hidden",
               mobileSearchRevealed
-                ? "max-h-24 opacity-100"
-                : "max-h-0 opacity-0 border-b-transparent",
+                ? mobileSearchPanelOpen
+                  ? "max-h-[min(24rem,70vh)] overflow-visible opacity-100"
+                  : "max-h-24 overflow-hidden opacity-100"
+                : "max-h-0 overflow-hidden opacity-0 border-b-transparent",
             )}
           >
             <div
