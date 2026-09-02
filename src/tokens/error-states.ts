@@ -76,7 +76,7 @@ export const errorStates = {
     id: "offline",
     title: "You're not connected to the internet.",
     description:
-      "It looks like you're offline. Check your connection and give it another go.",
+      "Check your wifi or data and try again. Our dog is sitting by the door, ready to go.",
     image: requireAsset("no-internet-1"),
     imageWidth: 320,
     imageHeight: 280,
@@ -90,9 +90,7 @@ export const errorStates = {
     image: requireAsset("empty-state-1"),
     imageWidth: 256,
     imageHeight: 224,
-    actions: [
-      { label: "Explore Residencies", href: "/", variant: "primary" },
-    ],
+    actions: [{ label: "Explore Residencies", href: "/", variant: "primary" }],
   },
   forbidden: {
     id: "forbidden",
