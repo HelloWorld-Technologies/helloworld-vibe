@@ -12,7 +12,12 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then(() => self.clients.claim()),
+  );
 });
 
 self.addEventListener("fetch", (event) => {
@@ -22,7 +27,12 @@ self.addEventListener("fetch", (event) => {
   if (pathname === OFFLINE_IMAGE) {
     event.respondWith(
       caches.match(request).then((cachedResponse) => {
-        return cachedResponse ?? fetch(request);
+        if (cachedResponse) return cachedResponse;
+        return fetch(request).then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
+          return response;
+        });
       }),
     );
     return;
