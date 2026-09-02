@@ -14,6 +14,26 @@ const PROPERTY_MEDIA_S3_HOSTS = new Set([
   "hw-staging-media.s3.ap-south-1.amazonaws.com",
 ]);
 
+const PROPERTY_VIDEO_S3_HOSTS = new Set([
+  "property-videos-original.s3.ap-south-1.amazonaws.com",
+  "property-videos-originals.s3.ap-south-1.amazonaws.com",
+  "property-videos-original-staging.s3.ap-south-1.amazonaws.com",
+]);
+
+const DEFAULT_PROPERTY_VIDEO_BUCKET_BASE =
+  process.env.NEXT_PUBLIC_ENV === "staging" ||
+  process.env.NEXT_PUBLIC_ENV === "dev"
+    ? "https://property-videos-original-staging.s3.ap-south-1.amazonaws.com/"
+    : "https://property-videos-original.s3.ap-south-1.amazonaws.com/";
+
+function encodeMediaUrl(url: string): string {
+  return url.replace(/\(/g, "%28").replace(/\)/g, "%29").replace(/ /g, "%20");
+}
+
+function isPropertyVideoPath(path: string): boolean {
+  return /\/videos\//i.test(path) || /\.(mp4|webm|mov|m4v)(\?|$)/i.test(path);
+}
+
 function propertyMediaKeyFromUrl(url: string): string | null {
   try {
     const parsed = new URL(url);
@@ -25,19 +45,58 @@ function propertyMediaKeyFromUrl(url: string): string | null {
   }
 }
 
-function formatMediaUrl(url: string | null | undefined): string {
+function formatImageMediaUrl(url: string | null | undefined): string {
   if (!url) return "";
   if (url.includes("coming-soon")) return srpCardComingSoonImage;
   if (url.startsWith("/")) return url;
+  if (isPropertyVideoPath(url)) return "";
 
   const mediaKey = url.includes("http") ? propertyMediaKeyFromUrl(url) : url;
-  if (mediaKey) return imageUrlFormatter("hdp", mediaKey);
-
-  if (url.includes("http")) {
-    return url.replace(/\(/g, "%28").replace(/\)/g, "%29").replace(/ /g, "%20");
+  if (mediaKey && !isPropertyVideoPath(mediaKey)) {
+    return imageUrlFormatter("hdp", mediaKey);
   }
 
+  if (url.includes("http")) return encodeMediaUrl(url);
+
   return imageUrlFormatter("hdp", url);
+}
+
+/** Video src must stay on the property video S3 bucket — not images.thehelloworld.com. */
+function formatVideoMediaUrl(url: string | null | undefined): string {
+  if (!url) return "";
+  if (url.startsWith("/")) return url;
+
+  if (url.includes("http")) {
+    try {
+      const parsed = new URL(url);
+      if (PROPERTY_VIDEO_S3_HOSTS.has(parsed.hostname)) {
+        return encodeMediaUrl(url);
+      }
+      if (
+        parsed.hostname === "images.thehelloworld.com" &&
+        isPropertyVideoPath(parsed.pathname)
+      ) {
+        const key = parsed.pathname.replace(/^\/+/, "");
+        return encodeMediaUrl(`${DEFAULT_PROPERTY_VIDEO_BUCKET_BASE}${key}`);
+      }
+      if (isPropertyVideoPath(url)) return encodeMediaUrl(url);
+    } catch {
+      // fall through
+    }
+  }
+
+  const mediaKey = url.includes("http") ? propertyMediaKeyFromUrl(url) : url;
+  if (mediaKey && isPropertyVideoPath(mediaKey)) {
+    return encodeMediaUrl(`${DEFAULT_PROPERTY_VIDEO_BUCKET_BASE}${mediaKey}`);
+  }
+
+  if (url.includes("http")) return encodeMediaUrl(url);
+
+  if (isPropertyVideoPath(url)) {
+    return encodeMediaUrl(`${DEFAULT_PROPERTY_VIDEO_BUCKET_BASE}${url}`);
+  }
+
+  return "";
 }
 
 /** Compare media URLs across moments vs gallery (ignore query/hash/host/bucket variant). */
@@ -102,8 +161,11 @@ export function mapPropertyMediaToGalleryItems(
 
   for (const item of sortByDisplayOrder(media)) {
     const mediaType = String(item.media_type || "").toLowerCase();
-    const url = formatMediaUrl(item.url);
-    const thumbnail = formatMediaUrl(item.thumbnail_url || undefined);
+    const rawUrl = item.url;
+    const rawThumbnail = item.thumbnail_url || undefined;
+    const isVideo = isVideoMedia(mediaType, rawUrl);
+    const url = isVideo ? formatVideoMediaUrl(rawUrl) : formatImageMediaUrl(rawUrl);
+    const thumbnail = formatImageMediaUrl(rawThumbnail);
     if (!url && !thumbnail) continue;
 
     const tag = item.tag?.trim() || item.caption?.trim() || undefined;
@@ -111,7 +173,6 @@ export function mapPropertyMediaToGalleryItems(
     const id = `media-${item.id}`;
 
     if (isMomentsTag(tag)) {
-      const isVideo = isVideoMedia(mediaType, url);
       moments.push({
         id,
         category: "moments",
@@ -124,7 +185,7 @@ export function mapPropertyMediaToGalleryItems(
       continue;
     }
 
-    if (isVideoMedia(mediaType, url)) {
+    if (isVideo) {
       const normalizedTag = tag?.toLowerCase();
       const videoLabel =
         normalizedTag === "property" ? "Community Vibe" : label;
@@ -163,14 +224,17 @@ export function mapMomentsToGalleryItems(
     if (moment.is_active === false) continue;
 
     const mediaType = String(moment.media_type || "").toLowerCase();
-    const url = formatMediaUrl(moment.url);
-    const thumbnail = formatMediaUrl(moment.thumbnail_url || undefined);
+    const rawUrl = moment.url;
+    const rawThumbnail = moment.thumbnail_url || undefined;
+    const isVideo = isVideoMedia(mediaType, rawUrl);
+    const url = isVideo ? formatVideoMediaUrl(rawUrl) : formatImageMediaUrl(rawUrl);
+    const thumbnail = formatImageMediaUrl(rawThumbnail);
     if (!url && !thumbnail) continue;
 
     const caption = moment.caption?.trim() || undefined;
     const id = `moment-${moment.id}`;
 
-    if (isVideoMedia(mediaType, url)) {
+    if (isVideo) {
       items.push({
         id,
         category: "moments",
@@ -216,7 +280,7 @@ export function mapLegacyPropertyPhotosToGalleryItems(
   const items: GalleryMediaItem[] = [];
 
   photoUrls.forEach((url, index) => {
-    const imageSrc = formatMediaUrl(url);
+    const imageSrc = formatImageMediaUrl(url);
     if (!imageSrc) return;
     items.push({
       id: `photo-${index}`,
