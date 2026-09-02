@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  Suspense,
   useCallback,
   useContext,
   useMemo,
@@ -59,13 +60,15 @@ export function PropertyActionsProvider({
   return (
     <PropertyActionsContext.Provider value={value}>
       {children}
-      <RequestCallbackModal
-        open={callbackTarget != null}
-        onClose={() => setCallbackTarget(null)}
-        propertyName={callbackTarget?.propertyName ?? ""}
-        location={callbackTarget?.location ?? defaultLocation}
-        city={callbackTarget?.city ?? defaultCity}
-      />
+      <Suspense fallback={null}>
+        <RequestCallbackModal
+          open={callbackTarget != null}
+          onClose={() => setCallbackTarget(null)}
+          propertyName={callbackTarget?.propertyName ?? ""}
+          location={callbackTarget?.location ?? defaultLocation}
+          city={callbackTarget?.city ?? defaultCity}
+        />
+      </Suspense>
       <ScheduleVisitModal
         open={visitTarget != null}
         onClose={() => setVisitTarget(null)}
