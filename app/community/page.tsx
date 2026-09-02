@@ -6,12 +6,18 @@ import { CommunityFeed } from "@/components/marketing/community-feed";
 import { CommunityReviews } from "@/components/marketing/community-reviews";
 import { CommunityHero } from "@/components/marketing/community-hero";
 import { CommunityVideo } from "@/components/marketing/community-video";
+import { PAGE_OG_IMAGES, staticPageMetadata } from "@/src/lib/og-metadata";
 
-export const metadata: Metadata = {
-  title: "Community Events — HelloWorld",
-  description:
-    "Sports, mixers, parties, and workshops across HelloWorld coliving homes. See what's happening in our community.",
-};
+const title = "Community Events — HelloWorld";
+const description =
+  "Sports, mixers, parties, and workshops across HelloWorld coliving homes. See what's happening in our community.";
+
+export const metadata: Metadata = staticPageMetadata({
+  title,
+  description,
+  url: "/community",
+  image: PAGE_OG_IMAGES.community,
+});
 
 export default function CommunityPage() {
   return (

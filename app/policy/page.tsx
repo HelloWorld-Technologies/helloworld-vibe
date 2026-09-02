@@ -5,6 +5,7 @@ import { PrivacyPolicyContent } from "@/components/marketing/privacy-policy/priv
 import { PrivacyPolicyFaq } from "@/components/marketing/privacy-policy/privacy-policy-faq";
 import { PrivacyPolicyHero } from "@/components/marketing/privacy-policy/privacy-policy-hero";
 import { JsonLd } from "@/components/seo/json-ld";
+import { staticPageMetadata } from "@/src/lib/og-metadata";
 import { getPrivacyPolicyFaqs } from "@/src/constants/privacy-policy-faqs";
 import {
   getBreadcrumbSchema,
@@ -17,13 +18,14 @@ const title = "Privacy Policy | HelloWorld Coliving & Student Hostels";
 const description =
   "HelloWorld privacy policy. How we collect, use, and protect your personal information on our website and mobile app.";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = staticPageMetadata({
   title,
   description,
+  url: "/policy",
   alternates: {
     canonical: "/policy",
   },
-};
+});
 
 export default function PrivacyPolicyPage() {
   const baseUrl = getPublicSiteUrl();

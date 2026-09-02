@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { ReferFaq } from "@/components/marketing/refer/refer-faq";
 import { ReferRedirect } from "@/components/marketing/refer/refer-redirect";
 import { JsonLd } from "@/components/seo/json-ld";
+import { staticPageMetadata } from "@/src/lib/og-metadata";
 import { getReferFaqs } from "@/src/constants/refer-faqs";
 import {
   getBreadcrumbSchema,
@@ -18,13 +19,14 @@ const title = "Refer & Earn | HelloWorld Coliving & Student Hostels";
 const description =
   "Refer friends to HelloWorld and earn rewards. Share coliving and student housing with your network.";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = staticPageMetadata({
   title,
   description,
+  url: "/refer",
   alternates: {
     canonical: "/refer",
   },
-};
+});
 
 function ReferRedirectFallback() {
   return (

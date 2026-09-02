@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { sitemapPageMetadata } from "@/src/lib/og-metadata";
 import cities from "@/src/constants/cities";
 import { SitemapListPage } from "@/components/sitemap/sitemap-list-page";
 import {
@@ -33,11 +34,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     .toLowerCase();
   const baseUrl = getPublicBaseUrl();
   const cityLabel = titleize(cityKey);
-  return {
+  const canonical = `${baseUrl}/sitemap/landmarks/${cityKey}`;
+  return sitemapPageMetadata({
     title: `Sitemap: Landmarks in ${cityLabel} | HelloWorld`,
     description: `PG near landmarks, room for rent near landmarks, and Kota hostel-near URLs in ${cityLabel}, grouped by locality.`,
-    alternates: { canonical: `${baseUrl}/sitemap/landmarks/${cityKey}` },
-  };
+    canonical,
+  });
 }
 
 export default async function LandmarkCitySitemapPage({ params }: PageProps) {

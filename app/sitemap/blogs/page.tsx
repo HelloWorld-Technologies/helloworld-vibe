@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SitemapListPage } from "@/components/sitemap/sitemap-list-page";
+import { sitemapPageMetadata } from "@/src/lib/og-metadata";
 import {
   buildBlogLinks,
   buildGeneratedAt,
@@ -10,11 +11,11 @@ export const revalidate = 86400;
 
 export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = getPublicBaseUrl();
-  return {
+  return sitemapPageMetadata({
     title: "Sitemap: Blogs | HelloWorld",
     description: "All blog URLs on HelloWorld.",
-    alternates: { canonical: `${baseUrl}/sitemap/blogs` },
-  };
+    canonical: `${baseUrl}/sitemap/blogs`,
+  });
 }
 
 export default async function BlogSitemapPage() {

@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { ContactFaq } from "@/components/marketing/contact/contact-faq";
 import { ContactPageContent } from "@/components/marketing/contact/contact-page-content";
 import { JsonLd } from "@/components/seo/json-ld";
+import { staticPageMetadata } from "@/src/lib/og-metadata";
 import { getContactFaqs } from "@/src/constants/contact-faqs";
 import {
   getBreadcrumbSchema,
@@ -16,13 +17,14 @@ const title = "Contact Us | HelloWorld Coliving & Student Hostels";
 const description =
   "Have a question, need assistance, or want to explore a partnership? Contact HelloWorld by phone, email, or request a callback.";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = staticPageMetadata({
   title,
   description,
+  url: "/contact",
   alternates: {
     canonical: "/contact",
   },
-};
+});
 
 export default function ContactPage() {
   const baseUrl = getPublicSiteUrl();

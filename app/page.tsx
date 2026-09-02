@@ -11,6 +11,11 @@ import { HomepageTestimonials } from "@/components/marketing/homepage-testimonia
 import { HomepageWeekends } from "@/components/marketing/homepage-weekends";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
+  buildOpenGraph,
+  buildTwitter,
+  PAGE_OG_IMAGES,
+} from "@/src/lib/og-metadata";
+import {
   getBreadcrumbSchema,
   getPublicSiteUrl,
   getWebPageSchema,
@@ -28,11 +33,13 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
-  openGraph: {
+  openGraph: buildOpenGraph({
     title,
     description,
     url: "/",
-  },
+    image: PAGE_OG_IMAGES.homepage,
+  }),
+  twitter: buildTwitter({ title, description, image: PAGE_OG_IMAGES.homepage }),
 };
 
 export default function Home() {

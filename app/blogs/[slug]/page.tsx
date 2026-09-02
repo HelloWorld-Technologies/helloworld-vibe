@@ -8,6 +8,12 @@ import {
   getAllBlogPostsMeta,
   getBlogPostBySlug,
 } from "@/src/lib/blog.server";
+import {
+  buildOpenGraph,
+  buildTwitter,
+  resolveBlogOgImage,
+  staticPageMetadata,
+} from "@/src/lib/og-metadata";
 import { getPublicSiteUrl } from "@/src/lib/schema";
 import { pageShell } from "@/src/tokens/layout";
 
@@ -26,29 +32,36 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
-  if (!post) return { title: "Blog | HelloWorld" };
+  if (!post) {
+    return staticPageMetadata({
+      title: "Blog | HelloWorld",
+      description: "HelloWorld blog.",
+      url: `${getPublicSiteUrl()}/blogs`,
+    });
+  }
 
   const baseUrl = getPublicSiteUrl();
   const canonical =
     post.canonicalUrl || `${baseUrl}${post.urlPath}`;
-  const ogImage = post.image?.startsWith("http")
-    ? post.image
-    : post.image
-      ? `${baseUrl}${post.image.startsWith("/") ? "" : "/"}${post.image}`
-      : undefined;
+  const ogImage = resolveBlogOgImage(post.image);
 
   return {
     title: post.title,
     description: post.description,
     alternates: { canonical },
     robots: post.noindex ? { index: false, follow: false } : undefined,
-    openGraph: {
+    openGraph: buildOpenGraph({
       type: "article",
       title: post.title,
       description: post.description,
       url: canonical,
-      ...(ogImage ? { images: [{ url: ogImage }] } : {}),
-    },
+      image: ogImage,
+    }),
+    twitter: buildTwitter({
+      title: post.title,
+      description: post.description,
+      image: ogImage,
+    }),
   };
 }
 

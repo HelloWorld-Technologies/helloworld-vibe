@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SitemapListPage } from "@/components/sitemap/sitemap-list-page";
+import { sitemapPageMetadata } from "@/src/lib/og-metadata";
 import {
   buildGeneratedAt,
   buildLocalitySectionsByCity,
@@ -11,11 +12,11 @@ export const revalidate = 86400;
 
 export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = getPublicBaseUrl();
-  return {
+  return sitemapPageMetadata({
     title: "Sitemap: Localities | HelloWorld",
     description: "All locality SRP URLs on HelloWorld.",
-    alternates: { canonical: `${baseUrl}/sitemap/localities` },
-  };
+    canonical: `${baseUrl}/sitemap/localities`,
+  });
 }
 
 export default async function LocalitiesSitemapPage() {

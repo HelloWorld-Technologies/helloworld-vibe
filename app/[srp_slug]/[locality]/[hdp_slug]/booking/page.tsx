@@ -4,6 +4,7 @@ import { BookingPageContent } from "@/components/booking/booking-page-content";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { getPublicSiteUrl } from "@/src/lib/schema";
+import { buildOpenGraph, buildTwitter } from "@/src/lib/og-metadata";
 import { pageLayout } from "@/src/tokens/layout";
 import { cn } from "@/src/lib/cn";
 
@@ -38,18 +39,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description =
     "Complete your HelloWorld booking. Choose payment options and reserve your room.";
 
+  const canonicalUrl = `${getPublicSiteUrl()}/${canonicalPath}`;
+
   return {
     title,
     description,
     alternates: {
-      canonical: `${getPublicSiteUrl()}/${canonicalPath}`,
+      canonical: canonicalUrl,
     },
-    openGraph: {
-      title,
-      description,
-      url: `${getPublicSiteUrl()}/${canonicalPath}`,
-      type: "website",
-    },
+    openGraph: buildOpenGraph({ title, description, url: canonicalUrl }),
+    twitter: buildTwitter({ title, description }),
   };
 }
 

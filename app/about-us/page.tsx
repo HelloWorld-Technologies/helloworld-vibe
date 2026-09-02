@@ -3,6 +3,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { AboutPageContent } from "@/components/marketing/about/about-page-content";
 import { JsonLd } from "@/components/seo/json-ld";
+import { staticPageMetadata } from "@/src/lib/og-metadata";
 import { aboutPageCopy } from "@/src/tokens/about";
 import {
   getBreadcrumbSchema,
@@ -13,13 +14,14 @@ import {
 const title = aboutPageCopy.title;
 const description = aboutPageCopy.description;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = staticPageMetadata({
   title,
   description,
+  url: "/about-us",
   alternates: {
     canonical: "/about-us",
   },
-};
+});
 
 export default function AboutPage() {
   const baseUrl = getPublicSiteUrl();

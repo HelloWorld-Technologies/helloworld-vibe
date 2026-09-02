@@ -7,6 +7,12 @@ import {
   type CampaignCitySlug,
 } from "@/src/constants/campaign-prices";
 import { getCampaignCityName } from "@/src/tokens/campaign";
+import {
+  buildOpenGraph,
+  buildTwitter,
+  PAGE_OG_IMAGES,
+  staticPageMetadata,
+} from "@/src/lib/og-metadata";
 import { getPublicSiteUrl, getBreadcrumbSchema, getWebPageSchema } from "@/src/lib/schema";
 
 type PageProps = {
@@ -24,7 +30,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { city } = await params;
   if (!isCampaignCitySlug(city)) {
-    return { title: "Page Not Found | HelloWorld" };
+    return staticPageMetadata({
+      title: "Page Not Found | HelloWorld",
+      description: "The requested campaign page could not be found.",
+    });
   }
 
   const cityName = getCampaignCityName(city);
@@ -44,6 +53,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     alternates: {
       canonical: `/campaign/${city}`,
     },
+    openGraph: buildOpenGraph({
+      title,
+      description,
+      url: `/campaign/${city}`,
+      image: PAGE_OG_IMAGES.campaign,
+    }),
+    twitter: buildTwitter({
+      title,
+      description,
+      image: PAGE_OG_IMAGES.campaign,
+    }),
   };
 }
 

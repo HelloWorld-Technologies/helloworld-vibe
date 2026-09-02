@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
+import { buildOpenGraph, buildTwitter } from "@/src/lib/og-metadata";
 import { getAllBlogPostsMeta } from "@/src/lib/blog.server";
 import { BLOG_PAGE_SIZE, paginate } from "@/src/lib/pagination";
 import { getPublicSiteUrl } from "@/src/lib/schema";
@@ -26,11 +27,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { page } = await params;
   const pageNum = Number(page);
   const baseUrl = getPublicSiteUrl();
+  const title = `Blogs — Page ${pageNum} | HelloWorld`;
+  const description =
+    "Guides and updates on coliving, student housing, and living better with HelloWorld.";
+  const canonical = `${baseUrl}/blogs/page/${pageNum}`;
+
   return {
-    title: `Blogs — Page ${pageNum} | HelloWorld`,
-    description:
-      "Guides and updates on coliving, student housing, and living better with HelloWorld.",
-    alternates: { canonical: `${baseUrl}/blogs/page/${pageNum}` },
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: buildOpenGraph({ title, description, url: canonical }),
+    twitter: buildTwitter({ title, description }),
   };
 }
 

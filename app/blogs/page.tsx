@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { BlogPostCard } from "@/components/blog/blog-post-card";
+import { buildOpenGraph, buildTwitter } from "@/src/lib/og-metadata";
 import { getAllBlogPostsMeta } from "@/src/lib/blog.server";
 import { BLOG_PAGE_SIZE, paginate } from "@/src/lib/pagination";
 import { getPublicSiteUrl } from "@/src/lib/schema";
@@ -11,11 +12,24 @@ export const revalidate = 86400;
 
 export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = getPublicSiteUrl();
+  const featured = getAllBlogPostsMeta()[0];
+  const featuredImage = featured?.banner || featured?.thumbnail;
+  const title = "Blogs | HelloWorld";
+  const description =
+    "Guides and updates on coliving, student housing, and living better with HelloWorld.";
+  const canonical = `${baseUrl}/blogs`;
+
   return {
-    title: "Blogs | HelloWorld",
-    description:
-      "Guides and updates on coliving, student housing, and living better with HelloWorld.",
-    alternates: { canonical: `${baseUrl}/blogs` },
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: buildOpenGraph({
+      title,
+      description,
+      url: canonical,
+      image: featuredImage,
+    }),
+    twitter: buildTwitter({ title, description, image: featuredImage }),
   };
 }
 

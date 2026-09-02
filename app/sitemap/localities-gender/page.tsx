@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SitemapListPage } from "@/components/sitemap/sitemap-list-page";
+import { sitemapPageMetadata } from "@/src/lib/og-metadata";
 import {
   buildGenderLocalitySectionsByCity,
   buildGeneratedAt,
@@ -11,12 +12,12 @@ export const revalidate = 86400;
 
 export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = getPublicBaseUrl();
-  return {
+  return sitemapPageMetadata({
     title: "Sitemap: Localities (gender-specific) | HelloWorld",
     description:
       "All gender-specific locality SRP URLs on HelloWorld (gents/ladies, boys/girls for Kota).",
-    alternates: { canonical: `${baseUrl}/sitemap/localities-gender` },
-  };
+    canonical: `${baseUrl}/sitemap/localities-gender`,
+  });
 }
 
 export default async function GenderLocalitiesSitemapPage() {

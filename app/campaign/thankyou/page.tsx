@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { staticPageMetadata } from "@/src/lib/og-metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = staticPageMetadata({
   title: "Thank You | HelloWorld",
+  url: "/campaign/thankyou",
   robots: { index: false, follow: true },
   alternates: {
     canonical: "/campaign/thankyou",
   },
-};
+});
 
 export default function CampaignThankYouPage() {
   return (

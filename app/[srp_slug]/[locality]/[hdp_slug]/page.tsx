@@ -6,6 +6,11 @@ import {
   buildHdpStaticParamsFromProperties,
   resolveHdpPage,
 } from "@/src/lib/hdp/resolve-hdp-page";
+import {
+  buildOpenGraph,
+  buildTwitter,
+  resolveOgImageUrl,
+} from "@/src/lib/og-metadata";
 import { getPublicSiteUrl } from "@/src/lib/schema";
 import type { Property } from "@/src/models/property";
 
@@ -36,21 +41,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!config) return {};
 
   const baseUrl = getPublicSiteUrl();
-  const ogImage = config.view.galleryImages[0];
+  const canonicalUrl = `${baseUrl}/${config.canonicalPath}`;
+  const ogImage = resolveOgImageUrl(config.view.galleryImages[0]);
 
   return {
     title: config.pageTitle,
     description: config.pageMetaDescription,
     alternates: {
-      canonical: `${baseUrl}/${config.canonicalPath}`,
+      canonical: canonicalUrl,
     },
-    openGraph: {
+    openGraph: buildOpenGraph({
       title: config.pageTitle,
       description: config.pageMetaDescription,
-      url: `${baseUrl}/${config.canonicalPath}`,
-      type: "website",
-      ...(ogImage ? { images: [{ url: ogImage }] } : {}),
-    },
+      url: canonicalUrl,
+      image: ogImage,
+    }),
+    twitter: buildTwitter({
+      title: config.pageTitle,
+      description: config.pageMetaDescription,
+      image: ogImage,
+    }),
   };
 }
 

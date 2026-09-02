@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SitemapListPage } from "@/components/sitemap/sitemap-list-page";
+import { sitemapPageMetadata } from "@/src/lib/og-metadata";
 import {
   buildEventLinks,
   buildGeneratedAt,
@@ -11,11 +12,11 @@ export const revalidate = 86400;
 
 export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = getPublicBaseUrl();
-  return {
+  return sitemapPageMetadata({
     title: "Sitemap: Events | HelloWorld",
     description: "All event URLs on HelloWorld.",
-    alternates: { canonical: `${baseUrl}/sitemap/events` },
-  };
+    canonical: `${baseUrl}/sitemap/events`,
+  });
 }
 
 export default async function EventsSitemapPage() {

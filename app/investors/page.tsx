@@ -8,18 +8,20 @@ import {
   getPublicSiteUrl,
   getWebPageSchema,
 } from "@/src/lib/schema";
+import { staticPageMetadata } from "@/src/lib/og-metadata";
 import { investorsPageCopy } from "@/src/tokens/investors";
 
 const title = investorsPageCopy.title;
 const description = investorsPageCopy.description;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = staticPageMetadata({
   title,
   description,
+  url: "/investors",
   alternates: {
     canonical: "/investors",
   },
-};
+});
 
 export default function InvestorsPage() {
   const baseUrl = getPublicSiteUrl();

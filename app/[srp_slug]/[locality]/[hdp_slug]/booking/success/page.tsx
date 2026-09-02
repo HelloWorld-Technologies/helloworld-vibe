@@ -4,12 +4,13 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { BookingSuccessContent } from "@/components/booking/booking-success-content";
 import { resolveHdpPage } from "@/src/lib/hdp/resolve-hdp-page";
+import { staticPageMetadata } from "@/src/lib/og-metadata";
 import { notFound } from "next/navigation";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = staticPageMetadata({
   title: "Booking Confirmed | HelloWorld",
   robots: { index: false, follow: true },
-};
+});
 
 type PageProps = {
   params: Promise<{

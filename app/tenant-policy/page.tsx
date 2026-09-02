@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { TenantPolicyContent } from "@/components/marketing/tenant-policy/tenant-policy-content";
 import { TenantPolicyFaq } from "@/components/marketing/tenant-policy/tenant-policy-faq";
 import { TenantPolicyHero } from "@/components/marketing/tenant-policy/tenant-policy-hero";
+import { staticPageMetadata } from "@/src/lib/og-metadata";
 import { getTenantPolicyFaqs } from "@/src/constants/tenant-policy-faqs";
 import {
   getBreadcrumbSchema,
@@ -17,13 +18,14 @@ const title = "Tenancy Policy | HelloWorld Coliving & Student Hostels";
 const description =
   "HelloWorld tenancy policy. Rules, guidelines, and expectations for residents in our coliving and student housing spaces.";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = staticPageMetadata({
   title,
   description,
+  url: "/tenant-policy",
   alternates: {
     canonical: "/tenant-policy",
   },
-};
+});
 
 export default function TenantPolicyPage() {
   const baseUrl = getPublicSiteUrl();

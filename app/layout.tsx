@@ -4,6 +4,10 @@ import localFont from "next/font/local";
 import { GoogleTagManager } from "@/components/analytics/google-tag-manager";
 import { UtmStorage } from "@/components/analytics/utm-storage";
 import { WishlistProvider } from "@/components/wishlist/wishlist-provider";
+import {
+  buildOpenGraph,
+  buildTwitter,
+} from "@/src/lib/og-metadata";
 import { getPublicSiteUrl } from "@/src/lib/schema";
 import "./globals.css";
 
@@ -31,8 +35,6 @@ const caveat = Caveat({
 });
 
 const siteUrl = getPublicSiteUrl();
-const DEFAULT_OG_IMAGE =
-  "https://hw-prod-static-assets.s3.ap-south-1.amazonaws.com/marketing/share.jpg";
 const DEFAULT_TITLE = "HelloWorld Coliving & Student Hostels";
 const DEFAULT_DESCRIPTION =
   "HelloWorld provides coliving, student housing, coworking, social spaces and natural habitats to those exploring the evolution of humanity through positive impact.";
@@ -48,26 +50,18 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    type: "website",
+    ...buildOpenGraph({
+      title: DEFAULT_TITLE,
+      description: DEFAULT_DESCRIPTION,
+      url: siteUrl,
+    }),
     locale: "en_US",
     siteName: "HelloWorld",
+  },
+  twitter: buildTwitter({
     title: DEFAULT_TITLE,
     description: DEFAULT_DESCRIPTION,
-    url: siteUrl,
-    images: [
-      {
-        url: DEFAULT_OG_IMAGE,
-        width: 1200,
-        height: 630,
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: DEFAULT_TITLE,
-    description: DEFAULT_DESCRIPTION,
-    images: [DEFAULT_OG_IMAGE],
-  },
+  }),
   icons: {
     icon: [
       { url: "/assets/logos/favicon.svg", type: "image/svg+xml" },

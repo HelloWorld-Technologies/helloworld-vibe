@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { HelloWorldLivingContent } from "@/components/marketing/hello-world-living/hello-world-living-content";
 import { HelloWorldLivingFaq } from "@/components/marketing/hello-world-living/hello-world-living-faq";
 import { JsonLd } from "@/components/seo/json-ld";
+import { PAGE_OG_IMAGES, staticPageMetadata } from "@/src/lib/og-metadata";
 import { getHelloWorldLivingFaqs } from "@/src/constants/hello-world-living-faqs";
 import {
   getBreadcrumbSchema,
@@ -16,13 +17,15 @@ import { helloWorldLivingPageCopy } from "@/src/tokens/hello-world-living";
 const title = helloWorldLivingPageCopy.title;
 const description = helloWorldLivingPageCopy.description;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = staticPageMetadata({
   title,
   description,
+  url: "/hello-world-living",
+  image: PAGE_OG_IMAGES.helloWorldLiving,
   alternates: {
     canonical: "/hello-world-living",
   },
-};
+});
 
 export default function HelloWorldLivingPage() {
   const baseUrl = getPublicSiteUrl();

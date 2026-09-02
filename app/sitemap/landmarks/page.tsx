@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SitemapListPage } from "@/components/sitemap/sitemap-list-page";
+import { sitemapPageMetadata } from "@/src/lib/og-metadata";
 import {
   buildGeneratedAt,
   buildLandmarkCityIndexLinks,
@@ -11,12 +12,12 @@ export const revalidate = 86400;
 
 export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = getPublicBaseUrl();
-  return {
+  return sitemapPageMetadata({
     title: "Sitemap: Landmarks | HelloWorld",
     description:
       "Landmark SRP URLs: PG near landmarks, room for rent near landmarks, and Kota hostel-near pages.",
-    alternates: { canonical: `${baseUrl}/sitemap/landmarks` },
-  };
+    canonical: `${baseUrl}/sitemap/landmarks`,
+  });
 }
 
 export default async function LandmarksSitemapPage() {

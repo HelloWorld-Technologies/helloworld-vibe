@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { SrpPageContent } from "@/components/marketing/srp-page-content";
+import {
+  buildOpenGraph,
+  buildTwitter,
+  resolveSrpOgImage,
+} from "@/src/lib/og-metadata";
 import { resolveSrpPage } from "@/src/lib/srp/resolve-srp-page";
 import { getPublicSiteUrl } from "@/src/lib/schema";
 import PRESENT_CITIES from "@/src/constants/cities";
@@ -44,18 +49,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!config) return {};
 
   const baseUrl = getPublicSiteUrl();
+  const canonicalUrl = `${baseUrl}/${config.canonicalPath}`;
+  const ogImage = resolveSrpOgImage(config);
   return {
     title: config.pageTitle,
     description: config.pageMetaDescription,
     alternates: {
-      canonical: `${baseUrl}/${config.canonicalPath}`,
+      canonical: canonicalUrl,
     },
-    openGraph: {
+    openGraph: buildOpenGraph({
       title: config.pageTitle,
       description: config.pageMetaDescription,
-      url: `${baseUrl}/${config.canonicalPath}`,
-      type: "website",
-    },
+      url: canonicalUrl,
+      image: ogImage,
+    }),
+    twitter: buildTwitter({
+      title: config.pageTitle,
+      description: config.pageMetaDescription,
+      image: ogImage,
+    }),
   };
 }
 
