@@ -1,4 +1,4 @@
-const CACHE_NAME = "helloworld-offline-assets-v2";
+const CACHE_NAME = "helloworld-offline-assets-v3";
 const OFFLINE_IMAGE = "/assets/error/no-internet-1.png";
 const OFFLINE_PAGE = "/offline";
 
@@ -6,7 +6,15 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(CACHE_NAME)
-      .then((cache) => cache.addAll([OFFLINE_PAGE, OFFLINE_IMAGE]))
+      .then((cache) =>
+        Promise.all(
+          [OFFLINE_PAGE, OFFLINE_IMAGE].map((url) =>
+            cache
+              .add(url)
+              .catch((err) => console.error(`[sw] failed to precache ${url}`, err)),
+          ),
+        ),
+      )
       .then(() => self.skipWaiting()),
   );
 });
@@ -34,13 +42,15 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       caches.match(request).then((cachedResponse) => {
         if (cachedResponse) return cachedResponse;
-        return fetch(request).then((response) => {
-          const responseClone = response.clone();
-          caches
-            .open(CACHE_NAME)
-            .then((cache) => cache.put(request, responseClone));
-          return response;
-        });
+        return fetch(request)
+          .then((response) => {
+            const responseClone = response.clone();
+            caches
+              .open(CACHE_NAME)
+              .then((cache) => cache.put(request, responseClone));
+            return response;
+          })
+          .catch(() => caches.match(request));
       }),
     );
     return;
