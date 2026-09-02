@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Caveat, Playfair_Display } from "next/font/google";
 import localFont from "next/font/local";
 import { GoogleTagManager } from "@/components/analytics/google-tag-manager";
+import { OfflineImageCache } from "@/components/common/offline-image-cache";
 import { OnlineStatusBoundary } from "@/components/common/online-status-boundary";
 import { UtmStorage } from "@/components/analytics/utm-storage";
 import { WishlistProvider } from "@/components/wishlist/wishlist-provider";
@@ -97,6 +98,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-white font-satoshi text-gray-900">
         <GoogleTagManager />
+        <OfflineImageCache />
         <UtmStorage />
         <WishlistProvider>
           <OnlineStatusBoundary>{children}</OnlineStatusBoundary>
