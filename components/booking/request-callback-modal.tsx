@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useId, useState, type FormEvent } from "react";
 import { uploadContactLead } from "@/src/apis/contact";
 import { postSendOtpLeads } from "@/src/apis/user";
@@ -32,6 +33,9 @@ export function RequestCallbackModal({
   location = "",
   city,
 }: RequestCallbackModalProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const titleId = useId();
   const descriptionId = useId();
   const [step, setStep] = useState<Step>("form");
@@ -102,6 +106,10 @@ export function RequestCallbackModal({
 
     if (response.success) {
       trackContactLead({ name, phone });
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("lead-submited-v1", "true");
+      const next = params.toString();
+      router.replace(next ? `${pathname}?${next}` : pathname, { scroll: false });
       setStep("success");
       return;
     }

@@ -1,11 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  LocalityCard,
-  LocalityCarouselButton,
-} from "@/components/marketing/locality-card";
-import { HomepageCarouselNav } from "@/components/marketing/homepage-carousel-nav";
+import { LocalityCard } from "@/components/marketing/locality-card";
+import { HomepageCarouselPagination } from "@/components/marketing/homepage-carousel-pagination";
 import type { LocalityListItem } from "@/src/apis/srp";
 import { buildPopularLocalityCards } from "@/src/lib/srp/build-popular-locality-cards";
 import { getCityLabel } from "@/src/tokens/cities";
@@ -102,19 +99,6 @@ export function SrpPopularLocalities({
       aria-label={`Popular ${cityLabel} localities`}
       className={cn(className)}
     >
-      <HomepageCarouselNav
-        className="mb-6 hidden lg:flex"
-        pageCount={maxIndex + 1}
-        activeIndex={index}
-        prevDisabled={index === 0}
-        nextDisabled={index >= maxIndex}
-        onPrev={() => scroll("prev")}
-        onNext={() => scroll("next")}
-        onSelectPage={(next) =>
-          setIndex(Math.max(0, Math.min(next, maxIndex)))
-        }
-      />
-
       <h2 className="text-2xl font-medium tracking-tight text-gray-900 md:text-[1.875rem] md:leading-[2.375rem]">
         Popular {cityLabel} Localities
       </h2>
@@ -158,20 +142,20 @@ export function SrpPopularLocalities({
         </div>
       </div>
 
-      <div className="mt-6 hidden items-center justify-center gap-4 lg:flex">
-        <LocalityCarouselButton
-          direction="prev"
-          label="Previous localities"
-          disabled={index === 0}
-          onClick={() => scroll("prev")}
+      {maxIndex > 0 ? (
+        <HomepageCarouselPagination
+          className="mt-6 hidden lg:flex"
+          pageCount={maxIndex + 1}
+          activeIndex={index}
+          prevDisabled={index === 0}
+          nextDisabled={index >= maxIndex}
+          onPrev={() => scroll("prev")}
+          onNext={() => scroll("next")}
+          onSelectPage={(next) =>
+            setIndex(Math.max(0, Math.min(next, maxIndex)))
+          }
         />
-        <LocalityCarouselButton
-          direction="next"
-          label="Next localities"
-          disabled={index >= maxIndex}
-          onClick={() => scroll("next")}
-        />
-      </div>
+      ) : null}
     </section>
   );
 }

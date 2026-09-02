@@ -1,6 +1,9 @@
 import { imageUrlFormatter } from "@/src/lib/images";
 import type { SrpPageConfig } from "@/src/lib/srp/resolve-srp-page";
-import { getCityHeroImage } from "@/src/tokens/city-hero-images";
+import {
+  getCityHeroImage,
+  type CityHeroImage,
+} from "@/src/tokens/city-hero-images";
 import { srpCardComingSoonImage } from "@/src/tokens/srp-card";
 
 function normalizeImageSource(value: unknown): string {
@@ -26,20 +29,24 @@ function formatHeroImageUrl(url: string): string {
   return imageUrlFormatter("hdp", trimmed);
 }
 
+export type SrpHeroImageAssets = {
+  src: string;
+  webpSrc?: string;
+};
+
 /**
  * Hero image for SRP pages.
  * - City pages always use the hardcoded city landmark image (fallback: coming-soon).
  * - Locality/landmark pages use API cover (or override) only — no city image swap.
  */
-export function resolveSrpHeroImageSrc(
+export function resolveSrpHeroImageAssets(
   config: SrpPageConfig,
   override?: string,
-): string {
+): SrpHeroImageAssets | undefined {
   if (config.kind === "city") {
-    return (
-      getCityHeroImage(config.city) ||
-      srpCardComingSoonImage
-    );
+    const cityImage = getCityHeroImage(config.city);
+    if (cityImage) return cityImage;
+    return { src: srpCardComingSoonImage };
   }
 
   const raw =
@@ -47,5 +54,16 @@ export function resolveSrpHeroImageSrc(
     normalizeImageSource(config.heroImageSrc) ||
     "";
 
-  return raw ? formatHeroImageUrl(raw) : "";
+  const src = raw ? formatHeroImageUrl(raw) : "";
+  return src ? { src } : undefined;
 }
+
+/** JPG/PNG fallback src for map cards and legacy callers. */
+export function resolveSrpHeroImageSrc(
+  config: SrpPageConfig,
+  override?: string,
+): string {
+  return resolveSrpHeroImageAssets(config, override)?.src ?? "";
+}
+
+export type { CityHeroImage };

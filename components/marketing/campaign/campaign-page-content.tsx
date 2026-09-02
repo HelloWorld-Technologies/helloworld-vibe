@@ -9,9 +9,28 @@ import { CampaignMoreThanRoom } from "@/components/marketing/campaign/campaign-m
 import { CampaignWeekendsCarousel } from "@/components/marketing/campaign/campaign-weekends";
 import { Modal } from "@/components/ui/modal";
 import type { CampaignCitySlug } from "@/src/constants/campaign-prices";
+import {
+  buildCitySrpHref,
+  buildLocalitySrpHref,
+} from "@/src/lib/srp/locality-srp-href";
 import { getCampaignCityApiSlug } from "@/src/tokens/campaign";
 import { pageLayout } from "@/src/tokens/layout";
 import { cn } from "@/src/lib/cn";
+
+function resolveCampaignSrpRedirect({
+  city,
+  location,
+}: {
+  city: string;
+  location: string;
+}) {
+  const trimmedLocation = location.trim();
+  if (trimmedLocation) {
+    const localityHref = buildLocalitySrpHref(city, trimmedLocation);
+    if (localityHref) return localityHref;
+  }
+  return buildCitySrpHref(city);
+}
 
 export function CampaignPageContent({ citySlug }: { citySlug: CampaignCitySlug }) {
   const [contactOpen, setContactOpen] = useState(false);
@@ -23,6 +42,10 @@ export function CampaignPageContent({ citySlug }: { citySlug: CampaignCitySlug }
       formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       return;
     }
+    setContactOpen(true);
+  }
+
+  function openContactModal() {
     setContactOpen(true);
   }
 
@@ -38,7 +61,7 @@ export function CampaignPageContent({ citySlug }: { citySlug: CampaignCitySlug }
               citySlug={citySlug}
               titlePrefix="This could be your"
               titleHighlight="Home!"
-              onRequestCallback={openContact}
+              onTakeTour={openContactModal}
             />
             <CampaignWeekendsCarousel />
             <CampaignContactBanner />
@@ -53,7 +76,7 @@ export function CampaignPageContent({ citySlug }: { citySlug: CampaignCitySlug }
               locationEditable
               hideCitySelect
               leadTracking="conversion"
-              redirectOnSuccess="/campaign/thankyou"
+              redirectOnSuccess={resolveCampaignSrpRedirect}
             />
           </aside>
         </div>
@@ -81,7 +104,7 @@ export function CampaignPageContent({ citySlug }: { citySlug: CampaignCitySlug }
           locationEditable
           hideCitySelect
           leadTracking="conversion"
-          redirectOnSuccess="/campaign/thankyou"
+          redirectOnSuccess={resolveCampaignSrpRedirect}
           className="shadow-none"
         />
       </Modal>

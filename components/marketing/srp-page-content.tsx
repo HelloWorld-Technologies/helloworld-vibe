@@ -32,7 +32,7 @@ import {
 import type { SrpPageConfig } from "@/src/lib/srp/resolve-srp-page";
 import type { Property } from "@/src/models/property";
 import type { SrpQuery } from "@/src/models/srp-query";
-import { resolveSrpHeroImageSrc } from "@/src/lib/srp/srp-hero-image";
+import { resolveSrpHeroImageAssets, resolveSrpHeroImageSrc } from "@/src/lib/srp/srp-hero-image";
 import { useSrpFilters } from "@/src/lib/srp/use-srp-filters";
 import { useSrpPagination } from "@/src/lib/srp/use-srp-pagination";
 import { cn } from "@/src/lib/cn";
@@ -121,13 +121,14 @@ function SrpHero({
   title: string;
   subtitle: string;
 }) {
-  const resolvedSrc = resolveSrpHeroImageSrc(config, heroImageSrc);
+  const heroAssets = resolveSrpHeroImageAssets(config, heroImageSrc);
 
   return (
     <LocalityBentoHero
       title={title}
       subtitle={subtitle}
-      heroImageSrc={resolvedSrc || undefined}
+      heroImageSrc={heroAssets?.src}
+      heroImageWebpSrc={heroAssets?.webpSrc}
       heroImageAlt={title}
       breadcrumbItems={config.breadcrumbItems}
       bentoTiles={config.bentoTiles}
@@ -254,6 +255,7 @@ export function SrpPageContent({ config }: { config: SrpPageConfig }) {
     return colivingPgSubtitle(
       property,
       config.localityName ?? getCityLabel(config.city),
+      config.city,
     );
   };
 

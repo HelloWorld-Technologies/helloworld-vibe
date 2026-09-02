@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { AdaptiveImage } from "@/components/media/adaptive-image";
 import { Breadcrumbs, type BreadcrumbItem } from "@/components/navigation/breadcrumbs";
 import {
   localityBentoDesktopLayout,
@@ -105,6 +106,7 @@ function BentoMobileRatings({ tiles }: { tiles: readonly LocalityBentoTile[] }) 
 
 function HeroImage({
   src,
+  webpSrc,
   alt,
   className,
   sizes,
@@ -112,12 +114,28 @@ function HeroImage({
   onError,
 }: {
   src: string;
+  webpSrc?: string;
   alt: string;
   className?: string;
   sizes: string;
   priority?: boolean;
   onError?: () => void;
 }) {
+  if (webpSrc) {
+    return (
+      <AdaptiveImage
+        src={src}
+        webpSrc={webpSrc}
+        alt={alt}
+        fill
+        fetchPriority={priority ? "high" : undefined}
+        onError={onError}
+        className={cn("object-cover", className)}
+        sizes={sizes}
+      />
+    );
+  }
+
   return (
     <Image
       src={src}
@@ -135,6 +153,7 @@ export type LocalityBentoHeroProps = {
   title: string;
   subtitle: string;
   heroImageSrc?: string;
+  heroImageWebpSrc?: string;
   heroImageAlt: string;
   breadcrumbItems?: readonly BreadcrumbItem[];
   bentoTiles?: readonly LocalityBentoTile[];
@@ -144,6 +163,7 @@ export function LocalityBentoHero({
   title,
   subtitle,
   heroImageSrc,
+  heroImageWebpSrc,
   heroImageAlt,
   breadcrumbItems,
   bentoTiles,
@@ -187,6 +207,7 @@ export function LocalityBentoHero({
             >
               <HeroImage
                 src={heroImageSrc!}
+                webpSrc={heroImageWebpSrc}
                 alt={heroImageAlt}
                 sizes="(max-width: 1280px) 65vw, 846px"
                 onError={() => setImageFailed(true)}
@@ -204,6 +225,7 @@ export function LocalityBentoHero({
           <div className="relative aspect-[4/3] overflow-hidden bg-gray-200">
             <HeroImage
               src={heroImageSrc!}
+              webpSrc={heroImageWebpSrc}
               alt={heroImageAlt}
               sizes="100vw"
               onError={() => setImageFailed(true)}

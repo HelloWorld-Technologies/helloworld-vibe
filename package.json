@@ -9,6 +9,7 @@
     "lint": "eslint",
     "sync:assets": "node scripts/sync-hw-vibe-assets.mjs",
     "compress:campaign-images": "node scripts/compress-campaign-images.mjs",
+    "compress:city-images": "node scripts/compress-city-images.mjs",
     "generate-sitemaps": "tsx scripts/generate-sitemaps.ts"
   },
   "dependencies": {

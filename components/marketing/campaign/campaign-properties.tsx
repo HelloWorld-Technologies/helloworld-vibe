@@ -35,14 +35,14 @@ export function CampaignProperties({
   titleHighlight,
   offset = 0,
   limit = 6,
-  onRequestCallback,
+  onTakeTour,
 }: {
   citySlug: CampaignCitySlug;
   titlePrefix: string;
   titleHighlight: string;
   offset?: number;
   limit?: number;
-  onRequestCallback?: () => void;
+  onTakeTour?: () => void;
 }) {
   const [properties, setProperties] = useState<Property[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -149,7 +149,6 @@ export function CampaignProperties({
           <WishlistSrpCard
             key={property.propertyId}
             propertyId={property.propertyId}
-            href={property.href}
             name={property.name}
             subtitle={property.subtitle}
             images={property.images}
@@ -163,8 +162,9 @@ export function CampaignProperties({
             genderLabel={property.genderLabel}
             vibeMatchScore={property.vibeMatchScore}
             imagePriority={index < 2}
+            showRequestCallback={false}
+            onTakeTour={onTakeTour}
             className="w-[min(100%,22rem)] shrink-0 md:w-[calc((100%-1.5rem)/1.5)]"
-            onRequestCallback={onRequestCallback}
           />
         ))}
       </div>

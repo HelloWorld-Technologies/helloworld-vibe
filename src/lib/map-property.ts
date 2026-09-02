@@ -63,12 +63,19 @@ export function resolvePropertyLocality(property: Property): string | undefined 
 export function colivingPgSubtitle(
   property: Property,
   fallbackLocality?: string,
+  citySlug?: string,
 ): string {
   const locality =
     resolvePropertyLocality(property) ||
     String(fallbackLocality ?? "").trim() ||
     formatCityDisplayName(property.city || property.address?.city || "");
-  return `Coliving PG in ${locality || "your city"}`;
+  const place = locality || "your city";
+
+  if (citySlug?.toLowerCase() === "kota") {
+    return `${getGenderSubtitlePrefix(property.gender)}Hostel in ${place}`;
+  }
+
+  return `Coliving PG in ${place}`;
 }
 
 /** Campaign carousel card subtitle — kota uses "hostel"; other cities use "Coliving PG". */

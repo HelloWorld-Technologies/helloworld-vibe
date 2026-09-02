@@ -10,25 +10,38 @@ const CITY_SLUG_ALIASES: Record<string, CitySlug> = {
   visakhapatnam: "visakhapatnam",
 };
 
+export type CityHeroImage = {
+  src: string;
+  webpSrc: string;
+};
+
+/** JPG fallback + compressed WebP for `<picture>` / `AdaptiveImage`. */
+function cityRasterImage(src: string): CityHeroImage {
+  return {
+    src,
+    webpSrc: src.replace(/\.(jpg|jpeg|png)$/i, ".webp"),
+  };
+}
+
 /** Landmark hero images for city SRP pages only. */
 export const CITY_HERO_IMAGES = {
-  ahmedabad: "/assets/cities/ahmedabad.png",
-  bangalore: "/assets/cities/bangalore.png",
-  chennai: "/assets/cities/chennai.png",
-  coimbatore: "/assets/cities/coimbatore.png",
-  delhi: "/assets/cities/delhi.png",
-  goa: "/assets/cities/goa.png",
-  gurugram: "/assets/cities/gurugram.png",
-  hyderabad: "/assets/cities/hyderabad.png",
-  indore: "/assets/cities/indore.png",
-  jaipur: "/assets/cities/jaipur.png",
-  kolkata: "/assets/cities/kolkata.png",
-  kota: "/assets/cities/kota.png",
-  mumbai: "/assets/cities/mumbai.png",
-  noida: "/assets/cities/noida.png",
-  pune: "/assets/cities/pune.png",
-  visakhapatnam: "/assets/cities/visakhapatnam.png",
-} as const satisfies Record<CitySlug, string>;
+  ahmedabad: cityRasterImage("/assets/cities/ahmedabad.jpg"),
+  bangalore: cityRasterImage("/assets/cities/bangalore.jpg"),
+  chennai: cityRasterImage("/assets/cities/chennai.jpg"),
+  coimbatore: cityRasterImage("/assets/cities/coimbatore.jpg"),
+  delhi: cityRasterImage("/assets/cities/delhi.jpg"),
+  goa: cityRasterImage("/assets/cities/goa.jpg"),
+  gurugram: cityRasterImage("/assets/cities/gurugram.jpg"),
+  hyderabad: cityRasterImage("/assets/cities/hyderabad.jpg"),
+  indore: cityRasterImage("/assets/cities/indore.jpg"),
+  jaipur: cityRasterImage("/assets/cities/jaipur.jpg"),
+  kolkata: cityRasterImage("/assets/cities/kolkata.jpg"),
+  kota: cityRasterImage("/assets/cities/kota.jpg"),
+  mumbai: cityRasterImage("/assets/cities/mumbai.jpg"),
+  noida: cityRasterImage("/assets/cities/noida.jpg"),
+  pune: cityRasterImage("/assets/cities/pune.jpg"),
+  visakhapatnam: cityRasterImage("/assets/cities/visakhapatnam.jpg"),
+} as const satisfies Record<CitySlug, CityHeroImage>;
 
 function normalizeCitySlug(city: string): CitySlug | undefined {
   const raw = city.trim().toLowerCase().replace(/_/g, " ").replace(/\s+/g, " ");
@@ -48,8 +61,8 @@ function normalizeCitySlug(city: string): CitySlug | undefined {
   return undefined;
 }
 
-/** City SRP hero image path, or undefined for unknown cities. */
-export function getCityHeroImage(city: string): string | undefined {
+/** City SRP hero image paths, or undefined for unknown cities. */
+export function getCityHeroImage(city: string): CityHeroImage | undefined {
   const slug = normalizeCitySlug(city);
   if (!slug) return undefined;
   return CITY_HERO_IMAGES[slug];
