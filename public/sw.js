@@ -11,7 +11,9 @@ self.addEventListener("install", (event) => {
           [OFFLINE_PAGE, OFFLINE_IMAGE].map((url) =>
             cache
               .add(url)
-              .catch((err) => console.error(`[sw] failed to precache ${url}`, err)),
+              .catch((err) =>
+                console.error(`[sw] failed to precache ${url}`, err),
+              ),
           ),
         ),
       )
