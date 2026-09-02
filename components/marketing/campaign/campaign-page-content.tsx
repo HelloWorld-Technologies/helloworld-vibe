@@ -9,27 +9,21 @@ import { CampaignMoreThanRoom } from "@/components/marketing/campaign/campaign-m
 import { CampaignWeekendsCarousel } from "@/components/marketing/campaign/campaign-weekends";
 import { Modal } from "@/components/ui/modal";
 import type { CampaignCitySlug } from "@/src/constants/campaign-prices";
-import {
-  buildCitySrpHref,
-  buildLocalitySrpHref,
-} from "@/src/lib/srp/locality-srp-href";
+import { buildCitySrpHref } from "@/src/lib/srp/locality-srp-href";
 import { getCampaignCityApiSlug } from "@/src/tokens/campaign";
 import { pageLayout } from "@/src/tokens/layout";
 import { cn } from "@/src/lib/cn";
 
-function resolveCampaignSrpRedirect({
-  city,
-  location,
-}: {
-  city: string;
-  location: string;
-}) {
-  const trimmedLocation = location.trim();
-  if (trimmedLocation) {
-    const localityHref = buildLocalitySrpHref(city, trimmedLocation);
-    if (localityHref) return localityHref;
-  }
-  return buildCitySrpHref(city);
+const CAMPAIGN_LEAD_SUBMITTED_PARAM = "lead-submited-v1";
+
+function resolveCampaignSrpRedirect({ city }: { city: string; location: string }) {
+  const href = buildCitySrpHref(city);
+  if (!href) return href;
+
+  const [pathname, existingQuery = ""] = href.split("?");
+  const params = new URLSearchParams(existingQuery);
+  params.set(CAMPAIGN_LEAD_SUBMITTED_PARAM, "true");
+  return `${pathname}?${params.toString()}`;
 }
 
 export function CampaignPageContent({ citySlug }: { citySlug: CampaignCitySlug }) {
