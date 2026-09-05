@@ -12,7 +12,7 @@ export const footerAboutLinks = [
   },
   { label: "For home owners", href: "/owner" },
   { label: "Contact", href: "/contact" },
-  { label: "Blog", href: "/blog" },
+  { label: "Blogs", href: "/blog" },
   { label: "Investors", href: "/investors" },
   { label: "Sitemap", href: "/sitemap" },
 ] as const;
@@ -34,7 +34,6 @@ const footerCities = [
   { label: "Indore", slug: "indore" },
   { label: "Kolkata", slug: "kolkata" },
   { label: "Mumbai", slug: "mumbai" },
-  { label: "Noida", slug: "greater-noida" },
   { label: "Visakhapatnam", slug: "visakhapatnam" },
 ] as const;
 

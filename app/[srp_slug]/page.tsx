@@ -8,6 +8,8 @@ import PRESENT_CITIES from "@/src/constants/cities";
 import { isKotaCity, srpSlug } from "@/src/lib/sitemap-slug";
 
 export const revalidate = 60;
+/** Landmark / locality slugs are not prerendered; generate them on first request. */
+export const dynamicParams = true;
 
 type PageProps = {
   params: Promise<{ srp_slug: string }>;

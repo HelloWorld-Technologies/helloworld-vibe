@@ -4,14 +4,12 @@ import { SitemapListPage } from "@/components/sitemap/sitemap-list-page";
 import {
   buildBlogLinks,
   buildCityLinks,
-  buildEventLinks,
   buildGenderLocalityLinks,
   buildGeneratedAt,
   buildLandmarkLinks,
   buildLocalityLinks,
   buildPropertyLinks,
   buildStaticLinks,
-  fetchAllEvents,
   fetchAllProperties,
   fetchNearbyPlacesByCity,
   getPublicBaseUrl,
@@ -32,9 +30,8 @@ export default async function SitemapPage() {
   const baseUrl = getPublicBaseUrl();
   const { iso: generatedAtIso, text: generatedAtText } = buildGeneratedAt();
 
-  const [properties, events, landmarks] = await Promise.all([
+  const [properties, landmarks] = await Promise.all([
     fetchAllProperties(),
-    fetchAllEvents(),
     fetchNearbyPlacesByCity(),
   ]);
 
@@ -42,14 +39,12 @@ export default async function SitemapPage() {
   const cityLinks = buildCityLinks();
   const propertyLinks = buildPropertyLinks(properties);
   const blogLinks = buildBlogLinks();
-  const eventLinks = buildEventLinks(events);
   const localityLinks = buildLocalityLinks(properties);
   const genderLocalityLinks = buildGenderLocalityLinks(properties);
   const landmarkLinks = buildLandmarkLinks(landmarks);
 
   const sitemapLinks = [
     { href: "/sitemap/blogs", label: "Blogs", count: blogLinks.length },
-    { href: "/sitemap/events", label: "Events", count: eventLinks.length },
     {
       href: "/sitemap/landmarks",
       label: "Landmarks",

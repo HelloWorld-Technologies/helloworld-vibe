@@ -14,12 +14,6 @@ export interface SitemapProperty {
   };
 }
 
-export interface SitemapEvent {
-  id: number;
-  name: string;
-  city: string;
-}
-
 export interface NearbyPlace {
   name: string;
   slug: string;

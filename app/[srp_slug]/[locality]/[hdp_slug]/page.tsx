@@ -10,6 +10,7 @@ import { getPublicSiteUrl } from "@/src/lib/schema";
 import type { Property } from "@/src/models/property";
 
 export const revalidate = 120;
+export const dynamicParams = true;
 
 type PageProps = {
   params: Promise<{

@@ -84,6 +84,7 @@ export function SitemapListPage(props: {
                     <li key={`${section.title}:${it.href}`} className="min-w-0">
                       <Link
                         href={it.href}
+                        prefetch={false}
                         className="block truncate rounded-lg px-2 py-1 text-sm font-medium text-gray-900 hover:bg-gray-50 hover:underline"
                         title={it.href}
                       >

@@ -4,7 +4,6 @@ import { getApiBaseUrl, getApiOriginHeader } from "@/src/lib/api";
 import { getHdpPageTitle } from "@/src/lib/hdp-page-title";
 import {
   colivingFlatLocalityPath,
-  createEventSlug,
   createHdpSlug,
   getLocalitySlug,
   isKotaCity,
@@ -18,7 +17,6 @@ import type {
   NearbyPlace,
   NearbyPlaceApiItem,
   NearbyPlacesApiResponse,
-  SitemapEvent,
   SitemapProperty,
 } from "@/src/models/sitemap-types";
 
@@ -117,15 +115,6 @@ export async function fetchAllProperties(): Promise<SitemapProperty[]> {
   if (Array.isArray(body)) return body as SitemapProperty[];
   if (body && typeof body === "object" && Array.isArray((body as { data?: unknown }).data)) {
     return (body as { data: SitemapProperty[] }).data;
-  }
-  return [];
-}
-
-export async function fetchAllEvents(): Promise<SitemapEvent[]> {
-  const body = await apiGet<unknown>("hello/event/list", { city: "", type: "all" });
-  if (Array.isArray(body)) return body as SitemapEvent[];
-  if (body && typeof body === "object" && Array.isArray((body as { data?: unknown }).data)) {
-    return (body as { data: SitemapEvent[] }).data;
   }
   return [];
 }
@@ -559,15 +548,6 @@ export function buildGenderLocalitySectionsByCity(
         x.label.localeCompare(y.label, undefined, { sensitivity: "base" }),
       ),
     }));
-}
-
-export function buildEventLinks(events: SitemapEvent[]) {
-  return events.map((e) => {
-    const city = String(e.city || "").trim();
-    const href = `/events/${city}/${createEventSlug(e)}`;
-    const label = `Event: ${String(e.name || "").trim() || `#${e.id}`} (${titleize(city)})`;
-    return { href: encodeURI(href), label };
-  });
 }
 
 export function buildBlogLinks() {

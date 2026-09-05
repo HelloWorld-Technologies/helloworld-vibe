@@ -11,8 +11,6 @@
 
 - [Coliving](https://thehelloworld.com/campaign): Furnished coliving spaces with community and flexible stays
 - [Student housing](https://thehelloworld.com/student-hostel-in-kota): Student hostels and PG in Kota and other cities
-- [Coworking](https://thehelloworld.com/coworking): HelloWorld Cowork – flexible coworking at our locations
-- [Community events](https://thehelloworld.com/events): Workshops, meetups, and experiences at HelloWorld spaces
 
 ## Key Information
 
@@ -21,7 +19,6 @@
 - [HelloWorld Living](https://thehelloworld.com/hello-world-living): Subsidiary managing residential living ecosystems
 - [Blog](https://thehelloworld.com/blogs): Guides and updates
 - [For property owners](https://thehelloworld.com/owner): List your property with HelloWorld
-- [Safety](https://thehelloworld.com/safety): How we keep spaces secure
 - [Privacy policy](https://thehelloworld.com/policy): Data and privacy
 - [Tenant policy](https://thehelloworld.com/tenant-policy): Resident guidelines
 - [Refer & earn](https://thehelloworld.com/refer): Referral program
@@ -67,11 +64,6 @@ HelloWorld does not provide legal, financial, or tax advice. We are a coliving a
 - [sitemap](https://thehelloworld.com/sitemap)
 - [campaign](https://thehelloworld.com/campaign)
 - [student-hostel-in-kota](https://thehelloworld.com/student-hostel-in-kota)
-- [kota-meridian-height](https://thehelloworld.com/kota-meridian-height)
 - [refer](https://thehelloworld.com/refer)
-- [safety](https://thehelloworld.com/safety)
-- [coworking](https://thehelloworld.com/coworking)
-- [events](https://thehelloworld.com/events)
-- [feedback](https://thehelloworld.com/feedback)
 - [hello-world-living](https://thehelloworld.com/hello-world-living)
 - [blogs](https://thehelloworld.com/blogs)

@@ -52,7 +52,7 @@ interface FetchPropertiesBySlugPayload {
   sorting?: Sorting | null;
 }
 
-interface PropertyListResponse {
+export interface PropertyListResponse {
   success: boolean;
   data: Property[];
   pageInfo?: { total: number; nextPage?: boolean; count?: number };
@@ -72,42 +72,54 @@ function asPropertyListResponse(body: object): PropertyListResponse {
   };
 }
 
+const LIST_FETCH_RETRIES = 1;
+const LIST_FETCH_RETRY_DELAY_MS = 250;
+
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function putPropertyList(
+  path: "v3/property/list" | "v3/property/list/slug",
+  payload: FetchAllPropertyPayload | FetchPropertiesBySlugPayload,
+  params?: { page?: number; page_size?: number },
+): Promise<PropertyListResponse> {
+  let last: PropertyListResponse = { success: false, data: [] };
+  for (let attempt = 0; attempt <= LIST_FETCH_RETRIES; attempt++) {
+    try {
+      const res = await createHttpClient().put(path, payload, { params });
+      const body = res?.data;
+      if (body != null && typeof body === "object" && !Array.isArray(body)) {
+        const parsed = asPropertyListResponse(body);
+        if (parsed.success && Array.isArray(parsed.data) && parsed.data.length > 0) {
+          return parsed;
+        }
+        last = parsed;
+      } else {
+        last = { success: false, data: [] };
+      }
+    } catch {
+      last = { success: false, data: [] };
+    }
+    if (attempt < LIST_FETCH_RETRIES) {
+      await delay(LIST_FETCH_RETRY_DELAY_MS);
+    }
+  }
+  return last;
+}
+
 export async function fetchAllProperty(
   payload: FetchAllPropertyPayload,
   params?: { page?: number; page_size?: number },
 ): Promise<PropertyListResponse> {
-  try {
-    const res = await createHttpClient().put("v3/property/list", payload, {
-      params,
-    });
-    const body = res?.data;
-    if (body == null || typeof body !== "object" || Array.isArray(body)) {
-      return { success: false, data: [] };
-    }
-    return asPropertyListResponse(body);
-  } catch {
-    return { success: false, data: [] };
-  }
+  return putPropertyList("v3/property/list", payload, params);
 }
 
 export async function fetchPropertiesBySlug(
   payload: FetchPropertiesBySlugPayload,
   params?: { page?: number; page_size?: number },
 ): Promise<PropertyListResponse> {
-  try {
-    const res = await createHttpClient().put(
-      "v3/property/list/slug",
-      payload,
-      { params },
-    );
-    const body = res?.data;
-    if (body == null || typeof body !== "object" || Array.isArray(body)) {
-      return { success: false, data: [] };
-    }
-    return asPropertyListResponse(body);
-  } catch {
-    return { success: false, data: [] };
-  }
+  return putPropertyList("v3/property/list/slug", payload, params);
 }
 
 export async function fetchNearbyPlaces(

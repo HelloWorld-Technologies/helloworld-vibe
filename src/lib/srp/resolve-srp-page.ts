@@ -1,3 +1,4 @@
+import { cache } from "react";
 import {
   fetchAllProperty,
   fetchCityLocalities,
@@ -6,6 +7,7 @@ import {
   fetchPropertiesBySlug,
   SRP_LIST_PAGE_SIZE,
   type LocalityListItem,
+  type PropertyListResponse,
 } from "@/src/apis/srp";
 import { getFaqsForSchema } from "@/src/constants/srp-faqs";
 import { mergeKotaHostelSrpLocalities } from "@/src/constants/kota-srp-localities";
@@ -213,7 +215,17 @@ function emptyResult(): null {
   return null;
 }
 
-export async function resolveSrpPage(
+function listingsFromResponse(result: PropertyListResponse): Property[] | null {
+  if (!result.success) {
+    throw new Error("Failed to load property listings");
+  }
+  if (!Array.isArray(result.data) || result.data.length === 0) {
+    return null;
+  }
+  return result.data;
+}
+
+async function resolveSrpPageUncached(
   srpSlugParam: string,
 ): Promise<SrpPageConfig | null> {
   const slug = String(srpSlugParam || "").trim().toLowerCase();
@@ -226,14 +238,16 @@ export async function resolveSrpPage(
   if (nearLandmark) {
     const { landmarkSlug, slugGender, livingType } = nearLandmark;
     const apiGender = genderFilterApiValue(undefined, slugGender);
-    const { data, success, pageInfo, place, localityInfo } = await fetchPropertiesBySlug(
+    const result = await fetchPropertiesBySlug(
       {
         slug: landmarkSlug,
         filter: apiGender ? { gender: apiGender, amenities: [] } : undefined,
       },
       { page: 1, page_size: SRP_LIST_PAGE_SIZE },
     );
-    if (!success || !Array.isArray(data) || data.length === 0) return emptyResult();
+    const data = listingsFromResponse(result);
+    if (!data) return emptyResult();
+    const { pageInfo, place, localityInfo } = result;
 
     const cityFromPlace =
       (place && typeof place === "object" ? place.city : "") ||
@@ -377,7 +391,7 @@ export async function resolveSrpPage(
     const localityName = localitySlugToName(branch.localitySlug);
     const localityFilter = branch.localitySlug.replace(/-/g, " ");
     const apiGender = genderFilterApiValue(undefined, branch.slugGender);
-    const { data, success, pageInfo, localityInfo } = await fetchAllProperty(
+    const result = await fetchAllProperty(
       {
         city: branch.city,
         localityName: localityFilter || undefined,
@@ -385,7 +399,9 @@ export async function resolveSrpPage(
       },
       { page: 1, page_size: SRP_LIST_PAGE_SIZE },
     );
-    if (!success || !Array.isArray(data) || data.length === 0) return emptyResult();
+    const data = listingsFromResponse(result);
+    if (!data) return emptyResult();
+    const { pageInfo, localityInfo } = result;
 
     const total = pageInfo?.total ?? data.length;
     const [localityLinks, popularLocalities] = await Promise.all([
@@ -628,14 +644,16 @@ export async function resolveSrpPage(
 
   const { city, livingType, slugGender } = parsed;
   const apiGender = genderFilterApiValue(undefined, slugGender);
-  const { data, success, pageInfo, localityInfo } = await fetchAllProperty(
+  const result = await fetchAllProperty(
     {
       city,
       filter: apiGender ? { gender: apiGender, amenities: [] } : undefined,
     },
     { page: 1, page_size: SRP_LIST_PAGE_SIZE },
   );
-  if (!success || !Array.isArray(data) || data.length === 0) return emptyResult();
+  const data = listingsFromResponse(result);
+  if (!data) return emptyResult();
+  const { pageInfo, localityInfo } = result;
 
   const total = pageInfo?.total ?? data.length;
   const [localityLinks, popularLocalities] = await Promise.all([
@@ -738,3 +756,5 @@ export async function resolveSrpPage(
     }),
   };
 }
+
+export const resolveSrpPage = cache(resolveSrpPageUncached);

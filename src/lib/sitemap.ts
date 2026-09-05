@@ -4,11 +4,9 @@
 
 import type {
   NearbyPlace,
-  SitemapEvent,
   SitemapProperty,
 } from "@/src/models/sitemap-types";
 import {
-  createEventSlug,
   createHdpSlug,
   getLocalitySlug,
   srpSlug,
@@ -78,12 +76,7 @@ export const SITEMAP_STATIC_LIST = [
   "sitemap",
   "campaign",
   "student-hostel-in-kota",
-  "kota-meridian-height",
   "refer",
-  "safety",
-  "coworking",
-  "events",
-  "feedback",
   "hello-world-living",
   "blogs",
 ] as const;
@@ -261,23 +254,6 @@ ${URLSET_CLOSE}
 `;
 }
 
-export function buildSitemapEventsXml(
-  baseUrl: string,
-  events: SitemapEvent[],
-  lastmod?: string,
-): string {
-  const base = baseUrl.replace(/\/$/, "");
-  const mod = lastmod || getSitemapLastmod();
-  const urls = events.map(
-    (e) => `${base}/events/${e.city}/${createEventSlug(e)}`,
-  );
-  return `${XML_DECLARATION}
-${URLSET_OPEN}
-${urls.map((loc) => urlEntry(loc, mod)).join("")}
-${URLSET_CLOSE}
-`;
-}
-
 export function buildSitemapLandmarksXml(
   baseUrl: string,
   landmarks: NearbyPlace[],
@@ -345,7 +321,6 @@ export function buildSitemapIndexXml(
     "sitemap-gender-cities.xml",
     "sitemap-gender-locality.xml",
     "sitemap-properties.xml",
-    "sitemap-events.xml",
     "sitemap-landmarks.xml",
     "sitemap-blog.xml",
   ],

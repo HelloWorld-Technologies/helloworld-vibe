@@ -1,5 +1,3 @@
-import type { SitemapEvent, SitemapProperty } from "@/src/models/sitemap-types";
-
 const createSlug = (str: string) => str.toLowerCase().split(" ").join("-");
 
 export const srpSlug = (city: string) => {
@@ -57,10 +55,6 @@ export const getLocalitySlug = (property: {
       : "";
   }
   return "";
-};
-
-export const createEventSlug = (event: SitemapEvent) => {
-  return `${event.name.split(" ").join("-")}-${event.id}`;
 };
 
 export function isKotaCity(city: string): boolean {

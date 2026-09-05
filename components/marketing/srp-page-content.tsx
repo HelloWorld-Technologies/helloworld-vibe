@@ -171,6 +171,7 @@ function RelatedLandmarkLinks({
           <li key={item.href} className="min-w-0">
             <Link
               href={item.href}
+              prefetch={false}
               className="block truncate text-sm font-medium text-gray-600 underline underline-offset-4 hover:text-gray-900"
             >
               {item.label}

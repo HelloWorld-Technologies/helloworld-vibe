@@ -16,7 +16,6 @@ import { getAllBlogPostsMeta } from "../src/lib/blog.server";
 import {
   buildSitemapBlogXml,
   buildSitemapCitiesXml,
-  buildSitemapEventsXml,
   buildSitemapGenderCitiesXml,
   buildSitemapGenderLocalityXml,
   buildSitemapIndexXml,
@@ -30,7 +29,6 @@ import type {
   NearbyPlace,
   NearbyPlaceApiItem,
   NearbyPlacesApiResponse,
-  SitemapEvent,
   SitemapProperty,
 } from "../src/models/sitemap-types";
 
@@ -144,33 +142,6 @@ async function main() {
     "utf8",
   );
   console.warn("Wrote public/sitemap-gender-locality.xml");
-
-  let events: SitemapEvent[] = [];
-  try {
-    if (BASE_URL) {
-      const client = axios.create({
-        baseURL: BASE_URL,
-        timeout: 30000,
-        headers: { origin: getApiOriginHeader() },
-      });
-      const res = await client.get("hello/event/list", {
-        params: { city: "", type: "all" },
-      });
-      const body = res.data;
-      if (Array.isArray(body)) {
-        events = body;
-      } else if (Array.isArray(body?.data)) {
-        events = body.data;
-      }
-    }
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error("Failed to fetch events:", message);
-  }
-
-  const eventsXml = buildSitemapEventsXml(PUBLIC_URL, events);
-  fs.writeFileSync(path.join(publicDir, "sitemap-events.xml"), eventsXml, "utf8");
-  console.warn(`Wrote public/sitemap-events.xml (${events.length} events)`);
 
   let landmarks: NearbyPlace[] = [];
   try {
